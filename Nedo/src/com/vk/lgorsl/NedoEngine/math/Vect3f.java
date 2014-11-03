@@ -3,26 +3,28 @@ package com.vk.lgorsl.NedoEngine.math;
 import android.util.FloatMath;
 
 /**
- * 2-dimensional float vector
+ * three - dimensional float vector
  *
  * Created by lgor on 04.11.2014.
  */
-public class Vect2f extends VectNf {
+public class Vect3f extends VectNf {
 
-    public float x, y;
+    public float x, y, z;
 
-    public Vect2f() {
+    public Vect3f() {
     }
 
-    public Vect2f set(Vect2f example) {
+    public Vect3f set(Vect3f example) {
         x = example.x;
         y = example.y;
+        z = example.z;
         return this;
     }
 
-    public Vect2f set(float x, float y) {
+    public Vect3f set(float x, float y, float z) {
         this.x = x;
         this.y = y;
+        this.z = z;
         return this;
     }
 
@@ -30,67 +32,72 @@ public class Vect2f extends VectNf {
     public void mul(float mul) {
         x *= mul;
         y *= mul;
+        z *= mul;
     }
 
-    public void add(Vect2f v) {
+    public void add(Vect3f v) {
         x += v.x;
         y += v.y;
+        z += v.z;
     }
 
     /**
      * this += v * mul;
      */
-    public void add(Vect2f v, float mul) {
+    public void add(Vect3f v, float mul) {
         x += v.x * mul;
         y += v.y * mul;
+        z += v.z * mul;
     }
 
-    public void sub(Vect2f v) {
+    public void sub(Vect3f v) {
         x -= v.x;
         y -= v.y;
+        z -= v.z;
     }
 
     @Override
     public float length2() {
-        return x * x + y * y;
+        return x * x + y * y + z * z;
     }
 
     @Override
     public boolean equals(Object o) {
         try {
-            Vect2f v = (Vect2f) o;
-            return v.x == x && v.y == y;
+            Vect3f v = (Vect3f) o;
+            return v.x == x && v.y == y && v.z == z;
         } catch (ClassCastException ex) {
             return false;
         }
     }
 
-    public float dot(Vect2f v) {
-        return x * v.x + y * v.y;
+    public float dot(Vect3f v) {
+        return x * v.x + y * v.y + z * v.z;
     }
 
-    public float cos(Vect2f v) {
+    public float cos(Vect3f v) {
         return this.dot(v) / FloatMath.sqrt(this.length2() * v.length2());
     }
 
-    /**
-     * it is looks like cross product of 3d vectors
-     * @return x * v.y - y * v.x
-     */
-    public float cross(Vect2f v) {
-        return x * v.y - y * v.x;
-    }
-
-    public float distance(Vect2f v){
+    public float distance(Vect3f v) {
         float dx = x - v.x;
         float dy = y - v.y;
-        return FloatMath.sqrt(dx * dx + dy * dy);
+        float dz = z - v.z;
+        return FloatMath.sqrt(dx * dx + dy * dy + dz * dz);
     }
 
     @Override
     public int putIntoArray(float[] array, int pos) {
         array[pos++] = x;
         array[pos++] = y;
+        array[pos++] = z;
         return pos;
+    }
+
+    public static void cross(Vect3f result, Vect3f f, Vect3f s) {
+        result.set(
+                f.y * s.z - f.z * s.y,
+                f.z * s.x - f.x * s.z,
+                f.x * s.y - f.y * s.x);
     }
 }
