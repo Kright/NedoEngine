@@ -7,13 +7,14 @@ import android.util.FloatMath;
  *
  * Created by lgor on 04.11.2014.
  */
-public class Vect3f extends VectNf {
+public class Vect3f extends VectNf<Vect3f> {
 
     public float x, y, z;
 
     public Vect3f() {
     }
 
+    @Override
     public Vect3f set(Vect3f example) {
         x = example.x;
         y = example.y;
@@ -35,21 +36,21 @@ public class Vect3f extends VectNf {
         z *= mul;
     }
 
+    @Override
     public void add(Vect3f v) {
         x += v.x;
         y += v.y;
         z += v.z;
     }
 
-    /**
-     * this += v * mul;
-     */
+    @Override
     public void add(Vect3f v, float mul) {
         x += v.x * mul;
         y += v.y * mul;
         z += v.z * mul;
     }
 
+    @Override
     public void sub(Vect3f v) {
         x -= v.x;
         y -= v.y;
@@ -71,14 +72,12 @@ public class Vect3f extends VectNf {
         }
     }
 
+    @Override
     public float dot(Vect3f v) {
         return x * v.x + y * v.y + z * v.z;
     }
 
-    public float cos(Vect3f v) {
-        return this.dot(v) / FloatMath.sqrt(this.length2() * v.length2());
-    }
-
+    @Override
     public float distance(Vect3f v) {
         float dx = x - v.x;
         float dy = y - v.y;

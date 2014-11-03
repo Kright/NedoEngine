@@ -7,13 +7,14 @@ import android.util.FloatMath;
  *
  * Created by lgor on 04.11.2014.
  */
-public class Vect2f extends VectNf {
+public class Vect2f extends VectNf<Vect2f> {
 
     public float x, y;
 
     public Vect2f() {
     }
 
+    @Override
     public Vect2f set(Vect2f example) {
         x = example.x;
         y = example.y;
@@ -32,19 +33,19 @@ public class Vect2f extends VectNf {
         y *= mul;
     }
 
+    @Override
     public void add(Vect2f v) {
         x += v.x;
         y += v.y;
     }
 
-    /**
-     * this += v * mul;
-     */
+    @Override
     public void add(Vect2f v, float mul) {
         x += v.x * mul;
         y += v.y * mul;
     }
 
+    @Override
     public void sub(Vect2f v) {
         x -= v.x;
         y -= v.y;
@@ -65,12 +66,9 @@ public class Vect2f extends VectNf {
         }
     }
 
+    @Override
     public float dot(Vect2f v) {
         return x * v.x + y * v.y;
-    }
-
-    public float cos(Vect2f v) {
-        return this.dot(v) / FloatMath.sqrt(this.length2() * v.length2());
     }
 
     /**
