@@ -7,9 +7,25 @@ import android.util.FloatMath;
  *
  * Created by lgor on 04.11.2014.
  */
-abstract class VectNf<T extends VectNf<T>> {
+abstract class VectNf<T extends VectNf<T>> implements Operable<T> {
 
+    /**
+     * this.coordinates = vect.coordinates;
+     * @return itself
+     */
     public abstract T set(T vect);
+
+    /**
+     * for each coordinate from this
+     * this.c = op.unary(this.c);
+     */
+    public abstract void apply(Unary op);
+
+    /**
+     * for each coordinate from this
+     * this.c = op.binary(first.c, second.c);
+     */
+    public abstract void apply(Binary op, T first, T second);
 
     /**
      * multiply vector to a single value

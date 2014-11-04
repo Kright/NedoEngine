@@ -22,6 +22,20 @@ public class Vect3f extends VectNf<Vect3f> {
         return this;
     }
 
+    @Override
+    public void apply(Unary op) {
+        x = op.apply(x);
+        y = op.apply(y);
+        z = op.apply(z);
+    }
+
+    @Override
+    public void apply(Binary op, Vect3f first, Vect3f second) {
+        x = op.apply(first.x, second.x);
+        y = op.apply(first.y, second.y);
+        z = op.apply(first.z, second.z);
+    }
+
     public Vect3f set(float x, float y, float z) {
         this.x = x;
         this.y = y;
