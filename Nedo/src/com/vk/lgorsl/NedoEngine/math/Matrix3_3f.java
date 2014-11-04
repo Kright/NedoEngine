@@ -3,6 +3,8 @@ package com.vk.lgorsl.NedoEngine.math;
 /**
  * класс матрицы 3*3
  *
+ * методы вида make* создают определённую матрицу ВМЕСТО текущей.
+ *
  * Created by lgor on 04.11.2014.
  */
 public class Matrix3_3f {
@@ -20,7 +22,7 @@ public class Matrix3_3f {
         m11 = m22 = m33 = 1f;
     }
 
-    public Matrix3_3f setIdentity() {
+    public Matrix3_3f makeIdentity() {
         m11 = m22 = m33 = 1f;
         m12 = m13 = m21 = m23 = m31 = m32 = 0f;
         return this;
@@ -43,7 +45,7 @@ public class Matrix3_3f {
      * надо будет проверить.
      * если не в ту сторону, то можно транспонировать матрицу
      */
-    public Matrix3_3f setRotation(Quaternion q) {
+    public Matrix3_3f makeRotation(Quaternion q) {
         m11 = 1f - 2f * (q.y * q.y + q.z * q.z);
         m12 = 2f * (q.x * q.y + q.w * q.z);
         m13 = 2f * (q.x * q.z - q.w * q.y);
@@ -112,7 +114,7 @@ public class Matrix3_3f {
     /**
      * @return false for singular matrix
      */
-    public boolean getInverse(Matrix3_3f result) {
+    public boolean invert(Matrix3_3f result) {
         //ищем миноры
         float mi11 = m22 * m33 - m23 * m32;
         float mi12 = m21 * m33 - m23 * m31;
