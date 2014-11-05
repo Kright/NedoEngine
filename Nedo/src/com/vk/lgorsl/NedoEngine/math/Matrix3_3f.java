@@ -107,6 +107,23 @@ public class Matrix3_3f {
         return eq(m12, m21) && eq(m13, m31) && eq(m23, m32);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Matrix3_3f){
+            Matrix3_3f f = (Matrix3_3f)o;
+            return eq(m11, f.m11) &&
+                    eq(m12, f.m12) &&
+                    eq(m13, f.m13) &&
+                    eq(m21, f.m21) &&
+                    eq(m22, f.m22) &&
+                    eq(m23, f.m23) &&
+                    eq(m31, f.m31) &&
+                    eq(m32, f.m32) &&
+                    eq(m33, f.m33);
+        }
+        return false;
+    }
+
     private static boolean eq(float f1, float f2) {
         return Math.abs(f1 - f2) < eps;
     }
@@ -184,5 +201,21 @@ public class Matrix3_3f {
         result.m31 = m31;
         result.m32 = m32;
         result.m33 = m33;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[[").
+                append(m11).append(",").
+                append(m12).append(",").
+                append(m13).append(",], [").
+                append(m21).append(",").
+                append(m22).append(",").
+                append(m23).append(",], [").
+                append(m31).append(",").
+                append(m32).append(",").
+                append(m33).append(",]]");
+        return sb.toString();
     }
 }
