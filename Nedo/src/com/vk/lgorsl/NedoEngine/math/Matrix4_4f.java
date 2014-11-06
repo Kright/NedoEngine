@@ -27,6 +27,7 @@ public class Matrix4_4f {
 
     public Matrix4_4f() {
         arr = new float[len];
+        arr[0] = arr[5] = arr[10] = arr[15] = 1f;
     }
 
     public Matrix4_4f(float[] f) {
@@ -84,12 +85,12 @@ public class Matrix4_4f {
         return this;
     }
 
-    public Matrix4_4f makeRotate(float angleInDegrees, float nx, float ny, float nz) {
+    public Matrix4_4f makeRotation(float angleInDegrees, float nx, float ny, float nz) {
         Matrix.setRotateM(arr, 0, angleInDegrees, nx, ny, nz);
         return this;
     }
 
-    public Matrix4_4f makeRotate(Quaternion q) {
+    public Matrix4_4f makeRotation(Quaternion q) {
         arr[0] = 1f - 2f * (q.y * q.y + q.z * q.z);
         arr[1] = 2f * (q.x * q.y - q.w * q.z);
         arr[2] = 2f * (q.x * q.z + q.w * q.y);
@@ -147,6 +148,10 @@ public class Matrix4_4f {
         return Matrix.invertM(inverted.arr, 0, arr, 0);
     }
 
+    public boolean invert(){
+        return getInvert(this);
+    }
+
     public boolean symmetric() {
         return symmetric(1f);
     }
@@ -171,6 +176,52 @@ public class Matrix4_4f {
         arr[j] = t;
     }
 
+    /*
+    * copy-paste code from Matrix.invertM()
+    *
+    * [0, 4, 8, 12]
+    * [1, 5, 9, 13]
+    * [2, 6, 10, 14]
+    * [3, 7, 11, 15]
+    */
+
+    public float getDeterminant(){
+        if (arr[3]==0f && arr[7]==0f && arr[11]==0f){
+            //optimisation for trivial matrices
+            return arr[15]*(
+                    arr[0]*(arr[5]*arr[10]-arr[6]*arr[9]) -
+                    arr[4]*(arr[1]*arr[10]-arr[2]*arr[9]) +
+                    arr[8]*(arr[1]*arr[6] -arr[2]*arr[5]));
+        }
+
+        final float atmp0  = arr[10] * arr[15];
+        final float atmp1  = arr[11] * arr[14];
+        final float atmp2  = arr[9]  * arr[15];
+        final float atmp3  = arr[11] * arr[13];
+        final float atmp4  = arr[9]  * arr[14];
+        final float atmp5  = arr[10] * arr[13];
+        final float atmp6  = arr[8]  * arr[15];
+        final float atmp7  = arr[11] * arr[12];
+        final float atmp8  = arr[8]  * arr[14];
+        final float atmp9  = arr[10] * arr[12];
+        final float atmp10 = arr[8]  * arr[13];
+        final float atmp11 = arr[9]  * arr[12];
+
+        final float dst0  = (atmp0 * arr[5] + atmp3 * arr[6] + atmp4  * arr[7])
+                - (atmp1 * arr[5] + atmp2 * arr[6] + atmp5  * arr[7]);
+        final float dst1  = (atmp1 * arr[4] + atmp6 * arr[6] + atmp9  * arr[7])
+                - (atmp0 * arr[4] + atmp7 * arr[6] + atmp8  * arr[7]);
+        final float dst2  = (atmp2 * arr[4] + atmp7 * arr[5] + atmp10 * arr[7])
+                - (atmp3 * arr[4] + atmp6 * arr[5] + atmp11 * arr[7]);
+        final float dst3  = (atmp5 * arr[4] + atmp8 * arr[5] + atmp11 * arr[6])
+                - (atmp4 * arr[4] + atmp9 * arr[5] + atmp10 * arr[6]);
+
+        final float det =
+                arr[0] * dst0 + arr[1] * dst1 + arr[2] * dst2 + arr[3] * dst3;
+
+        return det;
+    }
+
     private boolean symmetric(float sign) {
         return equals(arr[4], sign * arr[1]) &&
                 equals(arr[8], sign * arr[2]) &&
@@ -178,10 +229,6 @@ public class Matrix4_4f {
                 equals(arr[9], sign * arr[6]) &&
                 equals(arr[13], sign * arr[7]) &&
                 equals(arr[14], sign * arr[11]);
-    }
-
-    protected static boolean equals(float a, float b) {
-        return Math.abs(a - b) < eps;
     }
 
     public void mul(Vect3f v, Vect3f result) {
@@ -198,8 +245,56 @@ public class Matrix4_4f {
                 v.x * arr[2] + v.y * arr[6] + v.z * arr[10]);
     }
 
+    public void multiplication(Matrix4_4f first, Matrix4_4f second){
+        Matrix4_4f.multiply(this, first, second);
+    }
+
+    /**
+     * [0, 4, 8, 12]
+     * [1, 5, 9, 13]
+     * [2, 6, 10, 14]
+     * [3, 7, 11, 15]
+     *
+     * it gives array instead of copy of values,
+     * so matrix changes when you change this array
+     * @return array of values
+     */
     public float[] getArray() {
         return arr;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[[");
+        for(int i=0; i<len;i++){
+            sb.append(arr[i]);
+            if (i%4!=3){
+                sb.append(", ");
+            } else {
+                sb.append("], [");
+            }
+        }
+        sb.append(']');
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Matrix4_4f){
+            Matrix4_4f m = (Matrix4_4f)o;
+            for(int i=0; i<len; i++){
+                if (!equals(arr[i], m.arr[i])){
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    protected static boolean equals(float a, float b) {
+        return Math.abs(a - b) < eps;
     }
 
     public static void multiply(Matrix4_4f result, Matrix4_4f left, Matrix4_4f right) {

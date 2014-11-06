@@ -2,6 +2,7 @@ package com.vk.lgorsl.TryGLgame;
 
 import android.test.AndroidTestCase;
 import com.vk.lgorsl.NedoEngine.math.Matrix3_3f;
+import com.vk.lgorsl.NedoEngine.math.Matrix4_4f;
 import com.vk.lgorsl.NedoEngine.math.Quaternion;
 import com.vk.lgorsl.NedoEngine.math.Vect3f;
 
@@ -18,7 +19,7 @@ public class MatrixTest extends AndroidTestCase{
         assertEquals(id, m);
 
         Matrix3_3f r = new Matrix3_3f();
-        Matrix3_3f.multiply(m, id, r);
+        Matrix3_3f.multiply(r, m, id);
         assertEquals(m, id);
 
         r.invert();
@@ -34,7 +35,7 @@ public class MatrixTest extends AndroidTestCase{
         assertEquals(m2,r);
         m2.transpose();
 
-        Matrix3_3f.multiply(m2, r, m);
+        Matrix3_3f.multiply(m, m2, r);
         assertEquals(m, id);
 
         assertEquals(m.getDeterminant(), 1f);
@@ -90,5 +91,82 @@ public class MatrixTest extends AndroidTestCase{
         m.invert();
         m.invert();
         assertEquals(m, m2);
+    }
+
+    public void testMatrix4_4f(){
+        Matrix4_4f id = new Matrix4_4f();
+        Matrix4_4f m = new Matrix4_4f();
+        assertEquals(id, m);
+
+        Matrix4_4f r = new Matrix4_4f();
+        Matrix4_4f.multiply(m, id, r);
+        assertEquals(m, id);
+
+        r.invert();
+        assertEquals(r, id);
+
+        m.makeRotation(new Quaternion().set(0,1,0,0));
+        Matrix4_4f m2 = new Matrix4_4f().set(m);
+        assertEquals(m2,m);
+
+        m2.transpose();
+        r.set(m).invert();
+
+        assertEquals(m2,r);
+        m2.transpose();
+
+        Matrix4_4f.multiply(m, m2, r);
+        assertEquals(m, id);
+
+        assertEquals(m.getDeterminant(), 1f);
+
+        assertTrue(id.antisymmetric());
+        assertTrue(id.symmetric());
+
+        m2.makeRotation(new Quaternion().set(0.6f, 0.8f, 0, 0));
+        assertFalse(m2.symmetric());
+        assertTrue(m2.antisymmetric());
+
+        m2.makeRotation(new Quaternion().set(0.6f, 0, 0.8f, 0));
+        assertFalse(m2.symmetric());
+        assertTrue(m2.antisymmetric());
+
+        m2.makeRotation(new Quaternion().set(0.6f, 0, 0, 0.8f));
+        assertFalse(m2.symmetric());
+        assertTrue(m2.antisymmetric());
+
+        Quaternion q = new Quaternion().set(1f, 0.3f, 0.1f, -0.2f);
+        q.normalize();
+        m2.makeRotation(q);
+        assertTrue("determinant =" + m2.getDeterminant(), Math.abs(m2.getDeterminant() - 1f) < 0.0001);
+
+        m.set(m2);
+        m.transpose();
+        r.multiplication(m2, m);
+        assertEquals(r, id);
+
+        q.set(1,2,3,4);
+        q.normalize();
+        m2.makeRotation(q);
+        m.set(m2);
+        m.transpose();
+        m.invert();
+        assertEquals(m, m2);
+
+        m.set(m2);
+        m.invert();
+        m.invert();
+        assertEquals(m, m2);
+
+        float[] arr = m.getArray();
+        for(int i=0; i<arr.length; i++){
+            arr[i] = (float)Math.random();
+        }
+        m2.set(m);
+        boolean success = m2.invert();
+        if (success) {
+            m2.invert();
+            assertEquals(m, m2);
+        }
     }
 }

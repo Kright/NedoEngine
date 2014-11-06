@@ -46,7 +46,7 @@ public class Matrix3_3f {
      * @return this
      */
     public Matrix3_3f multiplication(Matrix3_3f first, Matrix3_3f second){
-        Matrix3_3f.multiply(first, second, this);
+        Matrix3_3f.multiply(this, first, second);
         return this;
     }
 
@@ -137,10 +137,7 @@ public class Matrix3_3f {
         return Math.abs(f1 - f2) < eps;
     }
 
-    /**
-     * @return false for singular matrix
-     */
-    public boolean invert() {
+    public boolean getInverted(Matrix3_3f result){
         //ищем миноры
         float mi11 = m22 * m33 - m23 * m32;
         float mi12 = m21 * m33 - m23 * m31;
@@ -159,16 +156,24 @@ public class Matrix3_3f {
         float mi33 = m11 * m22 - m21 * m12;
 
         //транспонируем, меняем знаки, делим на детерминант.
-        m11 = mi11 * m;
-        m12 = -mi21 * m;
-        m13 = mi31 * m;
-        m21 = -mi12 * m;
-        m22 = mi22 * m;
-        m23 = -mi32 * m;
-        m31 = mi13 * m;
-        m32 = -mi23 * m;
-        m33 = mi33 * m;
+        result.m11 = mi11 * m;
+        result.m12 = -mi21 * m;
+        result.m13 = mi31 * m;
+        result.m21 = -mi12 * m;
+        result.m22 = mi22 * m;
+        result.m23 = -mi32 * m;
+        result.m31 = mi13 * m;
+        result.m32 = -mi23 * m;
+        result.m33 = mi33 * m;
+
         return true;
+    }
+
+    /**
+     * @return false for singular matrix
+     */
+    public boolean invert() {
+        return getInverted(this);
     }
 
     public void getXAxis(Vect3f result) {
@@ -188,7 +193,7 @@ public class Matrix3_3f {
         m21, m22, m23,
         m31, m32, m33;
     */
-    public static void multiply(Matrix3_3f f, Matrix3_3f s, Matrix3_3f result) {
+    public static void multiply(Matrix3_3f result, Matrix3_3f f, Matrix3_3f s) {
         float m11 = f.m11 * s.m11 + f.m12 * s.m21 + f.m13 * s.m31;
         float m12 = f.m11 * s.m12 + f.m12 * s.m22 + f.m13 * s.m32;
         float m13 = f.m11 * s.m13 + f.m12 * s.m23 + f.m13 * s.m33;
