@@ -113,4 +113,9 @@ public class Vect3f extends VectNf<Vect3f> {
                 f.z * s.x - f.x * s.z,
                 f.x * s.y - f.y * s.x);
     }
+
+    @Override
+    public String toString() {
+        return "["+x+','+y+','+z+']';
+    }
 }

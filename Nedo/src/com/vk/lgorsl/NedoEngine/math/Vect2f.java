@@ -103,4 +103,9 @@ public class Vect2f extends VectNf<Vect2f> {
         array[pos++] = y;
         return pos;
     }
+
+    @Override
+    public String toString() {
+        return "["+x+','+y+']';
+    }
 }

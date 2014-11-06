@@ -11,7 +11,7 @@ public class Matrix3_3f {
 
     protected static float eps = 0.0001f;
 
-    private float
+    public float
             m11, m12, m13,
             m21, m22, m23,
             m31, m32, m33;
@@ -38,6 +38,11 @@ public class Matrix3_3f {
         m31 = mat.m31;
         m32 = mat.m32;
         m33 = mat.m33;
+        return this;
+    }
+
+    public Matrix3_3f setAsMultiply(Matrix3_3f first, Matrix3_3f second){
+        Matrix3_3f.multiply(first, second, this);
         return this;
     }
 
@@ -70,7 +75,7 @@ public class Matrix3_3f {
         m13 = m31;
         m31 = t;
         t = m32;
-        m13 = m23;
+        m32 = m23;
         m23 = t;
     }
 
@@ -131,13 +136,13 @@ public class Matrix3_3f {
     /**
      * @return false for singular matrix
      */
-    public boolean invert(Matrix3_3f result) {
+    public boolean invert() {
         //ищем миноры
         float mi11 = m22 * m33 - m23 * m32;
         float mi12 = m21 * m33 - m23 * m31;
         float mi13 = m21 * m32 - m22 * m31;
 
-        final float determinant = m11 * mi11 - m12 * mi12 + mi13 * mi13;
+        final float determinant = m11 * mi11 - m12 * mi12 + m13 * mi13;
         if (Math.abs(determinant) < 0.001) return false;
         final float m = 1 / determinant;
 
@@ -150,15 +155,15 @@ public class Matrix3_3f {
         float mi33 = m11 * m22 - m21 * m12;
 
         //транспонируем, меняем знаки, делим на детерминант.
-        result.m11 = mi11 * m;
-        result.m12 = -mi21 * m;
-        result.m13 = mi31 * m;
-        result.m21 = -mi12 * m;
-        result.m22 = mi22 * m;
-        result.m23 = -mi32 * m;
-        result.m31 = mi31 * m;
-        result.m32 = -mi23 * m;
-        result.m33 = mi33 * m;
+        m11 = mi11 * m;
+        m12 = -mi21 * m;
+        m13 = mi31 * m;
+        m21 = -mi12 * m;
+        m22 = mi22 * m;
+        m23 = -mi32 * m;
+        m31 = mi13 * m;
+        m32 = -mi23 * m;
+        m33 = mi33 * m;
         return true;
     }
 
@@ -180,15 +185,15 @@ public class Matrix3_3f {
         m31, m32, m33;
     */
     public static void multiply(Matrix3_3f f, Matrix3_3f s, Matrix3_3f result) {
-        float m11 = f.m11 * s.m11 + f.m12 * s.m12 + f.m13 * s.m31;
+        float m11 = f.m11 * s.m11 + f.m12 * s.m21 + f.m13 * s.m31;
         float m12 = f.m11 * s.m12 + f.m12 * s.m22 + f.m13 * s.m32;
         float m13 = f.m11 * s.m13 + f.m12 * s.m23 + f.m13 * s.m33;
 
-        float m21 = f.m21 * s.m11 + f.m22 * s.m12 + f.m23 * s.m31;
+        float m21 = f.m21 * s.m11 + f.m22 * s.m21 + f.m23 * s.m31;
         float m22 = f.m21 * s.m12 + f.m22 * s.m22 + f.m23 * s.m32;
         float m23 = f.m21 * s.m13 + f.m22 * s.m23 + f.m23 * s.m33;
 
-        float m31 = f.m31 * s.m11 + f.m32 * s.m12 + f.m33 * s.m31;
+        float m31 = f.m31 * s.m11 + f.m32 * s.m21 + f.m33 * s.m31;
         float m32 = f.m31 * s.m12 + f.m32 * s.m22 + f.m33 * s.m32;
         float m33 = f.m31 * s.m13 + f.m32 * s.m23 + f.m33 * s.m33;
 
@@ -209,13 +214,13 @@ public class Matrix3_3f {
         sb.append("[[").
                 append(m11).append(",").
                 append(m12).append(",").
-                append(m13).append(",], [").
+                append(m13).append("], [").
                 append(m21).append(",").
                 append(m22).append(",").
-                append(m23).append(",], [").
+                append(m23).append("], [").
                 append(m31).append(",").
                 append(m32).append(",").
-                append(m33).append(",]]");
+                append(m33).append("]]");
         return sb.toString();
     }
 }
