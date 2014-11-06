@@ -41,7 +41,11 @@ public class Matrix3_3f {
         return this;
     }
 
-    public Matrix3_3f setAsMultiply(Matrix3_3f first, Matrix3_3f second){
+    /**
+     * multiply first and second matrices and write result to this
+     * @return this
+     */
+    public Matrix3_3f multiplication(Matrix3_3f first, Matrix3_3f second){
         Matrix3_3f.multiply(first, second, this);
         return this;
     }

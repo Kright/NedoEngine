@@ -73,7 +73,7 @@ public class MatrixTest extends AndroidTestCase{
 
         m.set(m2);
         m.transpose();
-        r.setAsMultiply(m2, m);
+        r.multiplication(m2, m);
         assertEquals(r, id);
 
         q.set(1,2,3,4);
