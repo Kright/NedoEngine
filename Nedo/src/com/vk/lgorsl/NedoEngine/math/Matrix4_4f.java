@@ -110,23 +110,6 @@ public class Matrix4_4f {
     }
 
     public Matrix4_4f makeRotation(Quaternion q) {
-        /*
-        arr[0] = 1f - 2f * (q.y * q.y + q.z * q.z);
-        arr[1] = 2f * (q.x * q.y - q.w * q.z);
-        arr[2] = 2f * (q.x * q.z + q.w * q.y);
-        arr[3] = 0;
-
-        arr[4] = 2f * (q.x * q.y + q.w * q.z);
-        arr[5] = 1f - 2f * (q.x * q.x + q.z * q.z);
-        arr[6] = 2f * (q.y * q.z - q.w * q.x);
-        arr[7] = 0;
-
-        arr[8] = 2f * (q.x * q.z - q.w * q.y);
-        arr[9] = 2f * (q.y * q.z + q.w * q.x);
-        arr[10] = 1f - 2f * (q.x * q.x + q.y * q.y);
-        arr[11] = 0;
-        */
-
         arr[0] = 1f - 2f * (q.y * q.y + q.z * q.z);
         arr[1] = 2f * (q.x * q.y + q.w * q.z);
         arr[2] = 2f * (q.x * q.z - q.w * q.y);
@@ -327,8 +310,8 @@ public class Matrix4_4f {
             }
             return true;
         }
-        if (o instanceof Matrix3_3f){
-            return Helper.equals(this, (Matrix3_3f)o);
+        if (o instanceof Matrix3_3f) {
+            return Helper.equals(this, (Matrix3_3f) o);
         }
         return false;
     }
