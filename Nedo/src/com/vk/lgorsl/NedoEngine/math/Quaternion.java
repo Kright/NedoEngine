@@ -4,7 +4,7 @@ import android.util.FloatMath;
 
 /**
  * Created by lgor on 04.11.2014.
- *
+ * <p/>
  * I used the book :
  * F. Dunn, I. Parberry - 3D Math Primer for Graphics and Game Development
  */
@@ -79,7 +79,7 @@ public class Quaternion {
         return 2f * (float) Math.acos(w);
     }
 
-    public void getRotationAxis(Vect3f result){
+    public void getRotationAxis(Vect3f result) {
         result.set(x, y, z).normalize();
     }
 
@@ -105,14 +105,14 @@ public class Quaternion {
         z = -z;
     }
 
-    private void mul(float m){
+    private void mul(float m) {
         w *= m;
         x *= m;
         y *= m;
         z *= m;
     }
 
-    public void normalize(){
+    public void normalize() {
         float l = length();
         if (l < eps) {  //Houston, we have a problem
             setIdentity();
@@ -121,30 +121,35 @@ public class Quaternion {
         mul(1 / l);
     }
 
-    public void pow(float pow){
+    public void pow(float pow) {
         float l = lengthXYZ();
-        if ( eq(l, 0)) return;
+        if (eq(l, 0)) return;
         float alpha = pow * (float) Math.atan2(l, w);
         float m = FloatMath.sin(alpha) / l * length();
-        set(FloatMath.cos(alpha), x*m, y*m, z*m);
+        set(FloatMath.cos(alpha), x * m, y * m, z * m);
     }
 
-    public float dot(Quaternion q){
-        return w*q.w + x*q.x + y*q.y + z*q.z;
+    public float dot(Quaternion q) {
+        return w * q.w + x * q.x + y * q.y + z * q.z;
     }
 
     @Override
     public boolean equals(final Object o) {
         if (!(o instanceof Quaternion)) return false;
         Quaternion q = (Quaternion) o;
-        if (eq(w, q.w)){
+        if (eq(w, q.w)) {
             return eq(x, q.x) && eq(y, q.y) && eq(z, q.z);
         }
         return eq(w, -q.w) && eq(x, -q.x) && eq(y, -q.y) && eq(z, -q.z);
     }
 
-    private static boolean eq(float a, float b){
-        return Math.abs(a-b)<eps;
+    private static boolean eq(float a, float b) {
+        return Math.abs(a - b) < eps;
+    }
+
+    @Override
+    public String toString() {
+        return "[w=" + w + ", x=" + x + ", y=" + y + ", z=" + z + "]";
     }
 
     public static void multiply(Quaternion result, Quaternion first, Quaternion second) {
@@ -167,31 +172,31 @@ public class Quaternion {
      * works only for normalized quaternions
      */
     public static void slerp(Quaternion q1, Quaternion q2, float t, Quaternion result) {
-        if (t<0) {
+        if (t < 0) {
             result.set(q1);
             return;
         }
-        if (t>1){
+        if (t > 1) {
             result.set(q2);
             return;
         }
         float cosOmega = q1.dot(q2);
-        final float sign = cosOmega >=0 ? 1f : -1f;
+        final float sign = cosOmega >= 0 ? 1f : -1f;
         cosOmega *= sign;
         //if angle small, cosine is big, and we use linear interpolation
         if (cosOmega > linearCriteria) {
-            mix(q1, t*sign, q2, 1 - t, result);
+            mix(q1, t * sign, q2, 1 - t, result);
             return;
         }
         //copy-paste code from page 213
         final float sinOmega = FloatMath.sqrt(1 - cosOmega * cosOmega);
-        final float omega = (float)Math.atan2(sinOmega, cosOmega);
+        final float omega = (float) Math.atan2(sinOmega, cosOmega);
         final float mult = 1f / sinOmega;
 
         final float k0 = FloatMath.sin((1f - t) * omega) * mult;
-        final float k1 = FloatMath.sin(t*omega) * mult;
+        final float k1 = FloatMath.sin(t * omega) * mult;
 
-        mix(q1, k0*sign, q2, k1, result);
+        mix(q1, k0 * sign, q2, k1, result);
     }
 
     /**
