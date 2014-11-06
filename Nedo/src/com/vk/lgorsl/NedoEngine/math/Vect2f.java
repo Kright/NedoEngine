@@ -72,7 +72,8 @@ public class Vect2f extends VectNf<Vect2f> {
     public boolean equals(Object o) {
         try {
             Vect2f v = (Vect2f) o;
-            return v.x == x && v.y == y;
+            return Helper.equals(x, v.x, Helper.vectPrecision) &&
+                    Helper.equals(y, v.y, Helper.vectPrecision);
         } catch (ClassCastException ex) {
             return false;
         }

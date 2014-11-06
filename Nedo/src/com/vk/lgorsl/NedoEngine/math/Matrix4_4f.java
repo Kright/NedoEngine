@@ -46,6 +46,25 @@ public class Matrix4_4f {
         return makeScale(1f, 1f, 1f);
     }
 
+    public Matrix4_4f set(Matrix3_3f m) {
+        arr[0] = m.m11;
+        arr[1] = m.m21;
+        arr[2] = m.m31;
+        arr[3] = 0f;
+        arr[4] = m.m12;
+        arr[5] = m.m22;
+        arr[6] = m.m32;
+        arr[7] = 0f;
+        arr[8] = m.m13;
+        arr[9] = m.m23;
+        arr[10] = m.m33;
+        arr[11] = 0f;
+        arr[12] = arr[13] = arr[14] = 0f;
+        arr[15] = 1f;
+
+        return this;
+    }
+
     public final Matrix4_4f makeScale(float sx, float sy, float sz) {
         arr[0] = sx;
         arr[1] = arr[2] = arr[3] = arr[4] = 0f;
@@ -91,6 +110,7 @@ public class Matrix4_4f {
     }
 
     public Matrix4_4f makeRotation(Quaternion q) {
+        /*
         arr[0] = 1f - 2f * (q.y * q.y + q.z * q.z);
         arr[1] = 2f * (q.x * q.y - q.w * q.z);
         arr[2] = 2f * (q.x * q.z + q.w * q.y);
@@ -103,6 +123,22 @@ public class Matrix4_4f {
 
         arr[8] = 2f * (q.x * q.z - q.w * q.y);
         arr[9] = 2f * (q.y * q.z + q.w * q.x);
+        arr[10] = 1f - 2f * (q.x * q.x + q.y * q.y);
+        arr[11] = 0;
+        */
+
+        arr[0] = 1f - 2f * (q.y * q.y + q.z * q.z);
+        arr[1] = 2f * (q.x * q.y + q.w * q.z);
+        arr[2] = 2f * (q.x * q.z - q.w * q.y);
+        arr[3] = 0;
+
+        arr[4] = 2f * (q.x * q.y - q.w * q.z);
+        arr[5] = 1f - 2f * (q.x * q.x + q.z * q.z);
+        arr[6] = 2f * (q.y * q.z + q.w * q.x);
+        arr[7] = 0;
+
+        arr[8] = 2f * (q.x * q.z + q.w * q.y);
+        arr[9] = 2f * (q.y * q.z - q.w * q.x);
         arr[10] = 1f - 2f * (q.x * q.x + q.y * q.y);
         arr[11] = 0;
 
@@ -148,7 +184,7 @@ public class Matrix4_4f {
         return Matrix.invertM(inverted.arr, 0, arr, 0);
     }
 
-    public boolean invert(){
+    public boolean invert() {
         return getInvert(this);
     }
 
@@ -160,7 +196,7 @@ public class Matrix4_4f {
         return symmetric(-1f);
     }
 
-    public Matrix4_4f transpose(){
+    public Matrix4_4f transpose() {
         swap(1, 4);
         swap(2, 8);
         swap(3, 12);
@@ -170,7 +206,7 @@ public class Matrix4_4f {
         return this;
     }
 
-    private void swap(int i, int j){
+    private void swap(int i, int j) {
         float t = arr[i];
         arr[i] = arr[j];
         arr[j] = t;
@@ -185,35 +221,35 @@ public class Matrix4_4f {
     * [3, 7, 11, 15]
     */
 
-    public float getDeterminant(){
-        if (arr[3]==0f && arr[7]==0f && arr[11]==0f){
+    public float getDeterminant() {
+        if (arr[3] == 0f && arr[7] == 0f && arr[11] == 0f) {
             //optimisation for trivial matrices
-            return arr[15]*(
-                    arr[0]*(arr[5]*arr[10]-arr[6]*arr[9]) -
-                    arr[4]*(arr[1]*arr[10]-arr[2]*arr[9]) +
-                    arr[8]*(arr[1]*arr[6] -arr[2]*arr[5]));
+            return arr[15] * (
+                    arr[0] * (arr[5] * arr[10] - arr[6] * arr[9]) -
+                            arr[4] * (arr[1] * arr[10] - arr[2] * arr[9]) +
+                            arr[8] * (arr[1] * arr[6] - arr[2] * arr[5]));
         }
 
-        final float atmp0  = arr[10] * arr[15];
-        final float atmp1  = arr[11] * arr[14];
-        final float atmp2  = arr[9]  * arr[15];
-        final float atmp3  = arr[11] * arr[13];
-        final float atmp4  = arr[9]  * arr[14];
-        final float atmp5  = arr[10] * arr[13];
-        final float atmp6  = arr[8]  * arr[15];
-        final float atmp7  = arr[11] * arr[12];
-        final float atmp8  = arr[8]  * arr[14];
-        final float atmp9  = arr[10] * arr[12];
-        final float atmp10 = arr[8]  * arr[13];
-        final float atmp11 = arr[9]  * arr[12];
+        final float atmp0 = arr[10] * arr[15];
+        final float atmp1 = arr[11] * arr[14];
+        final float atmp2 = arr[9] * arr[15];
+        final float atmp3 = arr[11] * arr[13];
+        final float atmp4 = arr[9] * arr[14];
+        final float atmp5 = arr[10] * arr[13];
+        final float atmp6 = arr[8] * arr[15];
+        final float atmp7 = arr[11] * arr[12];
+        final float atmp8 = arr[8] * arr[14];
+        final float atmp9 = arr[10] * arr[12];
+        final float atmp10 = arr[8] * arr[13];
+        final float atmp11 = arr[9] * arr[12];
 
-        final float dst0  = (atmp0 * arr[5] + atmp3 * arr[6] + atmp4  * arr[7])
-                - (atmp1 * arr[5] + atmp2 * arr[6] + atmp5  * arr[7]);
-        final float dst1  = (atmp1 * arr[4] + atmp6 * arr[6] + atmp9  * arr[7])
-                - (atmp0 * arr[4] + atmp7 * arr[6] + atmp8  * arr[7]);
-        final float dst2  = (atmp2 * arr[4] + atmp7 * arr[5] + atmp10 * arr[7])
+        final float dst0 = (atmp0 * arr[5] + atmp3 * arr[6] + atmp4 * arr[7])
+                - (atmp1 * arr[5] + atmp2 * arr[6] + atmp5 * arr[7]);
+        final float dst1 = (atmp1 * arr[4] + atmp6 * arr[6] + atmp9 * arr[7])
+                - (atmp0 * arr[4] + atmp7 * arr[6] + atmp8 * arr[7]);
+        final float dst2 = (atmp2 * arr[4] + atmp7 * arr[5] + atmp10 * arr[7])
                 - (atmp3 * arr[4] + atmp6 * arr[5] + atmp11 * arr[7]);
-        final float dst3  = (atmp5 * arr[4] + atmp8 * arr[5] + atmp11 * arr[6])
+        final float dst3 = (atmp5 * arr[4] + atmp8 * arr[5] + atmp11 * arr[6])
                 - (atmp4 * arr[4] + atmp9 * arr[5] + atmp10 * arr[6]);
 
         final float det =
@@ -231,21 +267,21 @@ public class Matrix4_4f {
                 equals(arr[14], sign * arr[11]);
     }
 
-    public void mul(Vect3f v, Vect3f result) {
+    public void mul(Vect3f result, Vect3f v) {
         result.set(
                 v.x * arr[0] + v.y * arr[4] + v.z * arr[8] + arr[12],
                 v.x * arr[1] + v.y * arr[5] + v.z * arr[9] + arr[13],
                 v.x * arr[2] + v.y * arr[6] + v.z * arr[10] + arr[14]);
     }
 
-    public void rotate(Vect3f v, Vect3f result) {
+    public void rotate(Vect3f result, Vect3f v) {
         result.set(
                 v.x * arr[0] + v.y * arr[4] + v.z * arr[8],
                 v.x * arr[1] + v.y * arr[5] + v.z * arr[9],
                 v.x * arr[2] + v.y * arr[6] + v.z * arr[10]);
     }
 
-    public void multiplication(Matrix4_4f first, Matrix4_4f second){
+    public void multiplication(Matrix4_4f first, Matrix4_4f second) {
         Matrix4_4f.multiply(this, first, second);
     }
 
@@ -254,9 +290,10 @@ public class Matrix4_4f {
      * [1, 5, 9, 13]
      * [2, 6, 10, 14]
      * [3, 7, 11, 15]
-     *
+     * <p/>
      * it gives array instead of copy of values,
      * so matrix changes when you change this array
+     *
      * @return array of values
      */
     public float[] getArray() {
@@ -267,9 +304,9 @@ public class Matrix4_4f {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("[[");
-        for(int i=0; i<len;i++){
+        for (int i = 0; i < len; i++) {
             sb.append(arr[i]);
-            if (i%4!=3){
+            if (i % 4 != 3) {
                 sb.append(", ");
             } else {
                 sb.append("], [");
@@ -281,20 +318,23 @@ public class Matrix4_4f {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof Matrix4_4f){
-            Matrix4_4f m = (Matrix4_4f)o;
-            for(int i=0; i<len; i++){
-                if (!equals(arr[i], m.arr[i])){
+        if (o instanceof Matrix4_4f) {
+            Matrix4_4f m = (Matrix4_4f) o;
+            for (int i = 0; i < len; i++) {
+                if (!equals(arr[i], m.arr[i])) {
                     return false;
                 }
             }
             return true;
         }
+        if (o instanceof Matrix3_3f){
+            return Helper.equals(this, (Matrix3_3f)o);
+        }
         return false;
     }
 
-    protected static boolean equals(float a, float b) {
-        return Math.abs(a - b) < eps;
+    private static boolean equals(float f1, float f2) {
+        return Helper.equals(f1, f2, Helper.matrix4_4fPrecision);
     }
 
     public static void multiply(Matrix4_4f result, Matrix4_4f left, Matrix4_4f right) {

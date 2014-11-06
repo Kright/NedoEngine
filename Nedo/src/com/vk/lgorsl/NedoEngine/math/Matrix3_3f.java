@@ -42,6 +42,23 @@ public class Matrix3_3f {
     }
 
     /**
+     * set to this matrix values from left top sub-matrix 3*3
+     */
+    public Matrix3_3f set(Matrix4_4f mat){
+        float[] arr = mat.getArray();
+        m11 = arr[0];
+        m12 = arr[4];
+        m13 = arr[8];
+        m21 = arr[1];
+        m22 = arr[5];
+        m23 = arr[9];
+        m31 = arr[2];
+        m32 = arr[6];
+        m33 = arr[10];
+        return this;
+    }
+
+    /**
      * multiply first and second matrices and write result to this
      * @return this
      */
@@ -56,15 +73,15 @@ public class Matrix3_3f {
      */
     public Matrix3_3f makeRotation(Quaternion q) {
         m11 = 1f - 2f * (q.y * q.y + q.z * q.z);
-        m12 = 2f * (q.x * q.y + q.w * q.z);
-        m13 = 2f * (q.x * q.z - q.w * q.y);
+        m12 = 2f * (q.x * q.y - q.w * q.z);
+        m13 = 2f * (q.x * q.z + q.w * q.y);
 
-        m21 = 2f * (q.x * q.y - q.w * q.z);
+        m21 = 2f * (q.x * q.y + q.w * q.z);
         m22 = 1f - 2f * (q.x * q.x + q.z * q.z);
-        m23 = 2f * (q.y * q.z + q.w * q.x);
+        m23 = 2f * (q.y * q.z - q.w * q.x);
 
-        m31 = 2f * (q.x * q.z + q.w * q.y);
-        m32 = 2f * (q.y * q.z - q.w * q.x);
+        m31 = 2f * (q.x * q.z - q.w * q.y);
+        m32 = 2f * (q.y * q.z + q.w * q.x);
         m33 = 1f - 2f * (q.x * q.x + q.y * q.y);
 
         return this;
@@ -89,7 +106,7 @@ public class Matrix3_3f {
                 + m13 * (m21 * m32 - m22 * m31);
     }
 
-    public void mul(Vect3f v, Vect3f result) {
+    public void mul(Vect3f result, Vect3f v) {
         result.set(
                 m11 * v.x + m12 * v.y + m13 * v.z,
                 m21 * v.x + m22 * v.y + m23 * v.z,
@@ -130,11 +147,14 @@ public class Matrix3_3f {
                     eq(m32, f.m32) &&
                     eq(m33, f.m33);
         }
+        if (o instanceof Matrix4_4f){
+            return Helper.equals((Matrix4_4f)o, this);
+        }
         return false;
     }
 
     private static boolean eq(float f1, float f2) {
-        return Math.abs(f1 - f2) < eps;
+        return Helper.equals(f1, f2, Helper.matrix4_4fPrecision);
     }
 
     public boolean getInverted(Matrix3_3f result){

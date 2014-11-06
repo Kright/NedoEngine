@@ -1,6 +1,7 @@
 package com.vk.lgorsl.TryGLgame;
 
 import android.test.AndroidTestCase;
+import android.util.FloatMath;
 import com.vk.lgorsl.NedoEngine.math.Matrix3_3f;
 import com.vk.lgorsl.NedoEngine.math.Matrix4_4f;
 import com.vk.lgorsl.NedoEngine.math.Quaternion;
@@ -65,12 +66,12 @@ public class MatrixTest extends AndroidTestCase{
         m2.getXAxis(v1);
         m2.getYAxis(v2);
         m2.getZAxis(v3);
-        assertTrue(v1.length() == 1f);
-        assertTrue(v2.length()==1f);
+        assertTrue("length = " + v1.length(), Math.abs(v1.length()-1)<0.00001);
+        assertTrue("length = " + v2.length(), Math.abs(v2.length()-1)<0.00001);
         assertTrue("length = " + v3.length(), Math.abs(v3.length()-1)<0.00001);
         assertTrue(v1.dot(v2)+"", Math.abs(v1.dot(v2))<0.000001f);
-        assertTrue(v1.dot(v3)==0f);
-        assertTrue(v2.dot(v3)==0f);
+        assertTrue(v1.dot(v3)+"", Math.abs(v1.dot(v3))<0.000001f);
+        assertTrue(v2.dot(v3)+"", Math.abs(v2.dot(v3))<0.000001f);
 
         m.set(m2);
         m.transpose();
@@ -168,5 +169,56 @@ public class MatrixTest extends AndroidTestCase{
             m2.invert();
             assertEquals(m, m2);
         }
+    }
+
+    public void testMatrixInteraction(){
+        Matrix3_3f m3 = new Matrix3_3f();
+        Matrix4_4f m4 = new Matrix4_4f();
+        float ar[] = m4.getArray();
+        for (int i=0; i<ar.length; i++){
+            ar[i] = (float)Math.random();
+        }
+        m3.set(m4);
+        m4.set(m3);
+        Matrix3_3f mm3 = new Matrix3_3f().set(m4);
+        assertEquals(m3, mm3);
+
+
+        float s = 1/FloatMath.sqrt(2);
+        Quaternion q= new Quaternion().set(s, 0, 0, s);
+        Vect3f id = new Vect3f().set(1,2,3);
+        Vect3f expected = new Vect3f().set(-2,1,3);
+        Vect3f cp = new Vect3f();
+
+        m4.makeRotation(90, 0, 0, 1);
+        m4.rotate(cp, id);
+        assertEquals(cp, expected);
+
+        m4.mul(cp, id);
+        assertEquals(cp, expected);
+
+        m4.makeRotation(q);
+        m4.rotate(cp, id);
+        assertEquals(cp, expected);
+
+        m4.mul(cp, id);
+        assertEquals(cp, expected);
+
+        m3.makeRotation(q);
+        m3.mul(cp, id);
+        assertEquals(cp, expected);
+
+        assertEquals(m3, m4);
+
+        Vect3f v = new Vect3f().set(1,2,3);
+        q.set(v, (float)(Math.PI/2));
+        q.normalize();
+
+        Matrix4_4f mm = new Matrix4_4f().makeRotation(90, v.x, v.y, v.z);
+        m4.makeRotation(q);
+        assertEquals(m4, mm);
+        m3.makeRotation(q);
+        assertEquals(m3, mm);
+        assertEquals(mm, m3);
     }
 }

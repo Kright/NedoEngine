@@ -4,7 +4,7 @@ import android.util.FloatMath;
 
 /**
  * three - dimensional float vector
- *
+ * <p/>
  * Created by lgor on 04.11.2014.
  */
 public class Vect3f extends VectNf<Vect3f> {
@@ -80,7 +80,9 @@ public class Vect3f extends VectNf<Vect3f> {
     public boolean equals(Object o) {
         try {
             Vect3f v = (Vect3f) o;
-            return v.x == x && v.y == y && v.z == z;
+            return Helper.equals(v.x, x, Helper.vectPrecision) &&
+                    Helper.equals(v.y, y, Helper.vectPrecision) &&
+                    Helper.equals(v.z, z, Helper.vectPrecision);
         } catch (ClassCastException ex) {
             return false;
         }
@@ -116,6 +118,6 @@ public class Vect3f extends VectNf<Vect3f> {
 
     @Override
     public String toString() {
-        return "["+x+','+y+','+z+']';
+        return "[" + x + ',' + y + ',' + z + ']';
     }
 }
