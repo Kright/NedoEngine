@@ -11,7 +11,7 @@ import android.util.FloatMath;
 public class Quaternion {
 
     private final static float eps = 0.00001f;
-    private final static float linearCriteria = 0.5f;
+    private final static float linearCriteria = 0.8f;
 
     public float w;
     public float x, y, z;
