@@ -10,8 +10,8 @@ public class Helper {
     private Helper() {
     }
 
-    public static final float vectPrecision = 0.00001f;
-    public static final float matrix4_4fPrecision = 0.0001f;
+    public static final float vectPrecision = 0.000001f;
+    public static final float matrix4_4fPrecision = 0.00001f;
 
     public static boolean equals(float a, float b, float precision) {
         return a > b ? (a - b) < precision : (b - a) < precision;

@@ -59,11 +59,12 @@ public class Quaternion {
      * @param result - rotation axis with length of 0.5*angle in radians
      */
     public void getLog(Vect3f result) {
-        float sin = FloatMath.sqrt(x * x + y * y + z * z);
-        float angle2 = (float) Math.atan2(sin, w);
-        result.x = angle2 * x;
-        result.y = angle2 * y;
-        result.z = angle2 * z;
+        float xyz = FloatMath.sqrt(x * x + y * y + z * z);
+        float angle2 = (float) Math.atan2(xyz, w);
+        float mul = angle2 / xyz;
+        result.x = x * mul;
+        result.y = y * mul;
+        result.z = z * mul;
     }
 
     /**
@@ -75,7 +76,7 @@ public class Quaternion {
         return 2f * (float) Math.acos(w / l);
     }
 
-    public float getRotationAngleFast() {
+    public float getRotationAngleForNormalized() {
         return 2f * (float) Math.acos(w);
     }
 
@@ -122,15 +123,27 @@ public class Quaternion {
     }
 
     public void pow(float pow) {
-        float l = lengthXYZ();
-        if (eq(l, 0)) return;
-        float alpha = pow * (float) Math.atan2(l, w);
-        float m = FloatMath.sin(alpha) / l * length();
+        float xyz = lengthXYZ();
+        if (eq(xyz, 0)) return;
+        float alpha = pow * (float) Math.atan2(xyz, w);
+        float m = FloatMath.sin(alpha) / xyz;
         set(FloatMath.cos(alpha), x * m, y * m, z * m);
+    }
+
+    public void multiplication(Quaternion q1, Quaternion q2) {
+        Quaternion.multiply(this, q1, q2);
     }
 
     public float dot(Quaternion q) {
         return w * q.w + x * q.x + y * q.y + z * q.z;
+    }
+
+    /**
+     * @return dot/(|q1||q2|)
+     */
+    public float cos(Quaternion q) {
+        return (w * q.w + x * q.x + y * q.y + z * q.z) /
+                FloatMath.sqrt((w * w + x * x + y * y + z * z) * (q.w * q.w + q.x * q.x + q.y * q.y + q.z * q.z));
     }
 
     @Override
@@ -181,11 +194,13 @@ public class Quaternion {
             return;
         }
         float cosOmega = q1.dot(q2);
-        final float sign = cosOmega >= 0 ? 1f : -1f;
-        cosOmega *= sign;
+        if (cosOmega < 0) {
+            q2.negate();
+            cosOmega = -cosOmega;
+        }
         //if angle small, cosine is big, and we use linear interpolation
         if (cosOmega > linearCriteria) {
-            mix(q1, t * sign, q2, 1 - t, result);
+            mix(q1, (1 - t), q2, t, result);
             return;
         }
         //copy-paste code from page 213
@@ -196,7 +211,7 @@ public class Quaternion {
         final float k0 = FloatMath.sin((1f - t) * omega) * mult;
         final float k1 = FloatMath.sin(t * omega) * mult;
 
-        mix(q1, k0 * sign, q2, k1, result);
+        mix(q1, k0, q2, k1, result);
     }
 
     /**
@@ -204,8 +219,8 @@ public class Quaternion {
      */
     public static void lerp(Quaternion q1, Quaternion q2, float t, Quaternion result) {
         if (q1.dot(q2) >= 0)
-            mix(q1, t, q2, 1 - t, result);
+            mix(q1, 1 - t, q2, t, result);
         else
-            mix(q1, t, q2, t - 1, result);
+            mix(q1, 1 - t, q2, -t, result);
     }
 }

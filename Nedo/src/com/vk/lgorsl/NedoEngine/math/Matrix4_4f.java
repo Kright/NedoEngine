@@ -292,10 +292,13 @@ public class Matrix4_4f {
             if (i % 4 != 3) {
                 sb.append(", ");
             } else {
-                sb.append("], [");
+                if (i!=15) {
+                    sb.append("], [");
+                } else {
+                    sb.append("]]");
+                }
             }
         }
-        sb.append(']');
         return sb.toString();
     }
 
