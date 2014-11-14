@@ -21,7 +21,6 @@ public class Matrix4_4f {
 
     protected final static int size = 4;
     protected final static int len = size * size;
-    protected static float eps = 0.0001f;
 
     protected final float[] arr;
 
@@ -250,13 +249,31 @@ public class Matrix4_4f {
                 equals(arr[14], sign * arr[11]);
     }
 
-    public void mul(Vect3f result, Vect3f v) {
+    /**
+     * multiplication first 3 rows of matrix to vector (x,y,z,1)
+     */
+    public void mulAs3_4(Vect3f result, Vect3f v) {
         result.set(
                 v.x * arr[0] + v.y * arr[4] + v.z * arr[8] + arr[12],
                 v.x * arr[1] + v.y * arr[5] + v.z * arr[9] + arr[13],
                 v.x * arr[2] + v.y * arr[6] + v.z * arr[10] + arr[14]);
     }
 
+    /**
+     * multiplication in homogeneous space
+     * result = (x/w, y/w, z/w)
+     */
+    public void mul(Vect3f result, Vect3f v) {
+        float m = 1 / (v.x * arr[3] + v.y * arr[7] + v.z * arr[11] + arr[15]);
+        result.set(
+                m * (v.x * arr[0] + v.y * arr[4] + v.z * arr[8] + arr[12]),
+                m * (v.x * arr[1] + v.y * arr[5] + v.z * arr[9] + arr[13]),
+                m * (v.x * arr[2] + v.y * arr[6] + v.z * arr[10] + arr[14]));
+    }
+
+    /**
+     * multiplication up left 3*3 submatrix to vector
+     */
     public void rotate(Vect3f result, Vect3f v) {
         result.set(
                 v.x * arr[0] + v.y * arr[4] + v.z * arr[8],
