@@ -13,5 +13,6 @@ public class MyActivity extends Activity {
         setContentView(R.layout.main);
 
         Log.d("mylog", "I'm working");
+
     }
 }
