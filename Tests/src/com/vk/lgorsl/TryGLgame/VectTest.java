@@ -60,7 +60,7 @@ public class VectTest extends AndroidTestCase {
         assertEquals(v1, v2.set(2, 4));
         v1.add(v2);
         assertEquals(v1, v2.set(4, 8));
-        v1.add(v2, -2);
+        v1.madd(v2, -2);
         assertEquals(v1, v2.set(-4, -8));
         v1.sub(v2.set(-2, -4));
         assertEquals(v1, v2.set(-2, -4));
@@ -85,7 +85,7 @@ public class VectTest extends AndroidTestCase {
         v2.set(1, 2, 3);
         v1.set(0,0,0).add(v2);
         assertEquals(v1, v2);
-        v1.add(v2, -2);
+        v1.madd(v2, -2);
         assertEquals(v1, v2.set(-1, -2, -3));
         v1.set(-2,-4,-6);
         v2.set(-1,-2,-3);

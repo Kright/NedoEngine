@@ -52,7 +52,7 @@ public class Vect2f extends VectNf<Vect2f> {
     }
 
     @Override
-    public void add(Vect2f v, float mul) {
+    public void madd(Vect2f v, float mul) {
         x += v.x * mul;
         y += v.y * mul;
     }

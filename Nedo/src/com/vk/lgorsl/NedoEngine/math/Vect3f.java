@@ -58,7 +58,7 @@ public class Vect3f extends VectNf<Vect3f> {
     }
 
     @Override
-    public void add(Vect3f v, float mul) {
+    public void madd(Vect3f v, float mul) {
         x += v.x * mul;
         y += v.y * mul;
         z += v.z * mul;

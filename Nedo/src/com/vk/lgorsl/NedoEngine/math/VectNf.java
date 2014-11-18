@@ -33,9 +33,10 @@ abstract class VectNf<T extends VectNf<T>> implements Operable<T> {
     public abstract void mul(float mul);
 
     /**
+     * multiply and add.
      * this += vect * mul;
      */
-    public abstract void add(T vect, float mul);
+    public abstract void madd(T vect, float mul);
 
     /**
      * this += vect;
