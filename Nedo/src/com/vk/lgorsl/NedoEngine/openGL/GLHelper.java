@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.os.Build;
+import android.util.Log;
 import com.vk.lgorsl.NedoEngine.utils.NedoException;
 
 import java.io.BufferedReader;
@@ -22,6 +23,19 @@ import java.nio.ShortBuffer;
  * Created by lgor on 18.11.2014.
  */
 public class GLHelper {
+
+    public static String LOG_STRING = "Nedo Engine";
+    public static boolean showLog = true;
+
+    public static void log(String s){
+        if (showLog) {
+            Log.d(LOG_STRING, s);
+        }
+    }
+
+    public static void logError(String s){
+        Log.e(LOG_STRING, s);
+    }
 
     public static FloatBuffer make(float[] arr){
         FloatBuffer fb = ByteBuffer.allocateDirect(arr.length * 4).
