@@ -154,7 +154,6 @@ public class ConfigChooser implements GLSurfaceView.EGLConfigChooser {
             } else {
                 break;
             }
-
         }
         return text;
     }
