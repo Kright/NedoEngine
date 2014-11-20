@@ -17,6 +17,8 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
+import static android.opengl.GLES20.*;
+
 /**
  * вспомогательные функции дял openGL и не только
  *
@@ -106,5 +108,59 @@ public class GLHelper {
      */
     public static Bitmap loadBitmap(Resources res, int id) {
         return BitmapFactory.decodeResource(res, id, options);
+    }
+
+    public static String getExtensions(){
+        return glGetString(GL_EXTENSIONS);
+    }
+
+    //никто же не будет вызывать из разных потоков getIntegerv() и прочие?
+    private final static int[] intv = new int[4];
+    private final static float[] floatv = new float[4];
+    private final static boolean[] boolv = new boolean[4];
+
+    /**
+     * https://www.khronos.org/opengles/sdk/docs/man/xhtml/glGet.xml
+     *
+     * @param pname
+     * GL_ACTIVE_TEXTURE
+     * GL_CURRENT_PROGRAM
+     *
+     * GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS
+     * GL_MAX_CUBE_MAP_TEXTURE_SIZE
+     * GL_MAX_TEXTURE_SIZE
+     *
+     * GL_MAX_TEXTURE_IMAGE_UNITS (>=8)
+     * GL_MAX_VARYING_VECTORS
+     * GL_MAX_VERTEX_ATTRIBS
+     * and etc.
+     * @return integer value[]
+     */
+    public static int[] getIntegerv(int pname){
+        glGetIntegerv(pname, intv, 0);
+        return intv;
+    }
+
+    /**
+     * https://www.khronos.org/opengles/sdk/docs/man/xhtml/glGet.xml
+     *
+     * @param pname
+     * @return array
+     */
+    public static float[] getFloatv(int pname){
+        glGetFloatv(pname, floatv, 0);
+        return floatv;
+    }
+
+    /**
+     * https://www.khronos.org/opengles/sdk/docs/man/xhtml/glGet.xml
+     *
+     * @param pname
+     * for example, GL_CULL_FACE
+     * @return array of boolean values
+     */
+    public static boolean[] getBooleanv(int pname){
+        glGetBooleanv(pname, boolv, 0);
+        return boolv;
     }
 }
