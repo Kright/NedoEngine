@@ -72,6 +72,13 @@ public class TextureLoader {
         return loadtexture(bm, minFilter, magFilter, wrapS, wrapT, generateMipmaps);
     }
 
+    public void setParameters(){
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapS);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT);
+    }
+
     public static Texture2D loadtexture(Bitmap bm, int minFilter, int magFilter, int wrapS, int wrapT, boolean genMipmaps){
         int[] texId = new int[1];
         glGenTextures(1, texId, 0);
