@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 
 import android.opengl.GLSurfaceView;
+import android.util.FloatMath;
 import com.vk.lgorsl.NedoEngine.math.Matrix4_4f;
 import com.vk.lgorsl.NedoEngine.openGL.GLHelper;
 import com.vk.lgorsl.NedoEngine.openGL.Texture2D;
@@ -70,12 +71,13 @@ public class TempRenderer implements GLSurfaceView.Renderer{
             float y = rnd.nextInt(1000)-500;
             float tx = rnd.nextInt(26)*dX[1];
             float ty = rnd.nextInt(4)*dY[1];
+            float z = (rnd.nextInt(2)-0.5f)*(1f + rnd.nextFloat());
             int off = i*20;
             for(int j=0; j<2; j++){
                 for(int k=0; k<2; k++){
                     ff[off++] = x + j*dX[0];
                     ff[off++] = y + k*dY[0];
-                    ff[off++] = 0; // z==0
+                    ff[off++] = z;
                     ff[off++] = tx + k*dX[1];
                     ff[off++] = (ty + j*dY[1]);
                 }
@@ -116,6 +118,12 @@ public class TempRenderer implements GLSurfaceView.Renderer{
     @Override
     public void onDrawFrame(GL10 gl) {
         counter.update();
+
+        float t = 0.01f*(counter.framesCount() % 628);
+        float ampX = 0.1f;
+        float ampY = 0.2f;
+        matrix4_4f.getArray()[11]=1;
+        matrix4_4f.setTranslation(ampX*FloatMath.sin(t*2+0.2f), ampY*FloatMath.cos(5*t+0.6f), 0);
 
         float c = counter.framesCount() % 2 ==0 ? 0 : 1;
 
