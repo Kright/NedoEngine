@@ -12,10 +12,7 @@ import com.vk.lgorsl.NedoEngine.utils.NedoException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
+import java.nio.*;
 
 import static android.opengl.GLES20.*;
 
@@ -50,6 +47,14 @@ public class GLHelper {
 
     public static ShortBuffer make(short[] arr) {
         ShortBuffer sb = ByteBuffer.allocateDirect(arr.length * 4).order(ByteOrder.nativeOrder()).asShortBuffer();
+        sb.position(0);
+        sb.put(arr);
+        sb.position(0);
+        return sb;
+    }
+
+    public static IntBuffer make(int[] arr) {
+        IntBuffer sb = ByteBuffer.allocateDirect(arr.length * 4).order(ByteOrder.nativeOrder()).asIntBuffer();
         sb.position(0);
         sb.put(arr);
         sb.position(0);

@@ -15,6 +15,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.util.Random;
 
@@ -39,22 +40,25 @@ public class TempRenderer implements GLSurfaceView.Renderer{
     SpriteShader shader;
     FloatBuffer fb;
     ShortBuffer sb;
-    final int count = 100;
+    final int count = 15000;
     Matrix4_4f matrix4_4f = new Matrix4_4f().makeScale(2/1080f, 2/1780f, 1f);
+    {
+        matrix4_4f.getArray()[11]=1f;
+    }
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         Bitmap bm = GLHelper.loadBitmap(context.getResources(), R.drawable.font22cons);
         font = TextureLoader.loadTexture(bm,
-                GL_NEAREST,
-                GL_NEAREST,
+                GL_NEAREST_MIPMAP_NEAREST,
+                GL_NEAREST_MIPMAP_NEAREST,
                 GL_CLAMP_TO_EDGE,
                 GL_CLAMP_TO_EDGE,
-                false);
+                true);
         font.bind();
         shader = new SpriteShader(context.getResources(), R.raw.sprite);
 
-        float s = 2;
+        float s = 0.7f;
         Random rnd = new Random(1234);
         float[] ff= new float[count*5*4];
         float[] dX = {16f*s, 1/32f};
@@ -67,11 +71,12 @@ public class TempRenderer implements GLSurfaceView.Renderer{
             ss[i*6+3] = (short)(0+4*i);
             ss[i*6+4] = (short)(3+4*i);
             ss[i*6+5] = (short)(2+4*i);
+
             float x = rnd.nextInt(1000)-500;
-            float y = rnd.nextInt(1000)-500;
+            float y = rnd.nextInt(2000)-1000;
             float tx = rnd.nextInt(26)*dX[1];
             float ty = rnd.nextInt(4)*dY[1];
-            float z = (rnd.nextInt(2)-0.5f)*(1f + rnd.nextFloat());
+            float z = (1f - rnd.nextFloat());
             int off = i*20;
             for(int j=0; j<2; j++){
                 for(int k=0; k<2; k++){
@@ -119,12 +124,6 @@ public class TempRenderer implements GLSurfaceView.Renderer{
     public void onDrawFrame(GL10 gl) {
         counter.update();
 
-        float t = 0.01f*(counter.framesCount() % 628);
-        float ampX = 0.1f;
-        float ampY = 0.2f;
-        matrix4_4f.getArray()[11]=1;
-        matrix4_4f.setTranslation(ampX*FloatMath.sin(t*2+0.2f), ampY*FloatMath.cos(5*t+0.6f), 0);
-
         float c = counter.framesCount() % 2 ==0 ? 0 : 1;
 
         glClearColor(0.5f, c, c, 0);
@@ -135,11 +134,24 @@ public class TempRenderer implements GLSurfaceView.Renderer{
         glVertexAttribPointer(shader.aScreenPos, 3, GL_FLOAT, false, 4 * 5, fb);
         fb.position(3);
         glVertexAttribPointer(shader.aTexturePos, 2, GL_FLOAT, false, 4 * 5, fb);
-
-        glUniformMatrix4fv(shader.uCamera, 0, false, matrix4_4f.getArray(), 0);
         glUniform1i(shader.uTexture, 0);
 
         glDrawElements(GL_TRIANGLES, count*6, GL_UNSIGNED_SHORT, sb);
-        //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, sb);
+
+        float t = 0.01f*(counter.framesCount() % 628);
+        float ampX = 0.1f;
+        float ampY = 0.2f;
+
+        matrix4_4f.setTranslation(ampX*FloatMath.sin(t*2+0.2f), ampY*FloatMath.cos(5*t+0.6f), 0);
+
+        int n = 5;
+        float[] dd = {0, 0, 0.1f, 0.13f, 0.04f, -0.23f, -0.07f, -0.08f, 0.023f, -0.23f};
+
+        for(int i=0; i<n; i++) {
+            matrix4_4f.setTranslation(ampX * FloatMath.sin(t * 2 + 0.2f)+dd[2*i],
+                    ampY * FloatMath.cos(5 * t + 0.6f)+dd[2*i+1], 0.1f);
+            glUniformMatrix4fv(shader.uCamera, 0, false, matrix4_4f.getArray(), 0);
+            glDrawElements(GL_TRIANGLES, count * 6, GL_UNSIGNED_SHORT, sb);
+        }
     }
 }
