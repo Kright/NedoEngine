@@ -65,7 +65,7 @@ public class TextureLoader {
      * загружает текстуру
      * внутри вызывается Bitmap.recycle()!
      *
-     * @param Bitmap
+     * @param bm - Bitmap with picture
      * @return loaded Texture2D
      */
     public Texture2D loadtexture(Bitmap bm) {
@@ -73,10 +73,7 @@ public class TextureLoader {
     }
 
     public void setParameters(){
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapS);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT);
+        setParameters(minFilter, magFilter, wrapS, wrapT);
     }
 
     public static Texture2D loadtexture(Bitmap bm, int minFilter, int magFilter, int wrapS, int wrapT, boolean genMipmaps){
@@ -88,10 +85,7 @@ public class TextureLoader {
         int type = GLUtils.getType(bm);
         GLUtils.texImage2D(GL_TEXTURE_2D, 0, format, bm, type, 0);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapS);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT);
+        setParameters(minFilter, magFilter, wrapS, wrapT);
 
         if (genMipmaps) {
             glGenerateMipmap(GL_TEXTURE_2D);
@@ -99,5 +93,12 @@ public class TextureLoader {
         bm.recycle();
 
         return new Texture2D(texId);
+    }
+
+    public static void setParameters(int minFilter, int magFilter, int wrapS, int wrapT){
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapS);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT);
     }
 }
