@@ -1,14 +1,21 @@
 package com.vk.lgorsl.TryGLgame;
 
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
+import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 
-import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import com.vk.lgorsl.NedoEngine.openGL.ConfigChooser;
+import com.vk.lgorsl.NedoEngine.openGL.GLHelper;
+
+import javax.microedition.khronos.egl.EGL10;
 
 public class MyActivity extends Activity {
+
+    public GLSurfaceView view;
+    public TempRenderer renderer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -17,10 +24,39 @@ public class MyActivity extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
 
-        String s = ConfigChooser.printAllConfigs();
-        Log.d("com.vk.lgorsl.TryGLgame", s);
+        GLHelper.LOG_STRING = "com.vk.lgorsl.TryGLgame";
 
-        setContentView(R.layout.main);
+        view = new GLSurfaceView(this);
+        view.setEGLContextClientVersion(2);
+        view.setEGLConfigChooser(new ConfigChooser(new int[]{
+                EGL10.EGL_RED_SIZE, 8,
+                EGL10.EGL_GREEN_SIZE, 8,
+                EGL10.EGL_BLUE_SIZE, 8,
+                EGL10.EGL_ALPHA_SIZE, 1,
+                EGL10.EGL_DEPTH_SIZE, 16,
+                EGL10.EGL_RENDERABLE_TYPE, 4,
+                EGL10.EGL_NONE
+        }).setConfigPrinting(false));
+
+        renderer = new TempRenderer(this);
+        view.setRenderer(renderer);
+        view.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        view.setPreserveEGLContextOnPause(true);
+
+        setContentView(view);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        view.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        view.onPause();
+        super.onPause();
     }
 }

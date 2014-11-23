@@ -1,9 +1,12 @@
 package com.vk.lgorsl.NedoEngine.openGL;
 
 import android.annotation.TargetApi;
+import android.content.res.Resources;
 import android.opengl.GLES20;
 import android.os.Build;
 import com.vk.lgorsl.NedoEngine.utils.NedoException;
+
+import java.util.regex.Pattern;
 
 import static android.opengl.GLES20.*;
 
@@ -33,9 +36,18 @@ public class Shader {
         }
     }
 
+    public Shader(Resources resources, int resId){
+        this(GLHelper.loadRawFileAsOneString(resources, resId, "\n").
+                split(Pattern.quote("[FRAGMENT]")));
+    }
+
     public Shader(String vertexShaderCode, String pixelShaderCode) {
         this(compileShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode),
                 compileShader(GLES20.GL_FRAGMENT_SHADER, pixelShaderCode));
+    }
+
+    public Shader(String[] vetrexAndPixelCode){
+        this(vetrexAndPixelCode[0], vetrexAndPixelCode[1]);
     }
 
     public void useProgram(){

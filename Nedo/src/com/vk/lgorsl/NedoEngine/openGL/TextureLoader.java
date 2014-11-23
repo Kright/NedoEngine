@@ -69,14 +69,14 @@ public class TextureLoader {
      * @return loaded Texture2D
      */
     public Texture2D loadtexture(Bitmap bm) {
-        return loadtexture(bm, minFilter, magFilter, wrapS, wrapT, generateMipmaps);
+        return loadTexture(bm, minFilter, magFilter, wrapS, wrapT, generateMipmaps);
     }
 
     public void setParameters(){
         setParameters(minFilter, magFilter, wrapS, wrapT);
     }
 
-    public static Texture2D loadtexture(Bitmap bm, int minFilter, int magFilter, int wrapS, int wrapT, boolean genMipmaps){
+    public static Texture2D loadTexture(Bitmap bm, int minFilter, int magFilter, int wrapS, int wrapT, boolean genMipmaps){
         int[] texId = new int[1];
         glGenTextures(1, texId, 0);
         glBindTexture(GL_TEXTURE_2D, texId[0]);

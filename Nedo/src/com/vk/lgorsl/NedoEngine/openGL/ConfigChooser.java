@@ -3,8 +3,6 @@ package com.vk.lgorsl.NedoEngine.openGL;
 import android.annotation.TargetApi;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
-import android.util.Log;
-
 import javax.microedition.khronos.egl.*;
 
 /**
@@ -116,7 +114,7 @@ public class ConfigChooser implements GLSurfaceView.EGLConfigChooser {
         egl.eglChooseConfig(display, configSpec, configs, numConfigs, value); // получаем массив конфигураций
 
         if (printAvailableConfigs) {
-            Log.d("Nedo Engine", "EGL available configs\n" + printConfigs(configs, display, egl));
+            GLHelper.log("EGL available configs, config[0] was chosen\n" + printConfigs(configs, display, egl));
         }
 
         return configs[0]; // возвращаем конфиг
