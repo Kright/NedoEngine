@@ -39,7 +39,6 @@ public class GLHelper {
     public static FloatBuffer make(float[] arr){
         FloatBuffer fb = ByteBuffer.allocateDirect(arr.length * 4).
                 order(ByteOrder.nativeOrder()).asFloatBuffer();
-        fb.position(0);
         fb.put(arr);
         fb.position(0);
         return fb;
@@ -47,7 +46,6 @@ public class GLHelper {
 
     public static ShortBuffer make(short[] arr) {
         ShortBuffer sb = ByteBuffer.allocateDirect(arr.length * 4).order(ByteOrder.nativeOrder()).asShortBuffer();
-        sb.position(0);
         sb.put(arr);
         sb.position(0);
         return sb;
@@ -55,7 +53,6 @@ public class GLHelper {
 
     public static IntBuffer make(int[] arr) {
         IntBuffer sb = ByteBuffer.allocateDirect(arr.length * 4).order(ByteOrder.nativeOrder()).asIntBuffer();
-        sb.position(0);
         sb.put(arr);
         sb.position(0);
         return sb;
