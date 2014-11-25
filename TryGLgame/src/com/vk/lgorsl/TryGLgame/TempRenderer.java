@@ -16,7 +16,6 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.util.Random;
 
@@ -47,6 +46,10 @@ public class TempRenderer implements GLSurfaceView.Renderer{
     {
         matrix4_4f.getArray()[11]=1f;
     }
+
+    int[] bufGPU = new int[1];
+    boolean gpu = true;
+    int drawingCount = 20;
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -93,6 +96,10 @@ public class TempRenderer implements GLSurfaceView.Renderer{
         fb = GLHelper.make(ff);
         sb = GLHelper.make(ss);
 
+        glGenBuffers(1, bufGPU, 0);
+        glBindBuffer(GL_ARRAY_BUFFER, bufGPU[0]);
+        glBufferData(GL_ARRAY_BUFFER, fb.capacity(), fb, GL_STATIC_DRAW);
+
         /*
         fb = GLHelper.make(new float[]{
                 -400, 400, 0, 0, 0,
@@ -113,9 +120,9 @@ public class TempRenderer implements GLSurfaceView.Renderer{
         font.use(0);
 
         glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE);
-        //glSampleCoverage(0.8f, false);
+
         if (GLHelper.hasError()){
-            new NedoException("error");
+            //throw new NedoException("error");
         }
 
         glEnableVertexAttribArray(shader.aScreenPos);
@@ -144,13 +151,21 @@ public class TempRenderer implements GLSurfaceView.Renderer{
         glClearDepthf(1f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        fb.position(0);
-        glVertexAttribPointer(shader.aScreenPos, 3, GL_FLOAT, false, 4 * 5, fb);
-        fb.position(3);
-        glVertexAttribPointer(shader.aTexturePos, 2, GL_FLOAT, false, 4 * 5, fb);
-        glUniform1i(shader.uTexture, 0);
+        if (!gpu) {
+            fb.position(0);
+            glVertexAttribPointer(shader.aScreenPos, 3, GL_FLOAT, false, 4 * 5, fb);
+            fb.position(3);
+            glVertexAttribPointer(shader.aTexturePos, 2, GL_FLOAT, false, 4 * 5, fb);
+        } {
+            glBindBuffer(GL_ARRAY_BUFFER, bufGPU[0]);
+            glEnableVertexAttribArray(shader.aTexturePos);
+            glEnableVertexAttribArray(shader.aScreenPos);
 
-        glDrawElements(GL_TRIANGLES, count*6, GL_UNSIGNED_SHORT, sb);
+            glVertexAttribPointer(shader.aScreenPos, 3, GL_FLOAT, false, 4*5, 0);
+            glVertexAttribPointer(shader.aTexturePos, 2, GL_FLOAT, false, 4 * 5, 4 * 3);
+        }
+
+        glUniform1i(shader.uTexture, 0);
 
         float t = 0.01f*(counter.framesCount() % 628);
         float ampX = 0.1f;
@@ -158,18 +173,18 @@ public class TempRenderer implements GLSurfaceView.Renderer{
 
         matrix4_4f.setTranslation(ampX*FloatMath.sin(t*2+0.2f), ampY*FloatMath.cos(5*t+0.6f), 0);
 
-        int n = 5;
-        float[] dd = {0, 0, 0,
-                0.1f, 0.13f, 0.1f,
-                0.04f, -0.23f, 0.05f,
-                -0.07f, -0.08f, 0.12f,
-                0.023f, -0.23f, -0.03f};
+        Random rnd = new Random(1234);
 
-        for(int i=0; i<n; i++) {
-            matrix4_4f.setTranslation(ampX * FloatMath.sin(t * 2 + 0.2f)+dd[3*i],
-                    ampY * FloatMath.cos(5 * t + 0.6f)+dd[3*i+1], dd[3*i]);
+        for(int i=0; i<drawingCount; i++) {
+            matrix4_4f.setTranslation(ampX * FloatMath.sin(t * 2 + 0.2f)+rnd.nextFloat()*0.4f,
+                    ampY * FloatMath.cos(5 * t + 0.6f)+rnd.nextFloat()*0.4f,
+                    rnd.nextFloat()*0.2f);
             glUniformMatrix4fv(shader.uCamera, 0, false, matrix4_4f.getArray(), 0);
             glDrawElements(GL_TRIANGLES, count * 6, GL_UNSIGNED_SHORT, sb);
+        }
+        if (gpu){
+            glDisableVertexAttribArray(shader.aTexturePos);
+            glDisableVertexAttribArray(shader.aScreenPos);
         }
     }
 }
