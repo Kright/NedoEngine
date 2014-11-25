@@ -17,7 +17,15 @@ uniform sampler2D uTexture;
 varying vec2 vTexPos;
 
 void main(){
-    gl_FragColor = texture2D(uTexture, vTexPos);
-    //vec4 color = texture2D(uTexture, vTexPos);
-    //gl_FragColor = vec4(vTexPos.x, vTexPos.y, 0.0, 1.0);
+    vec4 color = texture2D(uTexture, vTexPos);
+
+    if (color.a<0.1) {
+        discard;
+    }
+
+    if (color.a < 1.0){
+        color *= 1.0/color.a;
+    }
+
+    gl_FragColor = color;
 }

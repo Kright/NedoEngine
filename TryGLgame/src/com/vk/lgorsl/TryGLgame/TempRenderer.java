@@ -10,6 +10,7 @@ import com.vk.lgorsl.NedoEngine.openGL.GLHelper;
 import com.vk.lgorsl.NedoEngine.openGL.Texture2D;
 import com.vk.lgorsl.NedoEngine.openGL.TextureLoader;
 import com.vk.lgorsl.NedoEngine.utils.FPSCounter;
+import com.vk.lgorsl.NedoEngine.utils.NedoException;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -41,6 +42,7 @@ public class TempRenderer implements GLSurfaceView.Renderer{
     FloatBuffer fb;
     ShortBuffer sb;
     final int count = 15000;
+    final float scale = 0.7f;
     Matrix4_4f matrix4_4f = new Matrix4_4f().makeScale(2/1080f, 2/1780f, 1f);
     {
         matrix4_4f.getArray()[11]=1f;
@@ -58,7 +60,7 @@ public class TempRenderer implements GLSurfaceView.Renderer{
         font.bind();
         shader = new SpriteShader(context.getResources(), R.raw.sprite);
 
-        float s = 0.7f;
+        float s = scale;
         Random rnd = new Random(1234);
         float[] ff= new float[count*5*4];
         float[] dX = {16f*s, 1/32f};
@@ -105,16 +107,21 @@ public class TempRenderer implements GLSurfaceView.Renderer{
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
-        glViewport(0, 0 , width, height);
+        glViewport(0, 0, width, height);
 
         shader.useProgram();
         font.use(0);
+
+        glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE);
+        //glSampleCoverage(0.8f, false);
+        if (GLHelper.hasError()){
+            new NedoException("error");
+        }
 
         glEnableVertexAttribArray(shader.aScreenPos);
         glEnableVertexAttribArray(shader.aTexturePos);
 
         glDisable(GL_CULL_FACE);
-        //glDisable(GL_DEPTH_TEST);
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -126,6 +133,10 @@ public class TempRenderer implements GLSurfaceView.Renderer{
     @Override
     public void onDrawFrame(GL10 gl) {
         counter.update();
+
+        if (counter.framesCount() % 200 == 0){
+            GLHelper.log("fps = " + counter.fps());
+        }
 
         float c = counter.framesCount() % 2 ==0 ? 0 : 1;
 
@@ -148,11 +159,15 @@ public class TempRenderer implements GLSurfaceView.Renderer{
         matrix4_4f.setTranslation(ampX*FloatMath.sin(t*2+0.2f), ampY*FloatMath.cos(5*t+0.6f), 0);
 
         int n = 5;
-        float[] dd = {0, 0, 0.1f, 0.13f, 0.04f, -0.23f, -0.07f, -0.08f, 0.023f, -0.23f};
+        float[] dd = {0, 0, 0,
+                0.1f, 0.13f, 0.1f,
+                0.04f, -0.23f, 0.05f,
+                -0.07f, -0.08f, 0.12f,
+                0.023f, -0.23f, -0.03f};
 
         for(int i=0; i<n; i++) {
-            matrix4_4f.setTranslation(ampX * FloatMath.sin(t * 2 + 0.2f)+dd[2*i],
-                    ampY * FloatMath.cos(5 * t + 0.6f)+dd[2*i+1], 0.1f);
+            matrix4_4f.setTranslation(ampX * FloatMath.sin(t * 2 + 0.2f)+dd[3*i],
+                    ampY * FloatMath.cos(5 * t + 0.6f)+dd[3*i+1], dd[3*i]);
             glUniformMatrix4fv(shader.uCamera, 0, false, matrix4_4f.getArray(), 0);
             glDrawElements(GL_TRIANGLES, count * 6, GL_UNSIGNED_SHORT, sb);
         }

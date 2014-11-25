@@ -30,15 +30,19 @@ public class MyActivity extends Activity {
 
         view = new GLSurfaceView(this);
         view.setEGLContextClientVersion(2);
-        view.setEGLConfigChooser(new ConfigChooser(new int[]{
+
+        ConfigChooser chooser = new ConfigChooser(new int[]{
                 EGL10.EGL_RED_SIZE, 8,
                 EGL10.EGL_GREEN_SIZE, 8,
                 EGL10.EGL_BLUE_SIZE, 8,
                 EGL10.EGL_ALPHA_SIZE, 1,
-                EGL10.EGL_DEPTH_SIZE, 16,
+                EGL10.EGL_DEPTH_SIZE, 8,
                 EGL10.EGL_RENDERABLE_TYPE, 4,
+                EGL10.EGL_SAMPLE_BUFFERS, 0,    //true
                 EGL10.EGL_NONE
-        }).setConfigPrinting(false));
+        }).setConfigPrinting(true);
+
+        view.setEGLConfigChooser(chooser);
 
         renderer = new TempRenderer(this);
         view.setRenderer(renderer);
