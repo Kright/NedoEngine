@@ -10,7 +10,6 @@ import com.vk.lgorsl.NedoEngine.openGL.GLHelper;
 import com.vk.lgorsl.NedoEngine.openGL.Texture2D;
 import com.vk.lgorsl.NedoEngine.openGL.TextureLoader;
 import com.vk.lgorsl.NedoEngine.utils.FPSCounter;
-import com.vk.lgorsl.NedoEngine.utils.NedoException;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;

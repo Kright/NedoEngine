@@ -11,7 +11,7 @@ public class Texture2D {
 
     private final int[] id;
 
-    protected Texture2D(int[] id){
+    public Texture2D(int[] id){
         this.id = id;
     }
 
