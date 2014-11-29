@@ -13,10 +13,10 @@ import javax.microedition.khronos.egl.*;
  *
  * помогла эта статья:
  * http://4pda.ru/forum/index.php?showtopic=418429&st=0#entry18734436
- * <p/>
+ *
  * eglChooseConfig specification:
  * https://www.khronos.org/registry/egl/sdk/docs/man/html/eglChooseConfig.xhtml
- * <p/>
+ *
  * Created by lgor on 18.11.2014.
  */
 @TargetApi(Build.VERSION_CODES.CUPCAKE)
