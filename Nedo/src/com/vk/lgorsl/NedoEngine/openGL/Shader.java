@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.opengl.GLES20;
 import android.os.Build;
 import com.vk.lgorsl.NedoEngine.utils.NedoException;
+import com.vk.lgorsl.NedoEngine.utils.NedoLog;
 
 import java.util.regex.Pattern;
 
@@ -94,8 +95,8 @@ public class Shader {
         int[] validateStatus = new int[1];
         glGetProgramiv(id, GL_VALIDATE_STATUS, validateStatus, 0);
         if (validateStatus[0] == 0){
-            GLHelper.logError("shader validate error" +
-                glGetProgramInfoLog(id));
+            NedoLog.logError("shader validate error" +
+                    glGetProgramInfoLog(id));
         }
         return validateStatus[0]!=0;
     }
@@ -109,7 +110,7 @@ public class Shader {
     public static int compileShader(int shaderType, String code){
         int id = glCreateShader(shaderType);
         if (id == 0){
-            GLHelper.logError("can't create empty shader :(");
+            NedoLog.logError("can't create empty shader :(");
             return 0;
         }
         glShaderSource(id, code);
@@ -118,7 +119,7 @@ public class Shader {
         int[] compiled = new int[1];
         glGetShaderiv(id, GL_COMPILE_STATUS, compiled, 0);
         if (compiled[0]==0){
-            GLHelper.logError("shader compilation error, code:\n"
+            NedoLog.logError("shader compilation error, code:\n"
                     + code + "\n" + glGetShaderInfoLog(id));
             glDeleteShader(id);
             return 0;

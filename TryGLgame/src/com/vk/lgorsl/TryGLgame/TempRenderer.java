@@ -10,6 +10,7 @@ import com.vk.lgorsl.NedoEngine.openGL.GLHelper;
 import com.vk.lgorsl.NedoEngine.openGL.Texture2D;
 import com.vk.lgorsl.NedoEngine.openGL.TextureLoader;
 import com.vk.lgorsl.NedoEngine.utils.FPSCounter;
+import com.vk.lgorsl.NedoEngine.utils.NedoLog;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -120,10 +121,6 @@ public class TempRenderer implements GLSurfaceView.Renderer{
 
         glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE);
 
-        if (GLHelper.hasError()){
-            //throw new NedoException("error");
-        }
-
         glEnableVertexAttribArray(shader.aScreenPos);
         glEnableVertexAttribArray(shader.aTexturePos);
 
@@ -141,7 +138,7 @@ public class TempRenderer implements GLSurfaceView.Renderer{
         counter.update();
 
         if (counter.framesCount() % 200 == 0){
-            GLHelper.log("fps = " + counter.fps());
+            NedoLog.log("fps = " + counter.fps());
         }
 
         float c = counter.framesCount() % 2 ==0 ? 0 : 1;

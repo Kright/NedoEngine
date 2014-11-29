@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
 import com.vk.lgorsl.NedoEngine.openGL.ConfigChooser;
-import com.vk.lgorsl.NedoEngine.openGL.GLHelper;
+import com.vk.lgorsl.NedoEngine.utils.NedoLog;
 
 import javax.microedition.khronos.egl.EGL10;
 
@@ -26,7 +26,7 @@ public class MyActivity extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
 
-        GLHelper.LOG_STRING = "com.vk.lgorsl.TryGLgame";
+        NedoLog.log_string = "com.vk.lgorsl.TryGLgame";
 
         view = new GLSurfaceView(this);
         view.setEGLContextClientVersion(2);

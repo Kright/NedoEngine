@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.os.Build;
-import android.util.Log;
 import com.vk.lgorsl.NedoEngine.utils.NedoException;
 
 import java.io.BufferedReader;
@@ -22,19 +21,6 @@ import static android.opengl.GLES20.*;
  * Created by lgor on 18.11.2014.
  */
 public class GLHelper {
-
-    public static String LOG_STRING = "Nedo Engine";
-    public static boolean showLog = true;
-
-    public static void log(String s){
-        if (showLog) {
-            Log.d(LOG_STRING, s);
-        }
-    }
-
-    public static void logError(String s){
-        Log.e(LOG_STRING, s);
-    }
 
     public static FloatBuffer make(float[] arr){
         FloatBuffer fb = ByteBuffer.allocateDirect(arr.length * 4).
@@ -71,6 +57,26 @@ public class GLHelper {
     @TargetApi(Build.VERSION_CODES.FROYO)
     public static int getError(){
         return GLES20.glGetError();
+    }
+
+    public static void checkError(){
+        int code = getError();
+        if (code == GL_NO_ERROR) {
+            return;
+        }
+        throw new NedoException(getErrorString(code));
+    }
+
+    public static String getErrorString(int code){
+        switch (code){
+            case GL_NO_ERROR : return "GL no error";
+            case GL_INVALID_ENUM: return "GL invalid enum";
+            case GL_INVALID_FRAMEBUFFER_OPERATION: return "GL framebuffer operation";
+            case GL_INVALID_VALUE: return "GL invalid operation";
+            case GL_INVALID_OPERATION: return "GL invalid operation";
+            case GL_OUT_OF_MEMORY: return "GL out ou memory";
+            default: return "GL unknown error code!!";
+        }
     }
 
     /**
