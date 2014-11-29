@@ -1,5 +1,7 @@
 package com.vk.lgorsl.NedoEngine.openGL;
 
+import com.vk.lgorsl.NedoEngine.math.Matrix4_4f;
+
 /**
  * something which can be rendered
  *
@@ -7,5 +9,5 @@ package com.vk.lgorsl.NedoEngine.openGL;
  */
 public interface Renderable {
 
-    void render();
+    void render(Matrix4_4f matrix4_4f);
 }

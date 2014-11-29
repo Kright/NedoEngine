@@ -47,8 +47,8 @@ public class Shader {
                 compileShader(GLES20.GL_FRAGMENT_SHADER, pixelShaderCode));
     }
 
-    public Shader(String[] vetrexAndPixelCode){
-        this(vetrexAndPixelCode[0], vetrexAndPixelCode[1]);
+    public Shader(String[] vertexAndPixelCode){
+        this(vertexAndPixelCode[0], vertexAndPixelCode[1]);
     }
 
     public void useProgram(){

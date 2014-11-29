@@ -176,8 +176,6 @@ public class TempRenderer implements GLSurfaceView.Renderer{
 
         Random rnd = new Random(1234);
 
-        GLHelper.checkError();
-
         for(int i=0; i<drawingCount; i++) {
             matrix4_4f.setTranslation(ampX * FloatMath.sin(t * 2 + 0.2f)+rnd.nextFloat()*0.4f,
                     ampY * FloatMath.cos(5 * t + 0.6f)+rnd.nextFloat()*0.4f,
