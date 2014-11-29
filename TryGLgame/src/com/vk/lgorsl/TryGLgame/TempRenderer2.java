@@ -15,7 +15,7 @@ import javax.microedition.khronos.opengles.GL10;
 import static android.opengl.GLES20.*;
 
 /**
- * used dor experiments
+ * used for experiments
  *
  * Created by lgor on 29.11.2014.
  */
@@ -24,9 +24,11 @@ public class TempRenderer2 implements GLSurfaceView.Renderer {
     final FPSCounter counter = new FPSCounter();
     final Context context;
 
+
     Squad squad;
-    Texture2D font;
+    FontTexture font;
     final Matrix4_4f matrix4_4f;
+    FontRenderer fontRenderer;
 
     public TempRenderer2(Context context) {
         this.context = context;
@@ -37,7 +39,7 @@ public class TempRenderer2 implements GLSurfaceView.Renderer {
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         font = FontTexture.load(
                 Typeface.createFromAsset(context.getAssets(), "newcourier.ttf"),
-                512, 32,
+                1024, 64,
                 FontTexture.ENGLISH_LOWERCASE +
                         FontTexture.ENGLISH_UPPERCASE +
                         FontTexture.SYMBOLS +
@@ -45,6 +47,15 @@ public class TempRenderer2 implements GLSurfaceView.Renderer {
                         FontTexture.RUSSIAN_UPPERCASE);
 
         squad = new Squad(font);
+
+        GLHelper.checkError();
+
+        fontRenderer = new FontRenderer(font);
+        fontRenderer.setText("qwertyuiop\n" +
+                "some epic text!\nи на русском тоже\n" +
+                "И НАЖМЁМ CAPS LOCK!\n" +
+                "wtf there?!\n...");
+        fontRenderer.setColor(1f, 0, 1f, 0.5f, true);
 
         GLHelper.checkError();
     }
@@ -70,9 +81,20 @@ public class TempRenderer2 implements GLSurfaceView.Renderer {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         float t = (counter.framesCount() % 628) * 0.01f;
-        matrix4_4f.makeIdentity().makeScale(FloatMath.sin(t));
+
+        float s = 0.2f + 0.1f*FloatMath.sin(t);
+        matrix4_4f.makeIdentity().makeScale(s*0.5f*5, s*5, 1);
+
+        GLHelper.checkError();
 
         squad.render(matrix4_4f);
+
+        matrix4_4f.getArray()[0]*=0.2f;
+        matrix4_4f.getArray()[5]*=0.3f;
+
+        fontRenderer.setColor(FloatMath.sin(t), 0.0f, 0.5f, .7f+ 0.3f*FloatMath.cos(2*t+1), true);
+
+        fontRenderer.render(matrix4_4f);
 
         GLHelper.checkError();
     }
