@@ -60,6 +60,9 @@ public class GLHelper {
         return GLES20.glGetError();
     }
 
+    /**
+     * throws NedoException() if getError() != GL_NO_ERROR
+     */
     public static void checkError(){
         int code = getError();
         if (code == GL_NO_ERROR) {
@@ -68,12 +71,23 @@ public class GLHelper {
         throw new NedoException(getErrorString(code));
     }
 
+    /**
+     * throws NedoException(msg) if getError() != GL_NO_ERROR
+     */
+    public static void checkError(String msg){
+        int code = getError();
+        if (code == GL_NO_ERROR) {
+            return;
+        }
+        throw new NedoException(getErrorString(code) + "\n" + msg);
+    }
+
     public static String getErrorString(int code){
         switch (code){
             case GL_NO_ERROR : return "GL no error";
             case GL_INVALID_ENUM: return "GL invalid enum";
             case GL_INVALID_FRAMEBUFFER_OPERATION: return "GL framebuffer operation";
-            case GL_INVALID_VALUE: return "GL invalid operation";
+            case GL_INVALID_VALUE: return "GL invalid value";
             case GL_INVALID_OPERATION: return "GL invalid operation";
             case GL_OUT_OF_MEMORY: return "GL out ou memory";
             default: return "GL unknown error code!!";
@@ -120,9 +134,6 @@ public class GLHelper {
     }
 
     /**
-     *
-     * @param res
-     * @param id
      * @return loaded bitmap or red bitmap 16*16 px if errors
      */
     public static Bitmap loadBitmap2(Resources res, int id){

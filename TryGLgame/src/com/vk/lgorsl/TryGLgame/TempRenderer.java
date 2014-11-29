@@ -22,7 +22,7 @@ import java.util.Random;
 import static android.opengl.GLES20.*;
 
 /**
- * it can draw sprites (now it id drawing alphabet)
+ * it can draw sprites (now it drawing alphabet)
  *
  * Created by lgor on 23.11.2014.
  */

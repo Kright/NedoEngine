@@ -52,7 +52,6 @@ public class Squad implements Renderable {
                         -1, -1, 0, 0, 1,
                         1, -1, 0, 1, 1});
                 shader = new CleverShader(vertexCode, fragmentCode);
-                //shader.addLocation("uTexture", "uCamera", "aScreenPos", "aTexturePos");
             }
         }
     }
@@ -66,19 +65,17 @@ public class Squad implements Renderable {
     public void render(Matrix4_4f matrix4_4f) {
         shader.useProgram();
 
-        texture.use(0);
-        glUniform1i(shader.getLocation("uTexture"), 0);
-
-        glUniformMatrix4fv(shader.getLocation("aPosition"), 1, false, matrix4_4f.getArray(), 0);
+        texture.useAndSetUniform1i(shader.get("uTexture"), 0);
+        glUniformMatrix4fv(shader.get("uCamera"), 1, false, matrix4_4f.getArray(), 0);
 
         shader.enableAllVertexAttribArray();
 
         fb.position(0);
-        glVertexAttribPointer(shader.getLocation("aScreenPos"), 3, GL_FLOAT, false, 4*5, fb);
+        glVertexAttribPointer(shader.get("aScreenPos"), 3, GL_FLOAT, false, 4*5, fb);
         fb.position(3);
-        glVertexAttribPointer(shader.getLocation("aTexturePos"), 2, GL_FLOAT, false, 4*5, fb);
+        glVertexAttribPointer(shader.get("aTexturePos"), 2, GL_FLOAT, false, 4*5, fb);
 
-        glDrawArrays(GL_TRIANGLE_STRIP, 4, 0);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
         shader.disableAllVertexAttribArray();
     }

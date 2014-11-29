@@ -41,52 +41,58 @@ public class CleverShader extends Shader {
         addLocationsFromCode(vertexAndPixelCode[1]);
     }
 
+    /**
+     * It parses code, gets names of uniforms and attributes and saves them
+     * @param code code of this shader
+     */
     public void addLocationsFromCode(String code) {
+        GLHelper.checkError();
         String[] ss = code.split("[; \n]+");
         for (int i = 0; i < ss.length; i++) {
-            if (ss[i].equals("uniform") || ss[i].equals("attribute")) {
+            if (ss[i].equals("uniform")) {
                 i += 2;
-                addName(ss[i]);
+                locations.put(ss[i], super.getUniformLocation(ss[i]));
+            } else if (ss[i].equals("attribute")) {
+                i += 2;
+                int loc = super.getAttributeLocation(ss[i]);
+                locations.put(ss[i], loc);
+                attributes.add(loc);
             }
         }
-    }
-
-    private int find(String s) {
-        Integer i = locations.get(s);
-        return i != null ? i : -1;
-    }
-
-    private int addName(String s) {
-        int id = find(s);
-        if (id != -1) {
-            return id;
-        }
-        if ((id = getAttributeLocation(s)) != 1) {
-            locations.put(s, id);
-            attributes.add(id);
-            return id;
-        }
-        if ((id = getUniformLocation(s)) != 1) {
-            locations.put(s, id);
-            return id;
-        }
-        throw new NedoException("wrong attribute or uniform name: " + s);
-    }
-
-    public void addLocation(String... names) {
-        for (String s : names) {
-            addName(s);
-        }
+        GLHelper.checkError();
     }
 
     @Override
     public int getAttributeLocation(String name) {
-        return getLocation(name);
+        if (locations.containsKey(name)) {
+            return locations.get(name);
+        }
+        int id = super.getAttributeLocation(name);
+        locations.put(name, id);
+        attributes.add(id);
+        return id;
+    }
+
+    public void addAttributeLocations(String... names) {
+        for (String s : names) {
+            getAttributeLocation(s);
+        }
     }
 
     @Override
     public int getUniformLocation(String name) {
-        return getLocation(name);
+        if (locations.containsKey(name)) {
+            return locations.get(name);
+        }
+        int id = super.getUniformLocation(name);
+        locations.put(name, id);
+        return id;
+    }
+
+    public void addUniformLocations(String... names) {
+        for (String s : names) {
+            getUniformLocation(s);
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.FROYO)
@@ -104,10 +110,13 @@ public class CleverShader extends Shader {
     }
 
     /**
-     * @param name of uniform or tag
-     * @return id
+     *
+     * @param name of attribute or uniform
+     * @return it's location
      */
-    public int getLocation(String name) {
-        return addName(name);
+    public int get(String name) {
+        Integer n = locations.get(name);
+        if (n == null) throw new NedoException("unknown name : \"" + name + "\"");
+        return n;
     }
 }

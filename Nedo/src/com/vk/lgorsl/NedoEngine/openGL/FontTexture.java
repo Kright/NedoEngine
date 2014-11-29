@@ -11,6 +11,12 @@ import static android.opengl.GLES20.*;
  */
 public class FontTexture extends Texture2D {
 
+    public final static String ENGLISH_LOWERCASE = "qwertyuiopasdfghjklzxcvbnm";
+    public final static String ENGLISH_UPPERCASE = "QWERTYUIOPASDFGHJKLZXCVBNM";
+    public final static String RUSSIAN_LOWERCASE = "йцукенгшщзхъфывапролджэячсмитьбю";
+    public final static String RUSSIAN_UPPERCASE = "ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ";
+    public final static String SYMBOLS = " <>(){}[]+-+_*/\\|,.:;\'\"!@#$%^&№";
+
     protected FontTexture(int[] id) {
         super(id);
     }

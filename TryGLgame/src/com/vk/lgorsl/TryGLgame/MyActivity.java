@@ -15,7 +15,7 @@ import javax.microedition.khronos.egl.EGL10;
 public class MyActivity extends Activity {
 
     public GLSurfaceView view;
-    public TempRenderer renderer;
+    public TempRenderer2 renderer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,7 +44,7 @@ public class MyActivity extends Activity {
 
         view.setEGLConfigChooser(chooser);
 
-        renderer = new TempRenderer(this);
+        renderer = new TempRenderer2(this);
         view.setRenderer(renderer);
         view.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         view.setPreserveEGLContextOnPause(true);

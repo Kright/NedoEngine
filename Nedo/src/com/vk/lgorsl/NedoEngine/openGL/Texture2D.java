@@ -32,6 +32,20 @@ public class Texture2D {
         bind();
     }
 
+    /**
+     * @param uniformLocation - location of uniform for this matrix
+     * @param slotNumber - number of used texture unit
+     */
+    public void useAndSetUniform1i(int uniformLocation, int slotNumber){
+        active(slotNumber);
+        bind();
+        glUniform1i(uniformLocation, slotNumber);
+    }
+
+    /**
+     * calls glActiveTexture(GL_TEXTURE0 + num)
+     * @param num number if texture unit
+     */
     public static void active(int num){
         glActiveTexture(GL_TEXTURE0 + num);
     }
