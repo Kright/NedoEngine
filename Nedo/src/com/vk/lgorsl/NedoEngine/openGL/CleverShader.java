@@ -12,7 +12,14 @@ import java.util.List;
 
 /**
  * this shader saves attributes and uniforms locations for faster access;
- * also it can enable and disable all vertexAttribArrays
+ * also it can enable and disable all vertexAttribArrays in one single method
+ * <p/>
+ * на самом деле оказалось, что выигрыш не такой уж и большой :(
+ * померял производительность на Sony Xperia ZL для какого-то простого шейдера
+ * В секунду можно сделать 3*10^6 вызовов get(name)
+ * или 4*10^5 вызовов glGetAttributeLocation(name)
+ * т.е., если вызывать 100 раз за кадр, то падение производительности будет всего лишь порядка 1%
+ * но раз уж класс уже написан и работает всё-таки раз в 10 быстрее - наверно, лучше использовать его
  * <p/>
  * Created by lgor on 29.11.2014.
  */
