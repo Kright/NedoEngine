@@ -54,13 +54,14 @@ public class TempRenderer implements GLSurfaceView.Renderer{
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         Bitmap bm = GLHelper.loadBitmap(context.getResources(), R.drawable.font22cons);
+
         font = TextureLoader.loadTexture(bm,
                 GL_NEAREST_MIPMAP_NEAREST,
-                GL_NEAREST_MIPMAP_NEAREST,
+                GL_LINEAR,
                 GL_CLAMP_TO_EDGE,
                 GL_CLAMP_TO_EDGE,
                 true);
-        font.bind();
+
         shader = new SpriteShader(context.getResources(), R.raw.sprite);
 
         float s = scale;
@@ -100,6 +101,8 @@ public class TempRenderer implements GLSurfaceView.Renderer{
         glBindBuffer(GL_ARRAY_BUFFER, bufGPU[0]);
         glBufferData(GL_ARRAY_BUFFER, fb.capacity(), fb, GL_STATIC_DRAW);
 
+        GLHelper.checkError();
+
         /*
         fb = GLHelper.make(new float[]{
                 -400, 400, 0, 0, 0,
@@ -131,6 +134,8 @@ public class TempRenderer implements GLSurfaceView.Renderer{
 
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
+
+        GLHelper.checkError();
     }
 
     @Override
@@ -171,6 +176,8 @@ public class TempRenderer implements GLSurfaceView.Renderer{
 
         Random rnd = new Random(1234);
 
+        GLHelper.checkError();
+
         for(int i=0; i<drawingCount; i++) {
             matrix4_4f.setTranslation(ampX * FloatMath.sin(t * 2 + 0.2f)+rnd.nextFloat()*0.4f,
                     ampY * FloatMath.cos(5 * t + 0.6f)+rnd.nextFloat()*0.4f,
@@ -182,5 +189,7 @@ public class TempRenderer implements GLSurfaceView.Renderer{
             glDisableVertexAttribArray(shader.aTexturePos);
             glDisableVertexAttribArray(shader.aScreenPos);
         }
+
+        GLHelper.checkError();
     }
 }

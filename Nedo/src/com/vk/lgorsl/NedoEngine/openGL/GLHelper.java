@@ -10,6 +10,7 @@ import com.vk.lgorsl.NedoEngine.utils.NedoException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.*;
 
@@ -116,6 +117,28 @@ public class GLHelper {
      */
     public static Bitmap loadBitmap(Resources res, int id) {
         return BitmapFactory.decodeResource(res, id, options);
+    }
+
+    /**
+     *
+     * @param res
+     * @param id
+     * @return loaded bitmap or red bitmap 16*16 px if errors
+     */
+    public static Bitmap loadBitmap2(Resources res, int id){
+        InputStream is = res.openRawResource(id);
+        Bitmap bitmap;
+        try{
+            bitmap = BitmapFactory.decodeStream(is);
+        } finally {
+            try {
+                is.close();
+            } catch (IOException ex){
+                bitmap = Bitmap.createBitmap(16, 16, Bitmap.Config.ARGB_8888);
+                bitmap.eraseColor(0xFFFF0000);
+            }
+        }
+        return bitmap;
     }
 
     public static String getExtensions(){

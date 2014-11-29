@@ -14,21 +14,10 @@ import static android.opengl.GLES20.*;
  */
 public class TextureLoader {
 
-         /*
-         *     Текстурные параметры можно изменить в любой момент времени, а не только при инициализации.
-         *     По умолчанию параметры установлены в GL_REPEAT и GL_LINEAR.
-         *
-         * GL_NEAREST – нет фильтрации, нет мипмапов
-         * GL_LINEAR - фильтрация, нет мипмапов
-         * GL_NEAREST_MIPMAP_NEAREST – нет фильтрации, выбор ближайшего уровня мипмап
-         * GL_NEAREST_MIPMAP_LINEAR – нет фильтрации, фильтрация между уровнями мипмап
-         * GL_LINEAR_MIPMAP_NEAREST - фильтрация, выбор ближайшего уровня мипмап
-         * GL_LINEAR_MIPMAP_LINEAR - filtering, фильтрация между уровнями мипмап
-         *
-         * GL_LINEAR - билинейная
-         * GL_LINEAR_MIPMAP_NEAREST - билинейная с мипмапами
-         * GL_LINEAR_MIPMAP_LINEAR – трилинейная
-         */
+   /*
+    *     Текстурные параметры можно изменить в любой момент времени, а не только при инициализации.
+    *     По умолчанию параметры установлены в GL_REPEAT и GL_LINEAR.
+    */
 
     public boolean generateMipmaps = false;
 
@@ -95,6 +84,28 @@ public class TextureLoader {
         return new Texture2D(texId);
     }
 
+    /**
+     * https://www.khronos.org/opengles/sdk/docs/man/xhtml/glTexParameter.xml
+     *
+     * @param minFilter :
+     *                  GL_NEAREST,
+     *                  GL_LINEAR,
+     *                  GL_NEAREST_MIPMAP_NEAREST,
+     *                  GL_LINEAR_MIPMAP_NEAREST,
+     *                  GL_NEAREST_MIPMAP_LINEAR,
+     *                  GL_LINEAR_MIPMAP_LINEAR
+     * @param magFilter
+     *                  GL_NEAREST
+     *                  GL_LINEAR
+     * @param wrapS
+     *                  GL_CLAMP_TO_EDGE
+     *                  GL_MIRRORED_REPEAT
+     *                  GL_REPEAT
+     * @param wrapT
+     *                  GL_CLAMP_TO_EDGE
+     *                  GL_MIRRORED_REPEAT
+     *                  GL_REPEAT
+     */
     public static void setParameters(int minFilter, int magFilter, int wrapS, int wrapT){
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
