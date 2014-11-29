@@ -17,8 +17,12 @@ public class FontTexture extends Texture2D {
     public final static String RUSSIAN_UPPERCASE = "ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ";
     public final static String SYMBOLS = " <>(){}[]+-+_*/\\|,.:;\'\"!@#$%^&№";
 
-    protected FontTexture(int[] id) {
+    protected float[] coords;
+    protected char[] chars;
+
+    protected FontTexture(int[] id, char[] chars, float[] coords) {
         super(id);
+        this.coords = coords;
     }
 
     public static FontTexture load(Typeface typeface, int textureSize, float fontSize, String symbols) {
@@ -44,6 +48,9 @@ public class FontTexture extends Texture2D {
         int wd = (int) (d + bounds.width() / cc.length);
         int n = textureSize / wd;
 
+        float[] coord = new float[4*cc.length];
+        int p=0;
+
         for (int i = 0, pos = 0; pos<cc.length; pos++, i++) {
             if (i == n) {
                 i = 0;
@@ -67,6 +74,6 @@ public class FontTexture extends Texture2D {
 
         glGenerateMipmap(GL_TEXTURE_2D);
 
-        return new FontTexture(texId);
+        return new FontTexture(texId, cc, coord);
     }
 }
