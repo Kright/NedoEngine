@@ -15,7 +15,7 @@ import java.nio.FloatBuffer;
  *
  * Created by lgor on 29.11.2014.
  */
-public class Squad implements Renderable {
+public class Quad implements Renderable {
 
     private static final Object monitor = new Object();
 
@@ -42,7 +42,7 @@ public class Squad implements Renderable {
     protected Texture2D texture;
 
     @TargetApi(Build.VERSION_CODES.FROYO)
-    public Squad(Texture2D texture) {
+    public Quad(Texture2D texture) {
         this.texture = texture;
         synchronized (monitor) {
             if (fb == null) {

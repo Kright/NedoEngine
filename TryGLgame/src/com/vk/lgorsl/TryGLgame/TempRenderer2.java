@@ -25,7 +25,7 @@ public class TempRenderer2 implements GLSurfaceView.Renderer {
     final Context context;
 
 
-    Squad squad;
+    Quad quad;
     FontTexture font;
     final Matrix4_4f matrix4_4f;
     FontRenderer fontRenderer;
@@ -46,7 +46,7 @@ public class TempRenderer2 implements GLSurfaceView.Renderer {
                         FontTexture.RUSSIAN_LOWERCASE +
                         FontTexture.RUSSIAN_UPPERCASE);
 
-        squad = new Squad(font);
+        quad = new Quad(font);
 
         GLHelper.checkError();
 
@@ -87,7 +87,7 @@ public class TempRenderer2 implements GLSurfaceView.Renderer {
 
         GLHelper.checkError();
 
-        squad.render(matrix4_4f);
+        quad.render(matrix4_4f);
 
         matrix4_4f.getArray()[0]*=0.2f;
         matrix4_4f.getArray()[5]*=0.3f;
