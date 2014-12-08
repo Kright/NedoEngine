@@ -40,6 +40,13 @@ public class FPSCounter {
     }
 
     /**
+     * @return time of last update in milliseconds
+     */
+    public long getTime(){
+        return now;
+    }
+
+    /**
      * @return frames per second count
      */
     public int fps(){
