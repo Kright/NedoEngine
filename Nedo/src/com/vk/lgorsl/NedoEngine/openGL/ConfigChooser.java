@@ -69,6 +69,17 @@ public class ConfigChooser implements GLSurfaceView.EGLConfigChooser {
             EGL10.EGL_NONE
     };
 
+    public static final int[] RGBA8888DEPTH16 = {
+            EGL10.EGL_RED_SIZE, 8,
+            EGL10.EGL_GREEN_SIZE, 8,
+            EGL10.EGL_BLUE_SIZE, 8,
+            EGL10.EGL_ALPHA_SIZE, 8,
+            EGL10.EGL_DEPTH_SIZE, 16,
+            EGL10.EGL_RENDERABLE_TYPE, 4,
+            EGL10.EGL_SAMPLE_BUFFERS, 0,
+            EGL10.EGL_NONE
+    };
+
     private final int[] config1, config2;
     private boolean printAvailableConfigs = false;
 
