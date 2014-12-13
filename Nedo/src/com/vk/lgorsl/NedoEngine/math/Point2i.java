@@ -27,4 +27,17 @@ public class Point2i implements iPoint2i {
     public int y() {
         return y;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return (o instanceof Point2i) && equals(this, (Point2i) o);
+    }
+
+    public boolean equals(iPoint2i point) {
+        return equals(this, point);
+    }
+
+    public static boolean equals(iPoint2i f, iPoint2i s) {
+        return f.x() == s.x() && f.y() == s.y();
+    }
 }

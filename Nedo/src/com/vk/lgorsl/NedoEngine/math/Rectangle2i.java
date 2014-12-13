@@ -4,7 +4,7 @@ package com.vk.lgorsl.NedoEngine.math;
  * Rectangle.
  * I don't use standard Rect class because I don't agree with realization of some methods and can't to override it -
  * Rect class is final :(
- *
+ * <p/>
  * Created by lgor on 13.12.2014.
  */
 public class Rectangle2i implements iRectangle2i {
@@ -60,8 +60,24 @@ public class Rectangle2i implements iRectangle2i {
         return yMax - yMin;
     }
 
-    public boolean intersects(iRectangle2i r1, iRectangle2i r2) {
+    @Override
+    public boolean equals(Object o) {
+        return (o instanceof iRectangle2i) && equals(this, (iRectangle2i) o);
+    }
+
+    public boolean equals(iRectangle2i rect) {
+        return equals(this, rect);
+    }
+
+    public static boolean intersects(iRectangle2i r1, iRectangle2i r2) {
         return !(r1.xMin() > r2.xMax() || r1.xMax() < r2.xMin() ||
                 r1.yMin() > r2.yMax() || r1.yMax() < r2.xMin());
+    }
+
+    public static boolean equals(iRectangle2i first, iRectangle2i second) {
+        return first.xMin() == second.xMin() &&
+                first.xMax() == second.xMax() &&
+                first.yMin() == second.yMin() &&
+                first.yMax() == second.yMax();
     }
 }
