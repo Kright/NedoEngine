@@ -1,5 +1,9 @@
 package com.vk.lgorsl.cossacks.world;
 
+import com.vk.lgorsl.cossacks.world.interfaces.iLandscapeMap;
+import com.vk.lgorsl.cossacks.world.interfaces.iMap;
+import com.vk.lgorsl.cossacks.world.interfaces.iTree;
+
 /**
  * world instance
  *
@@ -7,5 +11,7 @@ package com.vk.lgorsl.cossacks.world;
  */
 public class WorldInstance {
 
+    iLandscapeMap map;
+    iMap<iTree> trees;
 
 }
