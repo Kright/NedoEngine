@@ -88,17 +88,19 @@ public class MapView implements iMapView {
         array[9] = cos*scale;
 
         //TODO calculate coefficient
-        float k=1f;
-        array[2] = vi.y*k;
-        array[6] = vj.y*k;
+        float k=0.8f;
+        array[2] = k * array[1];
+        array[6] = k * array[5];
+        array[10] = 0f;
 
         array[12] = - (center.x * vi.x + center.y * vj.x);
         array[13] = - (center.x * vi.y + center.y * vj.y);
+        array[14] = k * array[13]  +  (1-k);
 
         /**
          *  i.x     j.x     0       dx
          *  i.y*sin j.y*sin cos     dy
-         *  k*vi.y  k*vj.y  0       0
+         *  -||-*k  -||-*k  0       dy*k+(1-k)
          *  0       0       0       1
          *
          *  and scaled

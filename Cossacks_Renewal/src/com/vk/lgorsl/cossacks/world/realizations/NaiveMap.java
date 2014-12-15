@@ -2,6 +2,7 @@ package com.vk.lgorsl.cossacks.world.realizations;
 
 import com.vk.lgorsl.NedoEngine.math.iRectangle2i;
 import com.vk.lgorsl.cossacks.world.interfaces.Iter;
+import com.vk.lgorsl.cossacks.world.interfaces.WorldMetrics;
 import com.vk.lgorsl.cossacks.world.interfaces.iMap;
 import com.vk.lgorsl.cossacks.world.interfaces.iMapObject;
 
@@ -20,9 +21,9 @@ public class NaiveMap<T extends iMapObject> implements iMap<T> {
     private final iRectangle2i bounds;
     private List<T> lst;
 
-    public NaiveMap(iRectangle2i bounds){
-        this.bounds = bounds;
-        lst = new ArrayList<T>();
+    public NaiveMap(WorldMetrics metrics){
+        this.bounds = metrics.mapSize();
+        lst = new ArrayList<>();
     }
 
     @Override

@@ -2,9 +2,13 @@ package com.vk.lgorsl.cossacks.graphics;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
+import android.util.FloatMath;
+import com.vk.lgorsl.NedoEngine.math.Point2i;
 import com.vk.lgorsl.NedoEngine.openGL.*;
 import com.vk.lgorsl.NedoEngine.utils.FPSCounter;
 import com.vk.lgorsl.NedoEngine.utils.NedoLog;
+import com.vk.lgorsl.cossacks.world.WorldInstance;
+import com.vk.lgorsl.cossacks.world.realizations.MapView;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -21,19 +25,22 @@ import static android.opengl.GLES20.*;
  */
 public class GameRenderer implements GLSurfaceView.Renderer {
 
-    private Context context;
     private final FPSCounter clock;
 
     private final List<GameRenderable> renderers = new ArrayList<>();
-    private RendererParams params;
+
+    private final WorldInstance world;
+    private LoadedData loadedData;
+    private RendererParams rendererParams;
 
     public GameRenderer(Context context){
-        setContext(context);
-        clock = new FPSCounter();
-    }
+        loadedData = new LoadedData(context.getResources());
+        world = new WorldInstance();
+        world.load();
 
-    public synchronized void setContext(Context context) {
-        this.context = context;
+        rendererParams = new RendererParams(world, new MapView(new Point2i().set(32, 32),world.metrics));
+
+        clock = new FPSCounter();
     }
 
     @Override
@@ -42,11 +49,11 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 
         GLHelper.checkError();
 
-        LoadedData data = new LoadedData(context.getResources());
-
+        renderers.add(new LandMeshRenderer());
         for(GameRenderable rend : renderers){
-            rend.load(data);
+            rend.load(loadedData);
         }
+        Shader.releaseCompiler();
     }
 
     @Override
@@ -71,13 +78,15 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 
         GLHelper.checkError();
 
+        float t = (clock.framesCount()%628)/100f;
+        rendererParams.mapView.setDirectionOfView(FloatMath.sin(t), FloatMath.cos(t));
+        rendererParams.mapView.setInclination(50+40*FloatMath.sin(t));
+        rendererParams.mapView.setCenterPosition(new Point2i().set(512,512));
+        //rendererParams.mapView.setScale((1.3f + FloatMath.sin(t))/ 1.3f);
+
         for(GameRenderable rend : renderers){
-            rend.render(params);
+            rend.render(rendererParams);
             GLHelper.checkError();
         }
-    }
-
-    public void setParams(RendererParams params) {
-        this.params = params;
     }
 }

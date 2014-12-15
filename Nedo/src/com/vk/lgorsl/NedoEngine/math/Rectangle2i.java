@@ -69,6 +69,16 @@ public class Rectangle2i implements iRectangle2i {
     }
 
     @Override
+    public int xCenter() {
+        return (xMax + xMin) / 2;
+    }
+
+    @Override
+    public int yCenter() {
+        return (yMax + yMin) / 2;
+    }
+
+    @Override
     public boolean equals(Object o) {
         return (o instanceof iRectangle2i) && equals(this, (iRectangle2i) o);
     }

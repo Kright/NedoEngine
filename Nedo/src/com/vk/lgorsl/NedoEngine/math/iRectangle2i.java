@@ -19,6 +19,10 @@ public interface iRectangle2i {
 
     int height();
 
+    int xCenter();
+
+    int yCenter();
+
     boolean contains(iPoint2i point2i);
 
     boolean intersects(iRectangle2i another);

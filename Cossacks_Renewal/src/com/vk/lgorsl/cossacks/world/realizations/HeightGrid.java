@@ -2,6 +2,8 @@ package com.vk.lgorsl.cossacks.world.realizations;
 
 import com.vk.lgorsl.NedoEngine.math.iPoint2i;
 
+import java.util.Random;
+
 /**
  * карта высот
  * Created by lgor on 14.12.2014.
@@ -31,6 +33,13 @@ public class HeightGrid {
 
     public final int getHeight(iPoint2i position) {
         return getHeight(position.x(), position.y());
+    }
+
+    public void randomHeight(int max){
+        Random rnd = new Random();
+        for(int i=0; i<data.length; i++){
+            data[i] = (short)rnd.nextInt(max);
+        }
     }
 
     //crazy, not optimized code. May be wrong

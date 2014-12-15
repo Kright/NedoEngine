@@ -34,7 +34,7 @@ public class Renewal extends Activity {
             view = new GLSurfaceView(this);
             view.setEGLContextClientVersion(2);
 
-            view.setEGLConfigChooser(new ConfigChooser(ConfigChooser.RGBA8888DEPTH16).setConfigPrinting(true));
+            view.setEGLConfigChooser(new ConfigChooser(ConfigChooser.RGBA8888DEPTH16).setConfigPrinting(false));
 
             renderer = new GameRenderer(this);
             view.setRenderer(renderer);
