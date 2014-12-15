@@ -4,7 +4,6 @@ import com.vk.lgorsl.NedoEngine.math.iPoint2i;
 
 /**
  * карта высот
- * <p>
  * Created by lgor on 14.12.2014.
  */
 public class HeightGrid {
@@ -19,9 +18,9 @@ public class HeightGrid {
           *---*---*---*
      */
 
-    final short[] data;
-    final int width, height;
-    final int scaleShift;
+    public final short[] data;
+    public final int width, height;
+    public final int scaleShift;
 
     public HeightGrid(int gridW, int gridH, int scaleShift) {
         this.height = gridH;

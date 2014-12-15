@@ -8,12 +8,12 @@ import android.view.Window;
 import android.view.WindowManager;
 import com.vk.lgorsl.NedoEngine.openGL.ConfigChooser;
 import com.vk.lgorsl.NedoEngine.utils.NedoLog;
-import com.vk.lgorsl.cossacks.graphics.MapRenderer;
+import com.vk.lgorsl.cossacks.graphics.GameRenderer;
 
 public class Renewal extends Activity {
 
     GLSurfaceView view;
-    MapRenderer renderer;
+    GameRenderer renderer;
 
     /**
      * Called when the activity is first created.
@@ -36,7 +36,7 @@ public class Renewal extends Activity {
 
             view.setEGLConfigChooser(new ConfigChooser(ConfigChooser.RGBA8888DEPTH16).setConfigPrinting(true));
 
-            renderer = new MapRenderer(this);
+            renderer = new GameRenderer(this);
             view.setRenderer(renderer);
 
             view.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);

@@ -1,5 +1,6 @@
 package com.vk.lgorsl.NedoEngine.openGL;
 
+import android.content.res.Resources;
 import com.vk.lgorsl.NedoEngine.math.Matrix4_4f;
 
 import java.nio.ByteBuffer;
@@ -13,7 +14,7 @@ import static android.opengl.GLES20.*;
  * draws immutable text string on screen
  * Created by lgor on 29.11.2014.
  */
-public class FontRenderer implements Renderable {
+public class FontRenderer implements Renderable<Matrix4_4f> {
 
     private static CleverShader shader;
     private static ShortBuffer table;   //таблица с индексами одна на всех
@@ -35,20 +36,8 @@ public class FontRenderer implements Renderable {
         this.texture = texture;
         r = g = b = 0;
         a = 1f;
-        if (shader == null) {
-            shader = new CleverShader(vertexShader, fragmentShader);
-            short[] indices = new short[6 * maxLettersCount];
-            for (int i = 0; i < maxLettersCount; i++) {
-                indices[6 * i] = (short)(i*4);
-                indices[6 * i + 1] = (short)(i*4+1);
-                indices[6 * i + 2] = (short)(i*4+2);
-                indices[6 * i + 3] = (short)(i*4);
-                indices[6 * i + 4] = (short)(i*4+2);
-                indices[6 * i + 5] = (short)(i*4+3);
-            }
-            table = GLHelper.make(indices);
-            fb = GLHelper.make(new float[4 * 4 * initialCapacity]);
-        }
+        fb = GLHelper.make(new float[4 * 4 * initialCapacity]);
+        load(null);
     }
 
     public void setColor(float red, float green, float blue, float alpha, boolean normalized) {
@@ -100,6 +89,23 @@ public class FontRenderer implements Renderable {
         }
         fb.position(0);
         stringLength = text.length();
+    }
+
+    @Override
+    public void load(Resources resources) {
+        if (shader == null) {
+            shader = new CleverShader(vertexShader, fragmentShader);
+            short[] indices = new short[6 * maxLettersCount];
+            for (int i = 0; i < maxLettersCount; i++) {
+                indices[6 * i] = (short)(i*4);
+                indices[6 * i + 1] = (short)(i*4+1);
+                indices[6 * i + 2] = (short)(i*4+2);
+                indices[6 * i + 3] = (short)(i*4);
+                indices[6 * i + 4] = (short)(i*4+2);
+                indices[6 * i + 5] = (short)(i*4+3);
+            }
+            table = GLHelper.make(indices);
+        }
     }
 
     /**

@@ -1,13 +1,22 @@
 package com.vk.lgorsl.NedoEngine.openGL;
 
-import com.vk.lgorsl.NedoEngine.math.Matrix4_4f;
+import android.content.res.Resources;
 
 /**
  * something which can be rendered
  *
  * Created by lgor on 23.11.2014.
  */
-public interface Renderable {
+public interface Renderable<ParamType> {
 
-    void render(Matrix4_4f matrix4_4f);
+    /**
+     * loading raw resources like images
+     */
+    void load(Resources resources);
+
+    /**
+     * rendering something
+     */
+    void render(ParamType params);
+
 }

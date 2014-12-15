@@ -2,24 +2,32 @@ package com.vk.lgorsl.cossacks.graphics;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
-import com.vk.lgorsl.NedoEngine.openGL.GLHelper;
+import com.vk.lgorsl.NedoEngine.openGL.*;
 import com.vk.lgorsl.NedoEngine.utils.FPSCounter;
 import com.vk.lgorsl.NedoEngine.utils.NedoLog;
+import com.vk.lgorsl.cossacks.world.WorldInstance;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static android.opengl.GLES20.*;
 
 /**
+ * main game render.
+ *
  * Created by lgor on 13.12.2014.
  */
-public class MapRenderer implements GLSurfaceView.Renderer {
+public class GameRenderer implements GLSurfaceView.Renderer {
 
     private Context context;
     private final FPSCounter clock;
 
-    public MapRenderer(Context context){
+    private final List<Renderable<WorldInstance>> renderers = new ArrayList<>();
+
+    public GameRenderer(Context context){
         setContext(context);
         clock = new FPSCounter();
     }
@@ -33,6 +41,11 @@ public class MapRenderer implements GLSurfaceView.Renderer {
         NedoLog.log("surface Created");
 
         GLHelper.checkError();
+
+
+        for(Renderable<WorldInstance> rend : renderers){
+            rend.load(context.getResources());
+        }
     }
 
     @Override
@@ -56,5 +69,9 @@ public class MapRenderer implements GLSurfaceView.Renderer {
         glClear(GL_COLOR_BUFFER_BIT);
 
         GLHelper.checkError();
+
+        for(Renderable<WorldInstance> rend : renderers){
+            rend.load(context.getResources());
+        }
     }
 }

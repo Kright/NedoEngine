@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 
 import static android.opengl.GLES20.*;
 
+import android.content.res.Resources;
 import android.os.Build;
 import com.vk.lgorsl.NedoEngine.math.Matrix4_4f;
 
@@ -15,7 +16,7 @@ import java.nio.FloatBuffer;
  *
  * Created by lgor on 29.11.2014.
  */
-public class Quad implements Renderable {
+public class Quad implements Renderable<Matrix4_4f> {
 
     private static final Object monitor = new Object();
 
@@ -44,6 +45,15 @@ public class Quad implements Renderable {
     @TargetApi(Build.VERSION_CODES.FROYO)
     public Quad(Texture2D texture) {
         this.texture = texture;
+        load(null);
+    }
+
+    public void setTexture(Texture2D texture){
+        this.texture = texture;
+    }
+
+    @Override
+    public void load(Resources resources) {
         synchronized (monitor) {
             if (fb == null) {
                 fb = GLHelper.make(new float[]{
@@ -54,10 +64,6 @@ public class Quad implements Renderable {
                 shader = new CleverShader(vertexCode, fragmentCode);
             }
         }
-    }
-
-    public void setTexture(Texture2D texture){
-        this.texture = texture;
     }
 
     @TargetApi(Build.VERSION_CODES.FROYO)
@@ -79,4 +85,6 @@ public class Quad implements Renderable {
 
         shader.disableAllVertexAttribArray();
     }
+
+
 }
