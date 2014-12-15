@@ -18,6 +18,17 @@ public class Point2i implements iPoint2i {
         return this;
     }
 
+    public Point2i set(iPoint2i src){
+        x = src.x();
+        y = src.y();
+        return this;
+    }
+
+    public void add(iPoint2i add){
+        x += add.x();
+        y += add.y();
+    }
+
     @Override
     public int x() {
         return x;

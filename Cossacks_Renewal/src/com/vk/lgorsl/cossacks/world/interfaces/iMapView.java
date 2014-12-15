@@ -1,8 +1,6 @@
 package com.vk.lgorsl.cossacks.world.interfaces;
 
-import com.vk.lgorsl.NedoEngine.math.Matrix4_4f;
-import com.vk.lgorsl.NedoEngine.math.iPoint2i;
-import com.vk.lgorsl.NedoEngine.math.iRectangle2i;
+import com.vk.lgorsl.NedoEngine.math.*;
 
 /**
  * game camera;
@@ -14,16 +12,28 @@ public interface iMapView {
     /**
      * @return center of view;
      */
-    public iPoint2i center();
+    iPoint2i center();
+
+    void setCenterPosition(iPoint2i newCenter);
+
+    void setScale(float scale);
+
+    void setDirectionOfView(float dx, float dy);
+
+    /**
+     * @param angle in degrees
+     * 90 is vertical, 0 is horizontal field of view;
+     */
+    void setInclination(float angle);
 
     /**
      * @return projection matrix for openGL
      */
-    public Matrix4_4f projection();
+    Matrix4_4f projection();
 
     /**
      * то, что снаружи bounding box, заведомо не рисуется.
      * @return bounds
      */
-    public iRectangle2i boundingBox();
+    iRectangle2i boundingBox();
 }

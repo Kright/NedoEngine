@@ -4,7 +4,7 @@ package com.vk.lgorsl.NedoEngine.math;
  * Rectangle.
  * I don't use standard Rect class because I don't agree with realization of some methods and can't to override it -
  * Rect class is final :(
- * <p/>
+ * <p>
  * Created by lgor on 13.12.2014.
  */
 public class Rectangle2i implements iRectangle2i {
@@ -20,6 +20,14 @@ public class Rectangle2i implements iRectangle2i {
         this.yMin = yMin;
         this.xMax = xMax;
         this.yMax = yMax;
+        return this;
+    }
+
+    public Rectangle2i set(iRectangle2i rectangle2i) {
+        xMin = rectangle2i.xMin();
+        yMin = rectangle2i.yMin();
+        xMax = rectangle2i.xMax();
+        yMax = rectangle2i.yMax();
         return this;
     }
 

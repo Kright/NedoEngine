@@ -10,16 +10,22 @@ import com.vk.lgorsl.NedoEngine.math.iRectangle2i;
  */
 public class WorldMetrics {
 
+    private final int maxHeight;
     private final int meterOffset;
     private final iRectangle2i boudns;
 
-    private WorldMetrics(int width, int height, int meterOffset) {
-        boudns = new Rectangle2i(0, 0, width, height);
+    private WorldMetrics(int mapWidth, int mapHeight, int maxHeight, int meterOffset) {
+        boudns = new Rectangle2i(0, 0, mapWidth, mapHeight);
         this.meterOffset = meterOffset;
+        this.maxHeight = maxHeight;
     }
 
     public iRectangle2i mapSize() {
         return boudns;
+    }
+
+    public int maxHeight(){
+        return maxHeight;
     }
 
     public int meterSize() {
@@ -32,6 +38,6 @@ public class WorldMetrics {
 
     public static WorldMetrics sizeInMeters(int size, int meterOffset) {
         size *= (1 << meterOffset);
-        return new WorldMetrics(size, size, meterOffset);
+        return new WorldMetrics(size, size, 30*(1<<meterOffset), meterOffset);
     }
 }

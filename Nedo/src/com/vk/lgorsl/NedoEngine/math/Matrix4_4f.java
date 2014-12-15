@@ -135,6 +135,12 @@ public class Matrix4_4f {
         arr[14] += v.z;
     }
 
+    public void translate(float x, float y, float z){
+        arr[12] += x;
+        arr[13] += y;
+        arr[14] += z;
+    }
+
     public void translate(Vect3f v, float mul) {
         arr[12] += v.x * mul;
         arr[13] += v.y * mul;
