@@ -5,7 +5,6 @@ import android.opengl.GLSurfaceView;
 import com.vk.lgorsl.NedoEngine.openGL.*;
 import com.vk.lgorsl.NedoEngine.utils.FPSCounter;
 import com.vk.lgorsl.NedoEngine.utils.NedoLog;
-import com.vk.lgorsl.cossacks.world.WorldInstance;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -25,7 +24,8 @@ public class GameRenderer implements GLSurfaceView.Renderer {
     private Context context;
     private final FPSCounter clock;
 
-    private final List<Renderable<WorldInstance>> renderers = new ArrayList<>();
+    private final List<Renderable<LoadedData, RendererParams>> renderers = new ArrayList<>();
+    private RendererParams params;
 
     public GameRenderer(Context context){
         setContext(context);
@@ -42,11 +42,14 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 
         GLHelper.checkError();
 
+        LoadedData data = new LoadedData(context.getResources());
 
-        for(Renderable<WorldInstance> rend : renderers){
-            rend.load(context.getResources());
+        for(Renderable<LoadedData, RendererParams> rend : renderers){
+            rend.load(data);
         }
     }
+
+
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
@@ -70,8 +73,13 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 
         GLHelper.checkError();
 
-        for(Renderable<WorldInstance> rend : renderers){
-            rend.load(context.getResources());
+        for(Renderable<LoadedData, RendererParams> rend : renderers){
+            rend.render(params);
+            GLHelper.checkError();
         }
+    }
+
+    public void setParams(RendererParams params) {
+        this.params = params;
     }
 }
