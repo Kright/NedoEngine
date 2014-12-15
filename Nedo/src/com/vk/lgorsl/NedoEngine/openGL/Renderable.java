@@ -7,12 +7,12 @@ import android.content.res.Resources;
  *
  * Created by lgor on 23.11.2014.
  */
-public interface Renderable<ParamType> {
+public interface Renderable<LoadType, ParamType> {
 
     /**
      * loading raw resources like images
      */
-    void load(Resources resources);
+    void load(LoadType loadType);
 
     /**
      * rendering something

@@ -16,7 +16,7 @@ import java.nio.FloatBuffer;
  *
  * Created by lgor on 29.11.2014.
  */
-public class Quad implements Renderable<Matrix4_4f> {
+public class Quad implements Renderable<Void, Matrix4_4f> {
 
     private static final Object monitor = new Object();
 
@@ -53,7 +53,7 @@ public class Quad implements Renderable<Matrix4_4f> {
     }
 
     @Override
-    public void load(Resources resources) {
+    public void load(Void nothing) {
         synchronized (monitor) {
             if (fb == null) {
                 fb = GLHelper.make(new float[]{
