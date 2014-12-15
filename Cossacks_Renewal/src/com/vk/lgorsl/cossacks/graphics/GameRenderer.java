@@ -24,7 +24,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
     private Context context;
     private final FPSCounter clock;
 
-    private final List<Renderable<LoadedData, RendererParams>> renderers = new ArrayList<>();
+    private final List<GameRenderable> renderers = new ArrayList<>();
     private RendererParams params;
 
     public GameRenderer(Context context){
@@ -44,12 +44,10 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 
         LoadedData data = new LoadedData(context.getResources());
 
-        for(Renderable<LoadedData, RendererParams> rend : renderers){
+        for(GameRenderable rend : renderers){
             rend.load(data);
         }
     }
-
-
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
@@ -73,7 +71,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 
         GLHelper.checkError();
 
-        for(Renderable<LoadedData, RendererParams> rend : renderers){
+        for(GameRenderable rend : renderers){
             rend.render(params);
             GLHelper.checkError();
         }
