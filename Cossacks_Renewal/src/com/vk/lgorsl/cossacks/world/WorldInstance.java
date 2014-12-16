@@ -24,7 +24,7 @@ public class WorldInstance {
         metrics = WorldMetrics.sizeInMeters(128, 5);
         GridLandscape land = new GridLandscape(metrics);
         heightGrid = land.grid;
-        heightGrid.randomHeight(3);
+        heightGrid.randomHeight(7);
         map = land;
         trees = new NaiveMap<>(metrics);
     }

@@ -18,8 +18,17 @@ public class MapView implements iMapView {
     private final Rectangle2i viewBounds = new Rectangle2i(0, 0, 0, 0);
     private final Matrix4_4f matrix4_4f = new Matrix4_4f();
     private final Vect2f directionOfView = new Vect2f().set(0, 1);
+
+    private final float baseScale = 0.001f;
+
     private float scale = 0.001f;
-    private float inclinationAngle = 60;
+    private float scaleVertical = 1f;
+    private float inclinationAngle = 60 / 180 * (float) Math.PI;
+
+    private final Vect3f
+            xProjection = new Vect3f(),
+            yProjection = new Vect3f(),
+            upProjection = new Vect3f();
 
     public MapView(Point2i center, WorldMetrics metrics) {
         this.center = center;
@@ -43,7 +52,13 @@ public class MapView implements iMapView {
 
     @Override
     public void setScale(float scale) {
-        this.scale = scale;
+        this.scale = scale * baseScale;
+        updateMatrixAndBounds();
+    }
+
+    @Override
+    public void setVerticalScale(float scale) {
+        scaleVertical = scale;
         updateMatrixAndBounds();
     }
 
@@ -51,6 +66,21 @@ public class MapView implements iMapView {
     public void setDirectionOfView(float dx, float dy) {
         directionOfView.set(dx, dy).normalize();
         updateMatrixAndBounds();
+    }
+
+    @Override
+    public Vect3f getXProjection() {
+        return xProjection;
+    }
+
+    @Override
+    public Vect3f getYProjection() {
+        return yProjection;
+    }
+
+    @Override
+    public Vect3f getUpProjection() {
+        return upProjection;
     }
 
     @Override
@@ -70,32 +100,25 @@ public class MapView implements iMapView {
     }
 
     private void updateMatrixAndBounds() {
-        matrix4_4f.makeIdentity();
-        float[] array = matrix4_4f.getArray();
         final float sin = FloatMath.sin(inclinationAngle);
         final float cos = FloatMath.cos(inclinationAngle);
-        Vect2f vi = new Vect2f().set(directionOfView.y, directionOfView.x);
-        Vect2f vj = new Vect2f().set(-directionOfView.x, directionOfView.y);
-
-        vi.mul(scale);
-        vj.mul(scale);
-
-        array[0] = vi.x;
-        array[4] = vj.x;
-
-        array[1] = vi.y*sin;
-        array[5] = vj.y*sin;
-        array[9] = cos*scale;
 
         //TODO calculate coefficient
         float k=0.8f;
-        array[2] = k * array[1];
-        array[6] = k * array[5];
-        array[10] = 0f;
 
-        array[12] = - (center.x * vi.x + center.y * vj.x);
-        array[13] = - (center.x * vi.y + center.y * vj.y);
-        array[14] = k * array[13]  +  (1-k);
+        xProjection.set(directionOfView.y, directionOfView.x*sin, directionOfView.x*k*sin).mul(scale);
+        yProjection.set(-directionOfView.x, directionOfView.y*sin, directionOfView.y*k*sin).mul(scale);
+        upProjection.set(0, cos*scale*scaleVertical, 0);
+
+        matrix4_4f.setColumn(0, xProjection, 0);
+        matrix4_4f.setColumn(1, yProjection, 0);
+        matrix4_4f.setColumn(2, upProjection, 0);
+
+        matrix4_4f.setColumn(3,
+                - (center.x * xProjection.x + center.y * yProjection.x),
+                - (center.x * xProjection.y + center.y * yProjection.y),
+                - (center.x * xProjection.y + center.y * yProjection.y)*k + (1-k),
+                1f);
 
         /**
          *  i.x     j.x     0       dx

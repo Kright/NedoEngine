@@ -16,9 +16,25 @@ public interface iMapView {
 
     void setCenterPosition(iPoint2i newCenter);
 
+    /**
+     * @param scale - will be applied to all axises
+     */
     void setScale(float scale);
 
+    /**
+     * @param scale only for vertical axis.
+     */
+    void setVerticalScale(float scale);
+
     void setDirectionOfView(float dx, float dy);
+
+
+
+    public Vect3f getXProjection();
+
+    public Vect3f getYProjection();
+
+    public Vect3f getUpProjection();
 
     /**
      * @param angle in degrees

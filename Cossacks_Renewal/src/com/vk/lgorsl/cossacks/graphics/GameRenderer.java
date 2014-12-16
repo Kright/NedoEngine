@@ -1,9 +1,11 @@
 package com.vk.lgorsl.cossacks.graphics;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.opengl.GLSurfaceView;
 import android.util.FloatMath;
 import com.vk.lgorsl.NedoEngine.math.Point2i;
+import com.vk.lgorsl.NedoEngine.math.iRectangle2i;
 import com.vk.lgorsl.NedoEngine.openGL.*;
 import com.vk.lgorsl.NedoEngine.utils.FPSCounter;
 import com.vk.lgorsl.NedoEngine.utils.NedoLog;
@@ -80,9 +82,12 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 
         float t = (clock.framesCount()%628)/100f;
         rendererParams.mapView.setDirectionOfView(FloatMath.sin(t), FloatMath.cos(t));
-        rendererParams.mapView.setInclination(50+40*FloatMath.sin(t));
-        rendererParams.mapView.setCenterPosition(new Point2i().set(512,512));
-        //rendererParams.mapView.setScale((1.3f + FloatMath.sin(t))/ 1.3f);
+        rendererParams.mapView.setInclination(50 + 40 * FloatMath.sin(t));
+        iRectangle2i mapSize = rendererParams.world.metrics.mapSize();
+        Point2i position = new Point2i().set(mapSize.xCenter(), mapSize.yCenter());
+        rendererParams.mapView.setCenterPosition(position);
+        rendererParams.mapView.setScale((1.3f + FloatMath.sin(t)) / 1.3f);
+        rendererParams.mapView.setVerticalScale(0.2f);
 
         for(GameRenderable rend : renderers){
             rend.render(rendererParams);

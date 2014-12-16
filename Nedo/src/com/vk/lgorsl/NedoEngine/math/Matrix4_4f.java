@@ -129,6 +129,22 @@ public class Matrix4_4f {
         return this;
     }
 
+    public void setColumn(int number, Vect3f xyz, float w){
+        final int offset = number*4;
+        arr[offset] = xyz.x;
+        arr[offset+1] = xyz.y;
+        arr[offset+2] = xyz.z;
+        arr[offset+3] = w;
+    }
+
+    public void setColumn(int number, float x, float y, float z, float w){
+        final int offset = number*4;
+        arr[offset] = x;
+        arr[offset+1] = y;
+        arr[offset+2] = z;
+        arr[offset+3] = w;
+    }
+
     public void translate(Vect3f v) {
         arr[12] += v.x;
         arr[13] += v.y;
