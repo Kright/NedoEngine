@@ -49,7 +49,7 @@ public class Point2i implements iPoint2i {
     }
 
     /*
-     * I can't use Java 8 features and made this method as default or static in iPoint2i interface
+     * I can't use Java 8 features and make this method as default or static in iPoint2i interface
      * because of android :(
      */
 

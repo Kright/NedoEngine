@@ -25,8 +25,8 @@ import java.util.List;
  */
 public class CleverShader extends Shader {
 
-    private final HashMap<String, Integer> locations = new HashMap<String, Integer>(16);
-    private final List<Integer> attributes = new ArrayList<Integer>(8);
+    private final HashMap<String, Integer> locations = new HashMap<>(16);
+    private final List<Integer> attributes = new ArrayList<>(8);
 
     public CleverShader(int vertexId, int pixelId) {
         super(vertexId, pixelId);
@@ -56,6 +56,11 @@ public class CleverShader extends Shader {
         GLHelper.checkError();
         String[] ss = code.split("[; \n]+");
         for (int i = 0; i < ss.length; i++) {
+            int pos = ss[i].indexOf("//", 0);
+            if (pos==0) continue;
+            if (pos > 0) {
+                ss[i] = ss[i].substring(0, pos);
+            }
             if (ss[i].equals("uniform")) {
                 i += 2;
                 locations.put(ss[i], super.getUniformLocation(ss[i]));
