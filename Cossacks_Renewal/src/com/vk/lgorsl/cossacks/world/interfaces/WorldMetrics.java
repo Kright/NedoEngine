@@ -12,6 +12,7 @@ public class WorldMetrics {
 
     private final int maxHeight;
     private final int meterOffset;
+
     private final iRectangle2i boudns;
 
     private WorldMetrics(int mapWidth, int mapHeight, int maxHeight, int meterOffset) {
@@ -33,6 +34,10 @@ public class WorldMetrics {
     }
 
     public int getRShiftToMeter() {
+        return meterOffset;
+    }
+
+    public int heightMeterSize(){
         return meterOffset;
     }
 

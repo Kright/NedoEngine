@@ -1,6 +1,6 @@
 package com.vk.lgorsl.cossacks.world.realizations;
 
-import com.vk.lgorsl.NedoEngine.math.iPoint2i;
+import com.vk.lgorsl.NedoEngine.math.Rectangle2i;
 
 import java.util.Random;
 
@@ -31,14 +31,53 @@ public class HeightGrid {
         data = new short[gridH * gridW];
     }
 
-    public final int getHeight(iPoint2i position) {
-        return getHeight(position.x(), position.y());
+    private void addHeight(Rectangle2i rect, float dh1, float dh2, float dh3, float dh4){
+        for(int x=rect.xMin; x<=rect.xMax; x++){
+            float kx = (x-rect.xMin)/(float)rect.width();
+            for(int y=rect.yMin; y<=rect.yMax; y++){
+                int n = getIndex(x, y);
+                if (n<0) continue;
+                float ky = (y-rect.yMin)/(float)rect.height();
+                float dh = (1-ky)*(dh1*(1-kx) + kx*dh2) + ky*(dh3*(1-kx)+kx*dh4);
+                data[n] += (short)dh;
+            }
+        }
     }
 
-    public void randomHeight(int max){
+    private int getIndex(int x, int y) {
+        if (contains(x, y)) {
+            return y * width + x;
+        }
+        return -1;
+    }
+
+    private boolean contains(int x, int y) {
+        return x >= 0 && x < width && y >= 0 && y < height;
+    }
+
+    //crazy temporal code
+    public void randomHeight(int levels, float max, float persistence) {
         Random rnd = new Random();
-        for(int i=0; i<data.length; i++){
-            data[i] = (short)rnd.nextInt(max);
+        Rectangle2i rect = new Rectangle2i(0, 0, width-1, height-1);
+        int size = width;
+        int pow = 1;
+        float dh = max;
+        for(int level=0; level<levels && size>1 && dh>1; level++){
+            float[][] h = new float[pow+1][pow+1];
+            for(int dx=0; dx<pow+1; dx++){
+                for(int dy=0; dy<pow+1; dy++){
+                    h[dx][dy] = dh * (float)rnd.nextGaussian();
+                }
+            }
+            for(int dx=0; dx<pow; dx++){
+                for(int dy=0; dy<pow; dy++){
+                    rect.set(dx*size, dy*size, (dx+1)*size-1, (dy+1)*size-1);
+                    addHeight(rect, h[dx][dy], h[dx+1][dy], h[dx][dy+1], h[dx+1][dy+1]);
+                }
+            }
+            size /= 2;
+            pow *= 2;
+            dh *= persistence;
         }
     }
 
@@ -60,34 +99,33 @@ public class HeightGrid {
             if (dx > dy) {
                 int pos1 = row * width + column;
                 int pos3 = (row + 1) * width + column;
-                if (!even(row)){
+                if (!even(row)) {
                     pos3++;
                 }
-                return simpleTriangle(dx, dy, size, pos1, pos1+1, pos3);
+                return simpleTriangle(dx, dy, size, pos1, pos1 + 1, pos3);
             } else {
                 int pos3 = row * width + column;
                 int pos1 = pos3 + width;
-                if (!even(row)){
+                if (!even(row)) {
                     pos1--;
                 }
-                return simpleTriangle(dx - size, size - dy, size, pos1, pos1+1, pos3);
+                return simpleTriangle(dx - size, size - dy, size, pos1, pos1 + 1, pos3);
             }
         } else {
-            if (dx+dy<size){
+            if (dx + dy < size) {
                 int pos1 = row * width + column;
                 int pos3 = (row + 1) * width + column;
-                if (!even(row)){
+                if (!even(row)) {
                     pos3++;
                 }
-                return simpleTriangle(dx, dy, size, pos1, pos1+1, pos3);
-            }
-            else {
+                return simpleTriangle(dx, dy, size, pos1, pos1 + 1, pos3);
+            } else {
                 int pos3 = 1 + row * width + column;
                 int pos1 = pos3 + width;
-                if (!even(row)){
+                if (!even(row)) {
                     pos1--;
                 }
-                return simpleTriangle(dx - size, size - dy, size, pos1, pos1+1, pos3);
+                return simpleTriangle(dx - size, size - dy, size, pos1, pos1 + 1, pos3);
             }
         }
     }

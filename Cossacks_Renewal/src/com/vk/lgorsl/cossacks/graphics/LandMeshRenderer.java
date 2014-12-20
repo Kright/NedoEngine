@@ -40,14 +40,14 @@ public class LandMeshRenderer implements GameRenderable {
         }
     }
 
-    private void createGrid(HeightGrid grid, float scale) {
+    private void createGrid(HeightGrid grid, float meterSize, float scale) {
         float[] f = new float[grid.data.length * 3];
         for (int i = 0; i < grid.data.length; i++) {
             int x = i % grid.width;
             int y = i / grid.width;
             f[3 * i] = scale* (x + (y % 2 == 1 ? 0.5f : 0f));
             f[3 * i + 1] = scale * y;
-            f[3 * i + 2] = scale * grid.data[i];
+            f[3 * i + 2] = scale * grid.data[i]/meterSize;
         }
         fb = GLHelper.make(f);
 
@@ -79,7 +79,7 @@ public class LandMeshRenderer implements GameRenderable {
         //crazy code, I will fix it
         load(null);
         if (sb == null) {
-            createGrid(params.world.heightGrid, params.world.metrics.meterSize());
+            createGrid(params.world.heightGrid, params.world.metrics.meterSize(), params.world.metrics.meterSize());
         }
 
         shader.useProgram();
