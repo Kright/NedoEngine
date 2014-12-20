@@ -86,7 +86,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         iRectangle2i mapSize = rendererParams.world.metrics.mapSize();
         Point2i position = new Point2i().set(mapSize.xCenter(), mapSize.yCenter());
         rendererParams.mapView.setCenterPosition(position);
-        rendererParams.mapView.setScale((1.3f + FloatMath.sin(t)) / 1.3f);
+        rendererParams.mapView.setScale((1.3f + FloatMath.sin(t)) / 1.3f / 2);
         rendererParams.mapView.setVerticalScale(0.2f);
 
         for(GameRenderable rend : renderers){

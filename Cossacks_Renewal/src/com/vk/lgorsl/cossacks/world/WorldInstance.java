@@ -21,7 +21,7 @@ public class WorldInstance {
     public HeightGrid heightGrid;
 
     public void load(){
-        metrics = WorldMetrics.sizeInMeters(128, 5);
+        metrics = WorldMetrics.sizeInMeters(255, 5);
         GridLandscape land = new GridLandscape(metrics);
         heightGrid = land.grid;
         heightGrid.randomHeight(7);
