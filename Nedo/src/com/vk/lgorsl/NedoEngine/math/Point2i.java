@@ -48,6 +48,11 @@ public class Point2i implements iPoint2i {
         return equals(this, point);
     }
 
+    /*
+     * I can't use Java 8 features and made this method as default or static in iPoint2i interface
+     * because of android :(
+     */
+
     public static boolean equals(iPoint2i f, iPoint2i s) {
         return f.x() == s.x() && f.y() == s.y();
     }
