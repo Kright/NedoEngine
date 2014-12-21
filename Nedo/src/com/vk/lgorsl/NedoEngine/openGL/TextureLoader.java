@@ -95,15 +95,15 @@ public class TextureLoader {
      *                  GL_NEAREST_MIPMAP_LINEAR,
      *                  GL_LINEAR_MIPMAP_LINEAR
      * @param magFilter
-     *                  GL_NEAREST
+     *                  GL_NEAREST,
      *                  GL_LINEAR
      * @param wrapS
-     *                  GL_CLAMP_TO_EDGE
-     *                  GL_MIRRORED_REPEAT
+     *                  GL_CLAMP_TO_EDGE,
+     *                  GL_MIRRORED_REPEAT,
      *                  GL_REPEAT
      * @param wrapT
-     *                  GL_CLAMP_TO_EDGE
-     *                  GL_MIRRORED_REPEAT
+     *                  GL_CLAMP_TO_EDGE,
+     *                  GL_MIRRORED_REPEAT,
      *                  GL_REPEAT
      */
     public static void setParameters(int minFilter, int magFilter, int wrapS, int wrapT){
