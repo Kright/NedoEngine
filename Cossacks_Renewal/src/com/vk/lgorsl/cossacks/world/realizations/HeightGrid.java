@@ -31,7 +31,7 @@ public class HeightGrid {
         data = new short[gridH * gridW];
     }
 
-    private void addHeight(Rectangle2i rect, float dh1, float dh2, float dh3, float dh4){
+    public void addHeight(Rectangle2i rect, float dh1, float dh2, float dh3, float dh4){
         for(int x=rect.xMin; x<=rect.xMax; x++){
             float kx = (x-rect.xMin)/(float)rect.width();
             for(int y=rect.yMin; y<=rect.yMax; y++){

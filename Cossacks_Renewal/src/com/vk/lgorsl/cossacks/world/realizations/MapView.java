@@ -104,7 +104,7 @@ public class MapView implements iMapView {
         final float cos = FloatMath.cos(inclinationAngle);
 
         //TODO calculate coefficient
-        float k=0.8f;
+        float k=1.0f;
 
         xProjection.set(directionOfView.y, directionOfView.x*sin, directionOfView.x*k*sin).mul(scale);
         yProjection.set(-directionOfView.x, directionOfView.y*sin, directionOfView.y*k*sin).mul(scale);

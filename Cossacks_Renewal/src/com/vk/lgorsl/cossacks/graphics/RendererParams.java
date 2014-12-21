@@ -1,8 +1,13 @@
 package com.vk.lgorsl.cossacks.graphics;
 
 import com.vk.lgorsl.NedoEngine.math.Matrix4_4f;
+import com.vk.lgorsl.NedoEngine.math.Point2i;
+import com.vk.lgorsl.NedoEngine.openGL.Texture2D;
 import com.vk.lgorsl.cossacks.world.WorldInstance;
 import com.vk.lgorsl.cossacks.world.interfaces.iMapView;
+
+import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
 
 /**
  * params for rendering
@@ -17,8 +22,14 @@ public class RendererParams {
 
     //lightning
     public boolean lightningRendering = true;
-    public final int depthTextureSize = 512;
+    public final Point2i defaultViewPortSize = new Point2i();
     public final Matrix4_4f lightningMatrix = new Matrix4_4f();
+    public Texture2D depthTexture;
+    public iMapView lightningView;
+
+    //temporal data
+    public FloatBuffer meshVertices;
+    public ShortBuffer meshIndices;
 
     public RendererParams(WorldInstance world, iMapView mapView) {
         this.world = world;

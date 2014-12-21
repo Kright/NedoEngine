@@ -34,12 +34,16 @@ public class GameRenderer implements GLSurfaceView.Renderer {
     private LoadedData loadedData;
     private RendererParams rendererParams;
 
+    //4 debug
+    Quad quad;
+
     public GameRenderer(Context context){
         loadedData = new LoadedData(context.getResources());
         world = new WorldInstance();
         world.load();
 
         rendererParams = new RendererParams(world, new MapView(new Point2i().set(32, 32),world.metrics));
+        rendererParams.lightningView = new MapView(new Point2i().set(32, 32),world.metrics);
 
         clock = new FPSCounter();
     }
@@ -50,16 +54,24 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 
         GLHelper.checkError();
 
+        renderers.add(new LightRenderer());
         renderers.add(new LandMeshRenderer());
+        //renderers.add(new LandMeshGridRenderer());
+
+        quad = new Quad(null);
+        quad.load(null);
+
         for(GameRenderable rend : renderers){
             rend.load(loadedData);
         }
+
         Shader.releaseCompiler();
     }
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         NedoLog.log("surface Updated, w = " + width + ", h = " + height );
+        rendererParams.defaultViewPortSize.set(width, height);
         glViewport(0, 0, width, height);
 
         GLHelper.checkError();
@@ -75,22 +87,55 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 
         float c = clock.framesCount()%2==0? 1 : 0;
         glClearColor(0.5f, c, 1-c, 0);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClearDepthf(1f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         GLHelper.checkError();
 
-        float t = (clock.framesCount()%628)/100f;
+        glFrontFace(GL_CW);
+        glCullFace(GL_FRONT);
+        glEnable(GL_CULL_FACE);
+
+        glEnable(GL_DEPTH_TEST);
+
+        GLHelper.checkError();
+
+        float t = (clock.framesCount()%(628*2))/100f;
         rendererParams.mapView.setDirectionOfView(FloatMath.sin(t), FloatMath.cos(t));
-        rendererParams.mapView.setInclination(60 + 20 * FloatMath.sin(t));
+        rendererParams.mapView.setInclination(50+20*FloatMath.sin(t));
+
+        rendererParams.lightningView.setDirectionOfView(FloatMath.sin(t/2), FloatMath.cos(t/2));
+        rendererParams.lightningView.setInclination(30+10*FloatMath.cos(t/2));
+
         iRectangle2i mapSize = rendererParams.world.metrics.mapSize();
         Point2i position = new Point2i().set(mapSize.xCenter(), mapSize.yCenter());
+
         rendererParams.mapView.setCenterPosition(position);
         rendererParams.mapView.setScale((1.3f + FloatMath.sin(t)) / 1.3f / 2);
         rendererParams.mapView.setVerticalScale(1f);
+
+        rendererParams.lightningView.setCenterPosition(position);
+        rendererParams.lightningView.setScale(0.3f);
+        rendererParams.lightningView.setVerticalScale(1f);
 
         for(GameRenderable rend : renderers){
             rend.render(rendererParams);
             GLHelper.checkError();
         }
+
+        /*
+        glClearColor(0.5f, c, 1-c, 0);
+        glClearDepthf(1f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glDisable(GL_CULL_FACE);
+
+        Texture2D depthTexture = rendererParams.depthTexture;
+        if (depthTexture!=null) {
+            quad.setTexture(depthTexture);
+            Matrix4_4f m = new Matrix4_4f();
+            m.getArray()[5]=-1;
+            quad.render(m);
+        }
+        */
     }
 }

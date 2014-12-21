@@ -28,8 +28,6 @@ public interface iMapView {
 
     void setDirectionOfView(float dx, float dy);
 
-
-
     public Vect3f getXProjection();
 
     public Vect3f getYProjection();
