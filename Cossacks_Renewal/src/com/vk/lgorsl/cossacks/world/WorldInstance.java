@@ -26,9 +26,12 @@ public class WorldInstance {
         heightGrid = land.grid;
 
         heightGrid.randomHeight(7, 8*metrics.meterSize(), 0.8f);
+
         /*
-        final float h = 500;
-        final int size = 12;
+        final float h = 300;
+        int size = 12;
+        heightGrid.addHeight(new Rectangle2i(128-size, 128-size, 128+size, 128+size), h, h, h, h);
+        size-=1;
         heightGrid.addHeight(new Rectangle2i(128-size, 128-size, 128+size, 128+size), h, h, h, h);
         heightGrid.addHeight(new Rectangle2i(177, 177, size+177, size+177), h, h, h, h);
         */

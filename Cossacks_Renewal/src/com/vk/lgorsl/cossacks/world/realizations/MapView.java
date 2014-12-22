@@ -106,8 +106,13 @@ public class MapView implements iMapView {
         //TODO calculate coefficient
         float k=1.0f;
 
+        /*
         xProjection.set(directionOfView.y, directionOfView.x*sin, directionOfView.x*k*sin).mul(scale);
         yProjection.set(-directionOfView.x, directionOfView.y*sin, directionOfView.y*k*sin).mul(scale);
+        upProjection.set(0, cos*scale*scaleVertical, 0);
+        */
+        xProjection.set(-directionOfView.y, directionOfView.x*sin, directionOfView.x*k*sin).mul(scale);
+        yProjection.set(directionOfView.x, directionOfView.y*sin, directionOfView.y*k*sin).mul(scale);
         upProjection.set(0, cos*scale*scaleVertical, 0);
 
         matrix4_4f.setColumn(0, xProjection, 0);

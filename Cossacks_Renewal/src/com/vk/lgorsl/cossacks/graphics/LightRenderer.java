@@ -19,7 +19,7 @@ import com.vk.lgorsl.NedoEngine.utils.NedoException;
  */
 public class LightRenderer implements GameRenderable {
 
-    public final static int depthTextureSize = 1024;
+    public final static int depthTextureSize = 512;
 
     private final int[]
             frameBuffer = new int[1],
@@ -58,6 +58,7 @@ public class LightRenderer implements GameRenderable {
         }
 
         shader = new CleverShader(
+                "precision mediump float;" +
                 "uniform mat4 uMatrix;\n" +
                 "attribute vec3 aPosition;\n" +
                 "varying float vZ;\n" +
@@ -68,10 +69,19 @@ public class LightRenderer implements GameRenderable {
                 "varying float vZ;\n" +
                         "vec4 pack(float d){\n" +
                         "   float c = 0.5*d+0.5;" +
-                        "   return vec4(c, fract(c*256.0), fract(256.0*256.0*c), 0.0);" +
+                        "   return vec4(floor(c*256.0)/256.0, 0.0, 0.0, 0.0);" +
+                        "}\n" +
+                        "vec4 Pack(float Value)\n" +
+                        "{\n" +
+                        "    Value = Value*0.5+0.5;\n" +
+                        "    const vec4 BitSh  = vec4( 256.0 * 256.0 * 256.0, 256.0 * 256.0, 256.0, 1.0);\n" +
+                        "    const vec4 BitMsk = vec4( 0.0, 1.0 / 256.0, 1.0 / 256.0, 1.0 / 256.0 );\n" +
+                        "    vec4 Comp = fract( Value * BitSh );\n" +
+                        "    Comp -= Comp.xxyz * BitMsk;\n" +
+                        "    return Comp;\n" +
                         "}\n" +
                         "void main(){\n" +
-                        "gl_FragColor = pack(vZ);\n" +
+                        "gl_FragColor = Pack(vZ);\n" +
                 "}\n");
     }
 
