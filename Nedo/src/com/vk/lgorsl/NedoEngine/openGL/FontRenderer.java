@@ -1,6 +1,5 @@
 package com.vk.lgorsl.NedoEngine.openGL;
 
-import android.content.res.Resources;
 import com.vk.lgorsl.NedoEngine.math.Matrix4_4f;
 
 import java.nio.ByteBuffer;
@@ -14,7 +13,7 @@ import static android.opengl.GLES20.*;
  * draws immutable text string on screen
  * Created by lgor on 29.11.2014.
  */
-public class FontRenderer implements Renderable<Void, Matrix4_4f> {
+public class FontRenderer implements Renderable<Object, Matrix4_4f> {
 
     private static CleverShader shader;
     private static ShortBuffer table;   //таблица с индексами одна на всех
@@ -92,7 +91,7 @@ public class FontRenderer implements Renderable<Void, Matrix4_4f> {
     }
 
     @Override
-    public void load(Void nothing) {
+    public void load(Object nothing) {
         if (shader == null) {
             shader = new CleverShader(vertexShader, fragmentShader);
             short[] indices = new short[6 * maxLettersCount];
