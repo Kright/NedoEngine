@@ -53,37 +53,30 @@ public class LandMeshRenderer implements GameRenderable {
                     "   gl_Position = uMatrix * vec4(aPosition.xyz, 1.0);\n" +
                     "   vInv.xyz = (uMatrixShadow * vec4(aPosition.xyz, 1.0)).xyz;\n" +
                     "   vNormal = aNormal;\n" +
-                    "   if (abs(vInv.x)>1.0 || abs(vInv.y)>1.0 ){ vNormal *= 0.0; }\n" +
-                    "   vInv.xy = vInv.xy*0.5+vec2(0.5, 0.5);\n" +
-                    "   vInv.w = aPosition.z*0.0002;\n" +
+                    "   vInv.xy = (vInv.xy*0.5+vec2(0.5, 0.5));\n" +
+                    "   vInv.w = aPosition.z*0.001;\n" +
                     "}",
-                    "precision mediump float;\n" +
-                            "uniform vec4 uColor;\n" +
+                            "uniform vec4 uColorAmbient;\n" +
+                            "uniform vec4 uColorDiffuse;\n" +
                             "uniform vec3 uLightDirection;\n" +
                             "uniform float uEps;\n" +
                             "uniform sampler2D uDepthMap; \n" +
                             "varying vec4 vInv;\n" +
                             "varying vec3 vNormal;\n" +
                             "float unpack(vec4 c){\n" +
-                            "    const vec4 BitShifts = vec4( 1.0, 1.0/256.0, 1.0/(256.0*256.0), 1.0/(256.0*256.0*256.0) );\n" +
-                            "    return -1.0+2.0*dot(c, BitShifts);\n" +
-                            "}\n" +
-                            "float Unpack(vec4 Value)\n" +
-                            "{\n" +
-                            "    const vec4 BitShifts = vec4( 1.0 / (256.0 * 256.0 * 256.0), 1.0 / (256.0 * 256.0), 1.0 / 256.0, 1.0 );\n" +
-                            "    return 2.0*dot( Value, BitShifts )-1.0;\n" +
+                            "    return -1.0+2.0*c.x;\n" +
                             "}\n" +
                             "void main(){\n" +
                             "   float nn = -dot(vNormal, uLightDirection);\n" +
                             "   if (nn <= 0.0){\n" +
-                            "       gl_FragColor = uColor*(0.2+vInv.w);\n" +
+                            "       gl_FragColor = uColorAmbient*(1.0+vInv.w);\n" +
                             "       return;\n" +
                             "   }\n" +
-                            "   float depth = uEps + Unpack(texture2D(uDepthMap, vInv.xy));\n" +
-                            "   if (depth < vInv.z){\n" +
-                            "       gl_FragColor = uColor*(0.2+vInv.w);\n" +
+                            "   float delta = - vInv.z + uEps + unpack(texture2D(uDepthMap, vInv.xy));\n" +
+                            "   if (delta < 0.0){\n" +
+                            "       gl_FragColor = uColorAmbient*(1.0+vInv.w);\n" +
                             "   } else {\n" +
-                            "       gl_FragColor = uColor*(0.2+nn*0.4+vInv.w);\n" +
+                            "       gl_FragColor = uColorAmbient*(1.0+vInv.w) + uColorDiffuse * nn;\n" +
                             "   }\n" +
                             "}\n");
 
@@ -212,13 +205,15 @@ public class LandMeshRenderer implements GameRenderable {
             glUniformMatrix4fv(shadowShader.get("uMatrixShadow"), 1, false,
                     params.lightningView.projection().getArray(), 0);
 
-            glUniform4f(shadowShader.get("uColor"), 0.3f, 1f, 0.2f, 1f);
+            glUniform4f(shadowShader.get("uColorAmbient"), 0.0f, 0.4f, 0.1f, 1f);
+            glUniform4f(shadowShader.get("uColorDiffuse"), 0.1f, 0.5f, 0.0f, 1f);
             glUniform1f(shadowShader.get("uEps"), 0.01f);
 
             params.depthTexture.use(0);
             glUniform1i(shadowShader.get("uDepthMap"), 0);
 
-            Vect3f dir = params.lightDirection;
+            Vect3f dir = new Vect3f();
+            params.lightningView.getViewDirection(dir);
             glUniform3f(shadowShader.get("uLightDirection"), dir.x, dir.y, dir.z);
 
             GLHelper.checkError();

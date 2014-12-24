@@ -34,6 +34,8 @@ public interface iMapView {
 
     public Vect3f getUpProjection();
 
+    public void getViewDirection(Vect3f result);
+
     /**
      * @param angle in degrees
      * 90 is vertical, 0 is horizontal field of view;

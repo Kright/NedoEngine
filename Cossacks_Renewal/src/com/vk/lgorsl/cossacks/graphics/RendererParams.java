@@ -1,7 +1,6 @@
 package com.vk.lgorsl.cossacks.graphics;
 
 import com.vk.lgorsl.NedoEngine.math.Point2i;
-import com.vk.lgorsl.NedoEngine.math.Vect3f;
 import com.vk.lgorsl.NedoEngine.openGL.Texture2D;
 import com.vk.lgorsl.cossacks.world.WorldInstance;
 import com.vk.lgorsl.cossacks.world.interfaces.iMapView;
@@ -25,7 +24,6 @@ public class RendererParams {
     public final Point2i defaultViewPortSize = new Point2i();
     public Texture2D depthTexture;
     public iMapView lightningView;
-    public final Vect3f lightDirection = new Vect3f();
 
     //temporal data
     public FloatBuffer meshVertices, meshNormals;

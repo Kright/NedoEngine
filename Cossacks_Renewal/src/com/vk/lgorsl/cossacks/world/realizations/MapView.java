@@ -84,6 +84,13 @@ public class MapView implements iMapView {
     }
 
     @Override
+    public void getViewDirection(Vect3f result) {
+        final float sin = FloatMath.sin(inclinationAngle);
+        final float cos = FloatMath.cos(inclinationAngle);
+        result.set(directionOfView.x*cos, directionOfView.y*cos, -sin);
+    }
+
+    @Override
     public void setInclination(float angle) {
         inclinationAngle = angle / 180 * (float) Math.PI;
         updateMatrixAndBounds();
