@@ -29,7 +29,7 @@ public class LightRenderer implements GameRenderable {
     private CleverShader shader;
 
     @Override
-    public void load(LoadedData loadedData) {
+    public boolean load(RendererParams params) {
         glGenFramebuffers(1, frameBuffer, 0);
         glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer[0]);
 
@@ -70,6 +70,8 @@ public class LightRenderer implements GameRenderable {
                         "void main(){\n" +
                         "   gl_FragColor = vec4(vZ*0.5+0.5, 0.0, 0.0, 0.0);\n" +
                         "}\n");
+
+        return true;
     }
 
     @Override

@@ -15,7 +15,7 @@ import java.nio.FloatBuffer;
  *
  * Created by lgor on 29.11.2014.
  */
-public class Quad implements Renderable<Object, Matrix4_4f> {
+public class Quad implements Renderable<Matrix4_4f>, Loadable<Object> {
 
     private static final Object monitor = new Object();
 
@@ -52,19 +52,26 @@ public class Quad implements Renderable<Object, Matrix4_4f> {
     }
 
     @Override
-    public void load(Object nothing) {
+    public boolean load(Object nothing) {
         synchronized (monitor) {
             if (fb == null) {
+                //counter-clockwise order
                 fb = GLHelper.make(new float[]{
                         -1, 1, 0, 0, 0,
-                        1, 1, 0, 1, 0,
                         -1, -1, 0, 0, 1,
+                        1, 1, 0, 1, 0,
                         1, -1, 0, 1, 1});
                 shader = new CleverShader(vertexCode, fragmentCode);
             }
         }
+        return true;
     }
 
+    /**
+     * it uses counter-clockwise order.
+     * may be better to disable face culling before rendering
+     * @param matrix4_4f
+     */
     @TargetApi(Build.VERSION_CODES.FROYO)
     @Override
     public void render(Matrix4_4f matrix4_4f) {
@@ -84,6 +91,4 @@ public class Quad implements Renderable<Object, Matrix4_4f> {
 
         shader.disableAllVertexAttribArray();
     }
-
-
 }

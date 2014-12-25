@@ -31,18 +31,20 @@ public class GameRenderer implements GLSurfaceView.Renderer {
     private final List<GameRenderable> renderers = new ArrayList<>();
 
     private final WorldInstance world;
-    private LoadedData loadedData;
     private RendererParams rendererParams;
 
     //4 debug
     Quad quad;
 
     public GameRenderer(Context context){
-        loadedData = new LoadedData(context.getResources());
         world = new WorldInstance();
         world.load();
 
-        rendererParams = new RendererParams(world, new MapView(new Point2i().set(32, 32),world.metrics));
+        //rendererParams = new RendererParams(world, new MapView(new Point2i().set(32, 32),world.metrics));
+        rendererParams = new RendererParams(context.getResources());
+        rendererParams.world = world;
+        rendererParams.mapView = new MapView(new Point2i().set(32,32), world.metrics);
+
         rendererParams.lightningView = new MapView(new Point2i().set(32, 32),world.metrics);
 
         clock = new FPSCounter();
@@ -62,7 +64,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         quad.load(null);
 
         for(GameRenderable rend : renderers){
-            rend.load(loadedData);
+            rend.load(rendererParams);
         }
 
         Shader.releaseCompiler();

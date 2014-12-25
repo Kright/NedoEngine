@@ -22,7 +22,7 @@ public class LandMeshGridRenderer implements GameRenderable {
     public ShortBuffer sb;
 
     @Override
-    public void load(LoadedData loadedData) {
+    public boolean load(RendererParams params) {
         if (!loaded) {
 
             shader = new CleverShader(
@@ -38,6 +38,7 @@ public class LandMeshGridRenderer implements GameRenderable {
 
             loaded = true;
         }
+        return true;
     }
 
     private void createGrid(RendererParams params) {

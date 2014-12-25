@@ -10,10 +10,10 @@ import java.nio.ShortBuffer;
 import static android.opengl.GLES20.*;
 
 /**
- * draws immutable text string on screen
+ * draws text string on screen
  * Created by lgor on 29.11.2014.
  */
-public class FontRenderer implements Renderable<Object, Matrix4_4f> {
+public class FontRenderer implements Renderable<Matrix4_4f>, Loadable<Object> {
 
     private static CleverShader shader;
     private static ShortBuffer table;   //таблица с индексами одна на всех
@@ -91,26 +91,28 @@ public class FontRenderer implements Renderable<Object, Matrix4_4f> {
     }
 
     @Override
-    public void load(Object nothing) {
+    public boolean load(Object nothing) {
         if (shader == null) {
             shader = new CleverShader(vertexShader, fragmentShader);
             short[] indices = new short[6 * maxLettersCount];
             for (int i = 0; i < maxLettersCount; i++) {
                 indices[6 * i] = (short)(i*4);
-                indices[6 * i + 1] = (short)(i*4+1);
+                indices[6 * i + 3] = (short)(i*4+1);
                 indices[6 * i + 2] = (short)(i*4+2);
-                indices[6 * i + 3] = (short)(i*4);
-                indices[6 * i + 4] = (short)(i*4+2);
-                indices[6 * i + 5] = (short)(i*4+3);
+                indices[6 * i + 0] = (short)(i*4);
+                indices[6 * i + 2] = (short)(i*4+2);
+                indices[6 * i + 1] = (short)(i*4+3);
             }
             table = GLHelper.make(indices);
         }
+        return true;
     }
 
     /**
      * about drawing space :
      * first row placed with y = 0 , second with y = 1, next = 2, etc;
      * width of any letter space is 1.0 too
+     * uses counter-clockwise order of vertices
      * @param matrix4_4f defines transformations to the screen-space coordinates
      */
     @Override
@@ -124,8 +126,6 @@ public class FontRenderer implements Renderable<Object, Matrix4_4f> {
 
         fb.position(0);
         glVertexAttribPointer(shader.get("aScreenTexPos"), 4, GL_FLOAT, false, 4 * 4, fb);
-
-        glDisable(GL_CULL_FACE);
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -150,4 +150,5 @@ public class FontRenderer implements Renderable<Object, Matrix4_4f> {
                     "void main(){\n" +
                     "    gl_FragColor = uColor * vec4(1.0, 1.0, 1.0, texture2D(uTexture, vTexPos).a);\n" +
                     "}";
+
 }

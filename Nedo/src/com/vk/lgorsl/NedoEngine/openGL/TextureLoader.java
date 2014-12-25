@@ -84,6 +84,13 @@ public class TextureLoader {
         return new Texture2D(texId);
     }
 
+    public static Texture2D genAndBindTexture(){
+        int[] texId = new int[1];
+        glGenTextures(1, texId, 0);
+        glBindTexture(GL_TEXTURE_2D, texId[0]);
+        return new Texture2D(texId);
+    }
+
     /**
      * https://www.khronos.org/opengles/sdk/docs/man/xhtml/glTexParameter.xml
      *

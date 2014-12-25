@@ -2,6 +2,7 @@ package com.vk.lgorsl.NedoEngine.openGL;
 
 import android.graphics.*;
 import android.opengl.GLUtils;
+
 import static android.opengl.GLES20.*;
 
 /**
@@ -15,6 +16,8 @@ public class FontTexture extends Texture2D {
     public final static String RUSSIAN_LOWERCASE = "йцукеёнгшщзхъфывапролджэячсмитьбю";
     public final static String RUSSIAN_UPPERCASE = "ЙЦУКЕЁНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ";
     public final static String SYMBOLS = " <>(){}[]+-+_*/\\\n|,.:;\'\"!?&@#$%^&№`~";
+    public final static String ALL_SYMBOLS = ENGLISH_LOWERCASE + ENGLISH_UPPERCASE +
+            RUSSIAN_LOWERCASE + RUSSIAN_UPPERCASE + SYMBOLS;
 
     protected char[] chars;
     protected float startX, startY, letterWidth, letterHeight, dX, dY;
@@ -25,7 +28,7 @@ public class FontTexture extends Texture2D {
         super(id);
         this.chars = chars;
         unknownSymbol = position('?');
-        if (unknownSymbol==-1){
+        if (unknownSymbol == -1) {
             //if we go out of font texture, we will take fully transparent space. like ' ' symbol
             unknownSymbol = chars.length;
         }
@@ -40,20 +43,20 @@ public class FontTexture extends Texture2D {
         return unknownSymbol;
     }
 
-    protected float left(int position){
+    protected float left(int position) {
         return startX + dX * (position % countInRow);
     }
 
-    protected float up(int position){
-        return startY + dY * ( position / countInRow);
+    protected float up(int position) {
+        return startY + dY * (position / countInRow);
     }
 
-    protected float bottom(int position){
-        return up(position)+letterHeight;
+    protected float bottom(int position) {
+        return up(position) + letterHeight;
     }
 
-    protected float right(int position){
-        return left(position)+ letterWidth;
+    protected float right(int position) {
+        return left(position) + letterWidth;
     }
 
     public static FontTexture load(Typeface typeface, int textureSize, float fontSize, String symbols) {
@@ -83,10 +86,10 @@ public class FontTexture extends Texture2D {
         int wd = (int) (d + bounds.width() / cc.length);
         int n = textureSize / wd;
 
-        float mm = 1f/ textureSize;
+        float mm = 1f / textureSize;
         result.dX = wd * mm;
-        result.dY = (h+d) * mm;
-        result.letterWidth = mm * bounds.width() / cc.length ;
+        result.dY = (h + d) * mm;
+        result.letterWidth = mm * bounds.width() / cc.length;
         result.letterHeight = bounds.height() * mm;
         result.countInRow = n;
         result.startX = x * mm;

@@ -1,5 +1,6 @@
 package com.vk.lgorsl.cossacks.graphics;
 
+import com.vk.lgorsl.NedoEngine.openGL.Loadable;
 import com.vk.lgorsl.NedoEngine.openGL.Renderable;
 
 /**
@@ -7,7 +8,7 @@ import com.vk.lgorsl.NedoEngine.openGL.Renderable;
  *
  * Created by lgor on 16.12.2014.
  */
-public interface GameRenderable extends Renderable<LoadedData, RendererParams>{
+public interface GameRenderable extends Renderable<RendererParams>, Loadable<RendererParams>{
 
     //nothing
 }

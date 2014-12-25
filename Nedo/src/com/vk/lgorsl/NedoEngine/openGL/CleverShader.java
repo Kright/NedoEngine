@@ -9,6 +9,7 @@ import com.vk.lgorsl.NedoEngine.utils.NedoException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * this shader saves attributes and uniforms locations for faster access;
@@ -30,10 +31,12 @@ public class CleverShader extends Shader {
 
     public CleverShader(int vertexId, int pixelId) {
         super(vertexId, pixelId);
+        // locations and attributes don't added :(
     }
 
     public CleverShader(Resources resources, int resId) {
-        super(resources, resId);
+        this(GLHelper.loadRawFileAsOneString(resources, resId, "\n").
+                split(Pattern.quote("[FRAGMENT]")));
     }
 
     public CleverShader(String vertexShaderCode, String pixelShaderCode) {

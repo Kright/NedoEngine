@@ -1,5 +1,6 @@
 package com.vk.lgorsl.cossacks.graphics;
 
+import android.content.res.Resources;
 import com.vk.lgorsl.NedoEngine.math.Point2i;
 import com.vk.lgorsl.NedoEngine.openGL.Texture2D;
 import com.vk.lgorsl.cossacks.world.WorldInstance;
@@ -16,8 +17,8 @@ import java.nio.ShortBuffer;
  */
 public class RendererParams {
 
-    public final WorldInstance world;
-    public final iMapView mapView;
+    public WorldInstance world;
+    public iMapView mapView;
 
     //lightning
     public boolean lightningRendering = true;
@@ -29,8 +30,9 @@ public class RendererParams {
     public FloatBuffer meshVertices, meshNormals;
     public ShortBuffer meshIndices;
 
-    public RendererParams(WorldInstance world, iMapView mapView) {
-        this.world = world;
-        this.mapView = mapView;
+    public final Resources resources;
+
+    public RendererParams(Resources resources) {
+        this.resources = resources;
     }
 }
