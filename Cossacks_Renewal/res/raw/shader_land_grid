@@ -1,0 +1,16 @@
+
+uniform mat4 uMatrix;
+
+attribute vec3 aPosition;
+
+void main(){
+    gl_Position = uMatrix * vec4(aPosition.xyz, 1.0);
+}
+
+[FRAGMENT]
+
+uniform vec4 uColor;
+
+void main(){
+    gl_FragColor = uColor;
+}

@@ -58,7 +58,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 
         renderers.add(new LightRenderer());
         renderers.add(new LandMeshRenderer());
-        //renderers.add(new LandMeshGridRenderer());
+        renderers.add(new LandMeshGridRenderer());
 
         quad = new Quad(null);
         quad.load(null);

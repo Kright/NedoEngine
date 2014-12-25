@@ -3,6 +3,7 @@ package com.vk.lgorsl.cossacks.graphics;
 import com.vk.lgorsl.NedoEngine.math.Vect3f;
 import com.vk.lgorsl.NedoEngine.openGL.CleverShader;
 import com.vk.lgorsl.NedoEngine.openGL.GLHelper;
+import com.vk.lgorsl.cossacks.R;
 import com.vk.lgorsl.cossacks.world.realizations.HeightGrid;
 
 import java.nio.FloatBuffer;
@@ -16,7 +17,6 @@ import static android.opengl.GLES20.*;
  */
 public class LandMeshRenderer implements GameRenderable {
 
-    private CleverShader shader;
     private CleverShader shadowShader;
 
     boolean loaded = false;
@@ -27,59 +27,7 @@ public class LandMeshRenderer implements GameRenderable {
     @Override
     public boolean load(RendererParams params) {
         if (!loaded) {
-
-            shader = new CleverShader(
-                    "uniform mat4 uMatrix;" +
-                            "attribute vec3 aPosition;" +
-                            "varying float vH;" +
-                            "void main(){" +
-                            "   gl_Position = uMatrix * vec4(aPosition.xyz, 1.0);" +
-                            "   vH = aPosition.z * 0.0005;" +
-                            "}",
-                    "uniform vec4 uColor;" +
-                            "varying float vH;" +
-                            "void main(){" +
-                            "   gl_FragColor = uColor*(0.6+vH);" +
-                            "}");
-
-            shadowShader = new CleverShader("uniform mat4 uMatrix;\n" +
-                    "uniform mat4 uMatrixShadow;\n" +
-                    "attribute vec3 aPosition;\n" +
-                    "attribute vec3 aNormal;" +
-                    "varying vec4 vInv;\n" +
-                    "varying vec3 vNormal;\n" +
-                    "varying float vH;\n" +
-                    "void main(){\n" +
-                    "   gl_Position = uMatrix * vec4(aPosition.xyz, 1.0);\n" +
-                    "   vInv.xyz = (uMatrixShadow * vec4(aPosition.xyz, 1.0)).xyz;\n" +
-                    "   vNormal = aNormal;\n" +
-                    "   vInv.xy = (vInv.xy*0.5+vec2(0.5, 0.5));\n" +
-                    "   vInv.w = aPosition.z*0.001;\n" +
-                    "}",
-                            "uniform vec4 uColorAmbient;\n" +
-                            "uniform vec4 uColorDiffuse;\n" +
-                            "uniform vec3 uLightDirection;\n" +
-                            "uniform float uEps;\n" +
-                            "uniform sampler2D uDepthMap; \n" +
-                            "varying vec4 vInv;\n" +
-                            "varying vec3 vNormal;\n" +
-                            "float unpack(vec4 c){\n" +
-                            "    return -1.0+2.0*c.x;\n" +
-                            "}\n" +
-                            "void main(){\n" +
-                            "   float nn = -dot(vNormal, uLightDirection);\n" +
-                            "   if (nn <= 0.0){\n" +
-                            "       gl_FragColor = uColorAmbient*(1.0+vInv.w);\n" +
-                            "       return;\n" +
-                            "   }\n" +
-                            "   float delta = - vInv.z + uEps + unpack(texture2D(uDepthMap, vInv.xy));\n" +
-                            "   if (delta < 0.0){\n" +
-                            "       gl_FragColor = uColorAmbient*(1.0+vInv.w);\n" +
-                            "   } else {\n" +
-                            "       gl_FragColor = uColorAmbient*(1.0+vInv.w) + uColorDiffuse * nn;\n" +
-                            "   }\n" +
-                            "}\n");
-
+            shadowShader = new CleverShader(params.resources, R.raw.shader_land_renderer);
             loaded = true;
         }
         return true;
@@ -108,7 +56,7 @@ public class LandMeshRenderer implements GameRenderable {
         params.meshNormals = fbn;
     }
 
-    private ShortBuffer generateIndices(HeightGrid grid){
+    private ShortBuffer generateIndices(HeightGrid grid) {
         short[] s = new short[(grid.height - 1) * (grid.width - 1) * 2 * 3];
         int pos = 0;
         for (int y = 0; y < grid.height - 1; y++) {
@@ -150,14 +98,14 @@ public class LandMeshRenderer implements GameRenderable {
             normal.add(add);
 
             if (y % 2 == 0) {
-                d  = get(grid, x-1, y-1) - get(grid, x, y+1) + get(grid, x, y-1) - get(grid, x-1, y+1);
+                d = get(grid, x - 1, y - 1) - get(grid, x, y + 1) + get(grid, x, y - 1) - get(grid, x - 1, y + 1);
             } else {
-                d = get(grid, x, y-1) - get(grid, x+1, y+1) + get(grid, x+1, y-1) - get(grid, x, y+1);
+                d = get(grid, x, y - 1) - get(grid, x + 1, y + 1) + get(grid, x + 1, y - 1) - get(grid, x, y + 1);
             }
-            add.set(0, d, meterSize*2).normalize();
+            add.set(0, d, meterSize * 2).normalize();
             normal.add(add);
             normal.normalize();
-            normal.putIntoArray(fn, i*3);
+            normal.putIntoArray(fn, i * 3);
         }
         return GLHelper.make(fn);
     }
@@ -183,48 +131,31 @@ public class LandMeshRenderer implements GameRenderable {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        if (!params.lightningRendering) {
-            shader.useProgram();
+        shadowShader.useProgram();
 
-            glUniformMatrix4fv(shader.get("uMatrix"), 1, false,
-                    params.mapView.projection().getArray(), 0);
+        glUniformMatrix4fv(shadowShader.get("uMatrix"), 1, false,
+                params.mapView.projection().getArray(), 0);
+        glUniformMatrix4fv(shadowShader.get("uMatrixShadow"), 1, false,
+                params.lightningView.projection().getArray(), 0);
 
-            glUniform4f(shader.get("uColor"), 0, 1f, 0, 1f);
+        glUniform4f(shadowShader.get("uColorAmbient"), 0.0f, 0.4f, 0.1f, 1f);
+        glUniform4f(shadowShader.get("uColorDiffuse"), 0.1f, 0.5f, 0.0f, 1f);
+        glUniform1f(shadowShader.get("uEps"), 0.01f);
 
-            shader.enableAllVertexAttribArray();
-            glVertexAttribPointer(shader.get("aPosition"), 3, GL_FLOAT, false,
-                    0, fb);
+        params.depthTexture.use(0);
+        glUniform1i(shadowShader.get("uDepthMap"), 0);
 
-            glDrawElements(GL_TRIANGLES, sb.capacity(), GL_UNSIGNED_SHORT, sb);
+        Vect3f dir = new Vect3f();
+        params.lightningView.getViewDirection(dir);
+        glUniform3f(shadowShader.get("uLightDirection"), dir.x, dir.y, dir.z);
 
-            shader.disableAllVertexAttribArray();
-        } else {
-            shadowShader.useProgram();
+        GLHelper.checkError();
+        shadowShader.enableAllVertexAttribArray();
+        glVertexAttribPointer(shadowShader.get("aPosition"), 3, GL_FLOAT, false, 0, fb);
+        glVertexAttribPointer(shadowShader.get("aNormal"), 3, GL_FLOAT, false, 0, fbn);
 
-            glUniformMatrix4fv(shadowShader.get("uMatrix"), 1, false,
-                    params.mapView.projection().getArray(), 0);
-            glUniformMatrix4fv(shadowShader.get("uMatrixShadow"), 1, false,
-                    params.lightningView.projection().getArray(), 0);
+        glDrawElements(GL_TRIANGLES, sb.capacity(), GL_UNSIGNED_SHORT, sb);
 
-            glUniform4f(shadowShader.get("uColorAmbient"), 0.0f, 0.4f, 0.1f, 1f);
-            glUniform4f(shadowShader.get("uColorDiffuse"), 0.1f, 0.5f, 0.0f, 1f);
-            glUniform1f(shadowShader.get("uEps"), 0.01f);
-
-            params.depthTexture.use(0);
-            glUniform1i(shadowShader.get("uDepthMap"), 0);
-
-            Vect3f dir = new Vect3f();
-            params.lightningView.getViewDirection(dir);
-            glUniform3f(shadowShader.get("uLightDirection"), dir.x, dir.y, dir.z);
-
-            GLHelper.checkError();
-            shadowShader.enableAllVertexAttribArray();
-            glVertexAttribPointer(shadowShader.get("aPosition"), 3, GL_FLOAT, false, 0, fb);
-            glVertexAttribPointer(shadowShader.get("aNormal"), 3, GL_FLOAT, false, 0, fbn);
-
-            glDrawElements(GL_TRIANGLES, sb.capacity(), GL_UNSIGNED_SHORT, sb);
-
-            shadowShader.disableAllVertexAttribArray();
-        }
+        shadowShader.disableAllVertexAttribArray();
     }
 }

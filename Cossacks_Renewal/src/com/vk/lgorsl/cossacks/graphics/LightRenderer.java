@@ -8,6 +8,7 @@ import com.vk.lgorsl.NedoEngine.openGL.CleverShader;
 import com.vk.lgorsl.NedoEngine.openGL.Texture2D;
 import com.vk.lgorsl.NedoEngine.openGL.TextureLoader;
 import com.vk.lgorsl.NedoEngine.utils.NedoException;
+import com.vk.lgorsl.cossacks.R;
 
 /**
  * it will produce depth map for directed shadows
@@ -57,19 +58,7 @@ public class LightRenderer implements GameRenderable {
             throw new NedoException("frameBuffer didn't created! status = " + status);
         }
 
-        shader = new CleverShader(
-                "uniform mat4 uMatrix;\n" +
-                        "attribute vec3 aPosition;\n" +
-                        "varying float vZ;\n" +
-                        "void main(){\n" +
-                        "   gl_Position = uMatrix * vec4(aPosition.xyz, 1.0);\n" +
-                        "vZ = gl_Position.z;\n" +
-                        "}",
-                // я пробовал паковать более серьёзными способами, но точность всё равно порядка 0.01 :(
-                "varying float vZ;\n" +
-                        "void main(){\n" +
-                        "   gl_FragColor = vec4(vZ*0.5+0.5, 0.0, 0.0, 0.0);\n" +
-                        "}\n");
+        shader = new CleverShader(params.resources, R.raw.shader_light_depth);
 
         return true;
     }

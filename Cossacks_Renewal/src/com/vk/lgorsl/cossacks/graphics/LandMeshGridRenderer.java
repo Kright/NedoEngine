@@ -2,6 +2,7 @@ package com.vk.lgorsl.cossacks.graphics;
 
 import com.vk.lgorsl.NedoEngine.openGL.CleverShader;
 import com.vk.lgorsl.NedoEngine.openGL.GLHelper;
+import com.vk.lgorsl.cossacks.R;
 import com.vk.lgorsl.cossacks.world.realizations.HeightGrid;
 
 import java.nio.FloatBuffer;
@@ -24,17 +25,7 @@ public class LandMeshGridRenderer implements GameRenderable {
     @Override
     public boolean load(RendererParams params) {
         if (!loaded) {
-
-            shader = new CleverShader(
-                    "uniform mat4 uMatrix;" +
-                            "attribute vec3 aPosition;" +
-                            "void main(){" +
-                            "   gl_Position = uMatrix * vec4(aPosition.xyz, 1.0);" +
-                            "}",
-                            "uniform vec4 uColor;" +
-                            "void main(){" +
-                            "   gl_FragColor = uColor;" +
-                            "}");
+            shader = new CleverShader(params.resources, R.raw.shader_land_grid);
 
             loaded = true;
         }
