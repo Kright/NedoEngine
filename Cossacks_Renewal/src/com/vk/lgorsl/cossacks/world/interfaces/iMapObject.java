@@ -15,7 +15,7 @@ public interface iMapObject extends iPoint2i {
     int id();
 
     /**
-     * dead gameObjects will be removed
+     * dead gameObjects will be removed from game world
      */
     boolean alive();
 }

@@ -17,30 +17,20 @@ public interface iMapView {
     void setCenterPosition(iPoint2i newCenter);
 
     /**
+     * game meter size in screen coordinates
      * @param scale - will be applied to all axises
      */
     void setScale(float scale);
 
-    /**
-     * @param scale only for vertical axis.
-     */
-    void setVerticalScale(float scale);
-
     void setDirectionOfView(float dx, float dy);
-
-    public Vect3f getXProjection();
-
-    public Vect3f getYProjection();
-
-    public Vect3f getUpProjection();
-
-    public void getViewDirection(Vect3f result);
 
     /**
      * @param angle in degrees
      * 90 is vertical, 0 is horizontal field of view;
      */
     void setInclination(float angle);
+
+    public void getViewDirection(Vect3f result);
 
     /**
      * @return projection matrix for openGL

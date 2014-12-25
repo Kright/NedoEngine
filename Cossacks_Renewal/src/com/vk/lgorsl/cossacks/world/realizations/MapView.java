@@ -19,11 +19,10 @@ public class MapView implements iMapView {
     private final Matrix4_4f matrix4_4f = new Matrix4_4f();
     private final Vect2f directionOfView = new Vect2f().set(0, 1);
 
-    private final float baseScale = 0.001f;
-
     private float scale = 0.001f;
-    private float scaleVertical = 1f;
     private float inclinationAngle = 60 / 180 * (float) Math.PI;
+
+    private boolean matrixUpdated = false;
 
     private final Vect3f
             xProjection = new Vect3f(),
@@ -33,8 +32,6 @@ public class MapView implements iMapView {
     public MapView(Point2i center, WorldMetrics metrics) {
         this.center = center;
         this.metrics = metrics;
-
-        updateMatrixAndBounds();
     }
 
     @Override
@@ -46,41 +43,20 @@ public class MapView implements iMapView {
     public void setCenterPosition(iPoint2i newCenter) {
         if (metrics.mapSize().contains(newCenter)) {
             center.set(newCenter);
-            updateMatrixAndBounds();
+            matrixUpdated = false;
         }
     }
 
     @Override
     public void setScale(float scale) {
-        this.scale = scale * baseScale;
-        updateMatrixAndBounds();
-    }
-
-    @Override
-    public void setVerticalScale(float scale) {
-        scaleVertical = scale;
-        updateMatrixAndBounds();
+        this.scale = scale / metrics.meterSize();
+        matrixUpdated = false;
     }
 
     @Override
     public void setDirectionOfView(float dx, float dy) {
         directionOfView.set(dx, dy).normalize();
-        updateMatrixAndBounds();
-    }
-
-    @Override
-    public Vect3f getXProjection() {
-        return xProjection;
-    }
-
-    @Override
-    public Vect3f getYProjection() {
-        return yProjection;
-    }
-
-    @Override
-    public Vect3f getUpProjection() {
-        return upProjection;
+        matrixUpdated = false;
     }
 
     @Override
@@ -93,11 +69,12 @@ public class MapView implements iMapView {
     @Override
     public void setInclination(float angle) {
         inclinationAngle = angle / 180 * (float) Math.PI;
-        updateMatrixAndBounds();
+        matrixUpdated = false;
     }
 
     @Override
     public Matrix4_4f projection() {
+        updateMatrixAndBounds();
         return matrix4_4f;
     }
 
@@ -107,20 +84,17 @@ public class MapView implements iMapView {
     }
 
     private void updateMatrixAndBounds() {
+        if (matrixUpdated) return;
+        matrixUpdated = true;
         final float sin = FloatMath.sin(inclinationAngle);
         final float cos = FloatMath.cos(inclinationAngle);
 
         //TODO calculate coefficient
         float k=1.0f;
 
-        /*
-        xProjection.set(directionOfView.y, directionOfView.x*sin, directionOfView.x*k*sin).mul(scale);
-        yProjection.set(-directionOfView.x, directionOfView.y*sin, directionOfView.y*k*sin).mul(scale);
-        upProjection.set(0, cos*scale*scaleVertical, 0);
-        */
         xProjection.set(-directionOfView.y, directionOfView.x*sin, directionOfView.x*k*sin).mul(scale);
         yProjection.set(directionOfView.x, directionOfView.y*sin, directionOfView.y*k*sin).mul(scale);
-        upProjection.set(0, cos*scale*scaleVertical, 0);
+        upProjection.set(0, cos*scale, 0);
 
         matrix4_4f.setColumn(0, xProjection, 0);
         matrix4_4f.setColumn(1, yProjection, 0);

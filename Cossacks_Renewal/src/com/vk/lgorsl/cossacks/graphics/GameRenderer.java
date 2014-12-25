@@ -58,7 +58,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 
         renderers.add(new LightRenderer());
         renderers.add(new LandMeshRenderer());
-        renderers.add(new LandMeshGridRenderer());
+        //renderers.add(new LandMeshGridRenderer());
 
         quad = new Quad(null);
         quad.load(null);
@@ -110,14 +110,12 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         rendererParams.mapView.setDirectionOfView(FloatMath.sin(t), FloatMath.cos(t));
         rendererParams.mapView.setInclination(40+20*FloatMath.sin(t+0.345f));
         rendererParams.mapView.setCenterPosition(position);
-        rendererParams.mapView.setScale((1.0f + 0.5f*FloatMath.sin(t)) / 1.3f / 2);
-        rendererParams.mapView.setVerticalScale(1f);
+        rendererParams.mapView.setScale((1.0f + 0.5f*FloatMath.sin(t)) / 80);
 
         rendererParams.lightningView.setDirectionOfView(FloatMath.sin(t/2), FloatMath.cos(t/2));
         rendererParams.lightningView.setInclination(20+10*FloatMath.cos(t/2));
         rendererParams.lightningView.setCenterPosition(position);
-        rendererParams.lightningView.setScale(0.3f);
-        rendererParams.lightningView.setVerticalScale(1f);
+        rendererParams.lightningView.setScale(0.01f);
 
         for(GameRenderable rend : renderers){
             rend.render(rendererParams);
