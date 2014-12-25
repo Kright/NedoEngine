@@ -19,25 +19,30 @@ public class LandMeshRenderer implements GameRenderable {
 
     private CleverShader shadowShader;
 
-    boolean loaded = false;
-    public FloatBuffer fb;  //vertices
-    public FloatBuffer fbn; //normals
-    public ShortBuffer sb;
+    private FloatBuffer fb;  //vertices
+    private FloatBuffer fbn; //normals
+    private ShortBuffer sb;
 
     @Override
     public boolean load(RendererParams params) {
-        if (!loaded) {
-            shadowShader = new CleverShader(params.resources, R.raw.shader_land_renderer);
-            loaded = true;
-        }
+        shadowShader = new CleverShader(params.resources, R.raw.shader_land_renderer);
+        createGrid(params);
         return true;
     }
 
     private void createGrid(RendererParams params) {
         HeightGrid grid = params.world.heightGrid;
-        float scale = params.world.metrics.meterSize();
         float meterSize = params.world.metrics.meterSize();
 
+        fb = generateVertices(grid, meterSize, meterSize);
+        sb = generateIndices(grid);
+        fbn = generateNormals(meterSize, grid);
+
+        params.meshVertices = fb;
+        params.meshIndices = sb;
+    }
+
+    private FloatBuffer generateVertices(HeightGrid grid, float scale, float meterSize){
         float[] f = new float[grid.data.length * 3];
         for (int i = 0; i < grid.data.length; i++) {
             int x = i % grid.width;
@@ -46,14 +51,7 @@ public class LandMeshRenderer implements GameRenderable {
             f[3 * i + 1] = scale * y;
             f[3 * i + 2] = scale * grid.data[i] / meterSize;
         }
-
-        fb = GLHelper.make(f);
-        sb = generateIndices(grid);
-        fbn = generateNormals(meterSize, grid);
-
-        params.meshVertices = fb;
-        params.meshIndices = sb;
-        params.meshNormals = fbn;
+        return  GLHelper.make(f);
     }
 
     private ShortBuffer generateIndices(HeightGrid grid) {
@@ -120,12 +118,6 @@ public class LandMeshRenderer implements GameRenderable {
 
     @Override
     public void render(RendererParams params) {
-        //crazy code, I will fix it
-        load(null);
-        if (sb == null) {
-            createGrid(params);
-        }
-
         glClearColor(0, 0, 0, 0);
         glClearDepthf(1f);
 

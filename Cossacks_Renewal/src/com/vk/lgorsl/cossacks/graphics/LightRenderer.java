@@ -60,6 +60,8 @@ public class LightRenderer implements GameRenderable {
 
         shader = new CleverShader(params.resources, R.raw.shader_light_depth);
 
+        params.depthTexture = texture2D;
+
         return true;
     }
 
@@ -68,9 +70,7 @@ public class LightRenderer implements GameRenderable {
         if (!params.lightningRendering) {
             return;
         }
-        if (params.depthTexture == null) {
-            params.depthTexture = texture2D;
-        }
+
         glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer[0]);
         glViewport(0, 0, depthTextureSize, depthTextureSize);
 
@@ -79,14 +79,10 @@ public class LightRenderer implements GameRenderable {
 
         glFlush();  //waiting drawing
         glBindFramebuffer(GL_FRAMEBUFFER, 0);   //set default settings
-        glViewport(0, 0, params.defaultViewPortSize.x, params.defaultViewPortSize.y);
+        glViewport(0, 0, params.defaultViewportSize.x, params.defaultViewportSize.y);
     }
 
     public void renderWorld(RendererParams params) {
-        if (params.meshIndices == null || params.meshVertices == null) {
-            return;
-        }
-
         glClearColor(0, 0, 0, 0);
         glClearDepthf(1f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

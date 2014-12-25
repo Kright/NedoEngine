@@ -18,17 +18,13 @@ import static android.opengl.GLES20.*;
 public class LandMeshGridRenderer implements GameRenderable {
 
     private CleverShader shader;
-    boolean loaded = false;
-    public FloatBuffer fb;
-    public ShortBuffer sb;
+    private FloatBuffer fb;
+    private ShortBuffer sb;
 
     @Override
     public boolean load(RendererParams params) {
-        if (!loaded) {
-            shader = new CleverShader(params.resources, R.raw.shader_land_grid);
-
-            loaded = true;
-        }
+        shader = new CleverShader(params.resources, R.raw.shader_land_grid);
+        createGrid(params);
         return true;
     }
 
@@ -41,9 +37,9 @@ public class LandMeshGridRenderer implements GameRenderable {
         for (int i = 0; i < grid.data.length; i++) {
             int x = i % grid.width;
             int y = i / grid.width;
-            f[3 * i] = scale* (x + (y % 2 == 1 ? 0.5f : 0f));
+            f[3 * i] = scale * (x + (y % 2 == 1 ? 0.5f : 0f));
             f[3 * i + 1] = scale * y;
-            f[3 * i + 2] = scale * grid.data[i]/meterSize;
+            f[3 * i + 2] = scale * grid.data[i] / meterSize;
         }
         fb = GLHelper.make(f);
 
@@ -72,12 +68,6 @@ public class LandMeshGridRenderer implements GameRenderable {
 
     @Override
     public void render(RendererParams params) {
-        //crazy code, I will fix it
-        load(null);
-        if (sb == null) {
-            createGrid(params);
-        }
-
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         shader.useProgram();

@@ -3,6 +3,7 @@ package com.vk.lgorsl.cossacks.graphics;
 import android.content.res.Resources;
 import com.vk.lgorsl.NedoEngine.math.Point2i;
 import com.vk.lgorsl.NedoEngine.openGL.Texture2D;
+import com.vk.lgorsl.NedoEngine.utils.FPSCounter;
 import com.vk.lgorsl.cossacks.world.WorldInstance;
 import com.vk.lgorsl.cossacks.world.interfaces.iMapView;
 
@@ -18,21 +19,26 @@ import java.nio.ShortBuffer;
 public class RendererParams {
 
     public WorldInstance world;
+
     public iMapView mapView;
 
+    public final FPSCounter clock;
+
+    public final Point2i defaultViewportSize = new Point2i();   //viewport of surface
+
     //lightning
-    public boolean lightningRendering = true;
-    public final Point2i defaultViewPortSize = new Point2i();
+    public boolean lightningRendering = true;       //TODO using it!!
     public Texture2D depthTexture;
     public iMapView lightningView;
 
-    //temporal data
-    public FloatBuffer meshVertices, meshNormals;
+    //for lightning and map rendering
+    public FloatBuffer meshVertices;
     public ShortBuffer meshIndices;
 
     public final Resources resources;
 
     public RendererParams(Resources resources) {
         this.resources = resources;
+        clock = new FPSCounter();
     }
 }
