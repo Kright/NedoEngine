@@ -79,6 +79,15 @@ public class Matrix4_4f {
         return makeScale(scale, scale, scale);
     }
 
+    public Matrix4_4f scale(float sx, float sy, float sz){
+        for(int i=0; i<4; i++){
+            arr[0+i] *= sx;
+            arr[4+i] *= sy;
+            arr[8+i] *= sz;
+        }
+        return this;
+    }
+
     /**
      * сжатие-растяжение вдоль оси dirNorm
      */

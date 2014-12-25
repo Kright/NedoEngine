@@ -157,6 +157,9 @@ public class Matrix3_3f {
         return Helper.equals(f1, f2, Helper.matrix4_4fPrecision);
     }
 
+    /**
+     * @return false for singular matrix
+     */
     public boolean getInverted(Matrix3_3f result){
         //ищем миноры
         float mi11 = m22 * m33 - m23 * m32;
@@ -196,16 +199,26 @@ public class Matrix3_3f {
         return getInverted(this);
     }
 
-    public void getXAxis(Vect3f result) {
-        result.set(m11, m12, m13);
-    }
-
-    public void getYAxis(Vect3f result) {
-        result.set(m21, m22, m23);
-    }
-
-    public void getZAxis(Vect3f result) {
-        result.set(m31, m32, m33);
+    public void setColumn(int number, Vect3f column){
+        switch (number){
+            case 0:
+                m11 = column.x;
+                m21 = column.y;
+                m31 = column.z;
+                break;
+            case 1:
+                m12 = column.x;
+                m22 = column.y;
+                m32 = column.z;
+                break;
+            case 2:
+                m13 = column.x;
+                m23 = column.y;
+                m33 = column.z;
+                break;
+            default:
+                throw new ArrayIndexOutOfBoundsException("this matrix has only [0], [1], [2] columns");
+        }
     }
 
     /*

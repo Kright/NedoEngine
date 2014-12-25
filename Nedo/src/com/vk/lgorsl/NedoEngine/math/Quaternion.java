@@ -21,6 +21,7 @@ public class Quaternion {
      */
     public Quaternion() {
         w = 1f;
+        // x=y=z=0 by default
     }
 
     public Quaternion set(float w, float x, float y, float z) {
