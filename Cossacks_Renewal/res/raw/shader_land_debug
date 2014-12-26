@@ -13,8 +13,11 @@ void main(){
     gl_Position = uMatrix * vec4(aPosition.xyz, 1.0);
     vInv.xyz = (uMatrixShadow * vec4(aPosition.xyz, 1.0)).xyz;
     vNormal = aNormal;
-    vInv.z = vInv.z*0.5+0.5;
+    if (abs(vInv.x)>1.0 || abs(vInv.y)>1.0){
+        vNormal.z = -1.0;
+    }
     vInv.xy = (vInv.xy*0.5+vec2(0.5, 0.5));
+    vInv.z = vInv.z*0.5+0.5;
     vInv.w = aPosition.z*0.001;
 }
 
@@ -35,14 +38,23 @@ float unpack(vec4 c){
 
 void main(){
 float nn = -dot(vNormal, uLightDirection);
-   if (nn <= 0.0){
-       gl_FragColor = uColorAmbient*(1.0+vInv.w);
-       return;
-   }
-   float delta = - vInv.z + uEps + unpack(texture2D(uDepthMap, vInv.xy));
-   if (delta < 0.0){
-       gl_FragColor = uColorAmbient*(1.0+vInv.w);
-   } else {
-       gl_FragColor = uColorAmbient*(1.0+vInv.w) + uColorDiffuse * nn;
-   }
+    if (nn <= 0.0){
+        gl_FragColor = uColorAmbient*(1.0+vInv.w);
+        return;
+    }
+    float delta = - vInv.z + uEps + unpack(texture2D(uDepthMap, vInv.xy));
+
+    delta *= 1000.0;
+
+    if (abs(delta)>1.0){
+        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+        return;
+    }
+    if (delta>0.0){
+        gl_FragColor = vec4(delta, 0.0, 0.0, 1.0);
+    } else if (delta < 0.0){
+        gl_FragColor = vec4(0.0, 0.0, -delta, 1.0);
+    } else {
+        gl_FragColor = uColorAmbient*(1.0+vInv.w) + uColorDiffuse * nn;
+    }
 }

@@ -23,9 +23,12 @@ public class LandMeshRenderer implements GameRenderable {
     private FloatBuffer fbn; //normals
     private ShortBuffer sb;
 
+    private float uEps = 0.001f;
+
     @Override
     public boolean load(RendererParams params) {
         shadowShader = new CleverShader(params.resources, R.raw.shader_land_renderer);
+        //shadowShader = new CleverShader(params.resources, R.raw.shader_land_debug);
         createGrid(params);
         return true;
     }
@@ -132,7 +135,7 @@ public class LandMeshRenderer implements GameRenderable {
 
         glUniform4f(shadowShader.get("uColorAmbient"), 0.0f, 0.4f, 0.1f, 1f);
         glUniform4f(shadowShader.get("uColorDiffuse"), 0.1f, 0.5f, 0.0f, 1f);
-        glUniform1f(shadowShader.get("uEps"), 0.01f);
+        glUniform1f(shadowShader.get("uEps"), uEps);
 
         params.depthTexture.use(0);
         glUniform1i(shadowShader.get("uDepthMap"), 0);

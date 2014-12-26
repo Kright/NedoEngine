@@ -59,6 +59,8 @@ public class LightRenderer implements GameRenderable {
         }
 
         shader = new CleverShader(params.resources, R.raw.shader_light_depth);
+        //shader = new CleverShader(params.resources, R.raw.shader_depth_debug);
+
 
         params.depthTexture = texture2D;
 
