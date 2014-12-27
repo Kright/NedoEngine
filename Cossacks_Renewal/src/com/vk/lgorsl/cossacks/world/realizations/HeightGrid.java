@@ -33,10 +33,15 @@ public class HeightGrid {
 
     public void addHeight(Rectangle2i rect, float dh1, float dh2, float dh3, float dh4){
         for(int x=rect.xMin; x<=rect.xMax; x++){
-            float kx = (x-rect.xMin)/(float)rect.width();
+            float kx0 = (x-rect.xMin)/(float)rect.width();
+            float dkx = 0.5f / rect.width();
             for(int y=rect.yMin; y<=rect.yMax; y++){
                 int n = getIndex(x, y);
                 if (n<0) continue;
+                float kx = kx0;
+                if (y%2==1){
+                    kx += dkx;
+                }
                 float ky = (y-rect.yMin)/(float)rect.height();
                 float dh = (1-ky)*(dh1*(1-kx) + kx*dh2) + ky*(dh3*(1-kx)+kx*dh4);
                 data[n] += (short)dh;
