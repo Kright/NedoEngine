@@ -6,6 +6,9 @@ import com.vk.lgorsl.cossacks.world.interfaces.iTree;
 import com.vk.lgorsl.cossacks.world.realizations.GridLandscape;
 import com.vk.lgorsl.cossacks.world.realizations.HeightGrid;
 import com.vk.lgorsl.cossacks.world.realizations.NaiveMap;
+import com.vk.lgorsl.cossacks.world.realizations.Tree;
+
+import java.util.Random;
 
 /**
  * world instance
@@ -14,18 +17,20 @@ import com.vk.lgorsl.cossacks.world.realizations.NaiveMap;
  */
 public class WorldInstance {
 
-    iLandscapeMap map;
-    iMap<iTree> trees;
+    public iLandscapeMap map;
+    public iMap<iTree> trees;
     public WorldMetrics metrics;
 
     public HeightGrid heightGrid;
+
+    private iTree.Factory treeFactory;
 
     public void load(){
         metrics = WorldMetrics.sizeInMeters(255, 5);
         GridLandscape land = new GridLandscape(metrics);
         heightGrid = land.grid;
 
-        heightGrid.randomHeight(7, 8*metrics.meterSize(), 0.8f);
+        heightGrid.randomHeight(7, 12*metrics.meterSize(), 0.4f);
 
         /*
         final float h = 200;
@@ -40,6 +45,14 @@ public class WorldInstance {
 
         map = land;
         trees = new NaiveMap<>(metrics);
+
+        treeFactory = new Tree.Factory(4);
+        Random rnd = new Random();
+        for(int i=0; i<1024; i++){
+            int x = rnd.nextInt(map.bounds().width()-metrics.meterSize()*2) + map.bounds().xMin()+metrics.meterSize();
+            int y = rnd.nextInt(map.bounds().height()-metrics.meterSize()*2) + map.bounds().yMin()+metrics.meterSize();
+            trees.add(treeFactory.makeTree(x,y));
+        }
     }
 
     public void tick(){

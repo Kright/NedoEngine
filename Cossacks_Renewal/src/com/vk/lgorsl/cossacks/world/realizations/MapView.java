@@ -22,6 +22,8 @@ public class MapView implements iMapView {
     private float scale = 0.001f;
     private float inclinationAngle = 60 / 180 * (float) Math.PI;
 
+    private float aspectRatio = 1f;
+
     private boolean matrixUpdated = false;
 
     private final Vect3f
@@ -60,6 +62,11 @@ public class MapView implements iMapView {
     }
 
     @Override
+    public void setAspectRation(float ratio) {
+        this.aspectRatio = ratio;
+    }
+
+    @Override
     public void getViewDirection(Vect3f result) {
         final float sin = FloatMath.sin(inclinationAngle);
         final float cos = FloatMath.cos(inclinationAngle);
@@ -92,8 +99,8 @@ public class MapView implements iMapView {
         //TODO calculate coefficient
         float k=1.0f;
 
-        xProjection.set(-directionOfView.y, directionOfView.x*sin, directionOfView.x*k*sin).mul(scale);
-        yProjection.set(directionOfView.x, directionOfView.y*sin, directionOfView.y*k*sin).mul(scale);
+        xProjection.set(-directionOfView.y, directionOfView.x*sin, directionOfView.x*k*sin).mul(scale/aspectRatio);
+        yProjection.set(directionOfView.x, directionOfView.y*sin, directionOfView.y*k*sin).mul(scale/aspectRatio);
         upProjection.set(0, cos*scale, 0);
 
         matrix4_4f.setColumn(0, xProjection, 0);

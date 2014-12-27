@@ -35,6 +35,8 @@ public class RendererParams {
     public FloatBuffer meshVertices;
     public ShortBuffer meshIndices;
 
+    public TreesRender treesRender;
+
     public final Resources resources;
 
     public RendererParams(Resources resources) {

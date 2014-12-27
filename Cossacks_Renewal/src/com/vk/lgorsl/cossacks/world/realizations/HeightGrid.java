@@ -92,55 +92,29 @@ public class HeightGrid {
         final int size = 1 << scaleShift;
 
         final int row = y / size;
+        if (row<0 || row >= height) return 0;
         final int dy = y - row * size;
 
         if (!even(y)) {
             x += size;
         }
-        final int column = x / size;
+        final int column = x / (size*2);
+        if (column <0 || column >= width) return 0;
+
         final int dx = x - column * size;
 
-        if (even(column)) {
-            if (dx > dy) {
-                int pos1 = row * width + column;
-                int pos3 = (row + 1) * width + column;
-                if (!even(row)) {
-                    pos3++;
-                }
-                return simpleTriangle(dx, dy, size, pos1, pos1 + 1, pos3);
-            } else {
-                int pos3 = row * width + column;
-                int pos1 = pos3 + width;
-                if (!even(row)) {
-                    pos1--;
-                }
-                return simpleTriangle(dx - size, size - dy, size, pos1, pos1 + 1, pos3);
-            }
-        } else {
-            if (dx + dy < size) {
-                int pos1 = row * width + column;
-                int pos3 = (row + 1) * width + column;
-                if (!even(row)) {
-                    pos3++;
-                }
-                return simpleTriangle(dx, dy, size, pos1, pos1 + 1, pos3);
-            } else {
-                int pos3 = 1 + row * width + column;
-                int pos1 = pos3 + width;
-                if (!even(row)) {
-                    pos1--;
-                }
-                return simpleTriangle(dx - size, size - dy, size, pos1, pos1 + 1, pos3);
-            }
-        }
+        final int result = data[row*width+column];
+
+        // it is crasy :(
+        // but I didn't write working approximate code yet
+
+        return result;
     }
 
-    private int simpleTriangle(int dx, int dy, int size, int p1, int p2, int p3) {
-        int result;
-        result = (2 * size - dx - dy) * data[p1];
-        result += (dx - dy) * data[p2];
-        result += (2 * dy) * data[p3];
-        return result / 2 * size;
+    private static int average(int dh2, int dh3, int dx, int dy, int size){
+        float k3 = (float)(dy) / size;
+        float k2 = (float)(dx-dy) / 2 / size;
+        return (int)(k3*dh3 + k2*dh2);
     }
 
     private static boolean even(int n) {

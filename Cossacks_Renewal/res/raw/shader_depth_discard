@@ -1,0 +1,33 @@
+
+uniform mat4 uMatrix;
+
+attribute vec3 aPosition;
+attribute vec2 aTexCoord;
+
+varying float vZ;
+varying vec2 vTexCoord;
+
+void main(){
+    gl_Position = uMatrix * vec4(aPosition.xyz, 1.0);
+    vZ = gl_Position.z*0.5+0.5;
+    vTexCoord = aTexCoord;
+}
+
+[FRAGMENT]
+
+uniform sampler2D uTexture;
+
+varying float vZ;
+varying vec2 vTexCoord;
+
+vec4 pack(float value){
+    vec4 enc = fract ( vec4(1.0, 255.0, 255.0*255.0, 255.0*255.0*255.0) * value );
+    enc -= enc.yzww * vec4(1.0/255.0, 1.0/255.0, 1.0/255.0, 0.0);
+    return enc;
+}
+
+void main(){
+    vec4 color = texture2D(uTexture, vTexCoord);
+    if (color.a < 0.5) discard;
+    gl_FragColor = pack(vZ);
+}

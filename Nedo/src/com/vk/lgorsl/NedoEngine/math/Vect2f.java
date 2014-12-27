@@ -2,6 +2,8 @@ package com.vk.lgorsl.NedoEngine.math;
 
 import android.util.FloatMath;
 
+import java.nio.FloatBuffer;
+
 /**
  * 2-dimensional float vector
  *
@@ -91,6 +93,12 @@ public class Vect2f extends VectNf<Vect2f> {
         array[pos++] = x;
         array[pos++] = y;
         return pos;
+    }
+
+    @Override
+    public void putIntoFloatBuffer(FloatBuffer floatBuffer) {
+        floatBuffer.put(x);
+        floatBuffer.put(y);
     }
 
     @Override

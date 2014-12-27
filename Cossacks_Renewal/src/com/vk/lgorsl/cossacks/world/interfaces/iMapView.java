@@ -25,6 +25,11 @@ public interface iMapView {
     void setDirectionOfView(float dx, float dy);
 
     /**
+     * @param ratio = screen width / height
+     */
+    void setAspectRation(float ratio);
+
+    /**
      * @param angle in degrees
      * 90 is vertical, 0 is horizontal field of view;
      */

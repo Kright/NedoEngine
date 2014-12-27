@@ -1,0 +1,24 @@
+
+uniform mat4 uMatrix;
+
+attribute vec3 aPosition;
+attribute vec2 aTexCoord;
+
+varying vec2 vTexCoord;
+
+void main(){
+    gl_Position = uMatrix*vec4(aPosition.xyz, 1.0);
+    vTexCoord = aTexCoord;
+}
+
+[FRAGMENT]
+
+uniform sampler2D uTexture;
+
+varying vec2 vTexCoord;
+
+void main(){
+    vec4 color = texture2D(uTexture, vTexCoord);
+    if (color.a < 0.5) discard;
+    gl_FragColor = color;
+}

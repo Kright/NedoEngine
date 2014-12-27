@@ -28,6 +28,7 @@ public class LightRenderer implements GameRenderable {
     private Texture2D texture2D;
 
     private CleverShader shader;
+    private CleverShader treesShadows;
 
     @Override
     public boolean load(RendererParams params) {
@@ -60,6 +61,7 @@ public class LightRenderer implements GameRenderable {
 
         shader = new CleverShader(params.resources, R.raw.shader_light_depth);
         //shader = new CleverShader(params.resources, R.raw.shader_depth_debug);
+        treesShadows = new CleverShader(params.resources, R.raw.shader_depth_discard);
 
 
         params.depthTexture = texture2D;
@@ -100,6 +102,9 @@ public class LightRenderer implements GameRenderable {
 
         glDrawElements(GL_TRIANGLES, params.meshIndices.capacity(), GL_UNSIGNED_SHORT, params.meshIndices);
 
+        params.treesRender.render(params, params.lightningView.projection(), treesShadows);
+
         shader.disableAllVertexAttribArray();
+
     }
 }

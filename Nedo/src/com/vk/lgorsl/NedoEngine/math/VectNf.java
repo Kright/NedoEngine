@@ -2,6 +2,8 @@ package com.vk.lgorsl.NedoEngine.math;
 
 import android.util.FloatMath;
 
+import java.nio.FloatBuffer;
+
 /**
  * abstract class of N-dimensional vector
  *
@@ -102,4 +104,6 @@ abstract class VectNf<T extends VectNf<T>>{
      * @return new position in array (pos+2 for 2d vector, for example)
      */
     public abstract int putIntoArray(float[] array, int pos);
+
+    public abstract void putIntoFloatBuffer(FloatBuffer floatBuffer);
 }

@@ -19,7 +19,7 @@ import java.util.List;
 import static android.opengl.GLES20.*;
 
 /**
- * main game render.
+ * main game renderer.
  *
  * Created by lgor on 13.12.2014.
  */
@@ -46,6 +46,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 
         renderers.add(new LightRenderer());
         renderers.add(new LandMeshRenderer());
+        renderers.add(new TreesRender());
         //renderers.add(new LandMeshGridRenderer());
         //renderers.add(new DepthTextureRenderer());
 
@@ -61,6 +62,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         NedoLog.log("surface Updated, w = " + width + ", h = " + height );
         rendererParams.defaultViewportSize.set(width, height);
         glViewport(0, 0, width, height);
+        rendererParams.mapView.setAspectRation((float)width / height);
 
         GLHelper.checkError();
     }
@@ -88,12 +90,13 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         rendererParams.mapView.setDirectionOfView(FloatMath.sin(t), FloatMath.cos(t));
         rendererParams.mapView.setInclination(40+20*FloatMath.sin(t+0.345f));
         rendererParams.mapView.setCenterPosition(position);
-        rendererParams.mapView.setScale((1.0f + 0.5f*FloatMath.sin(t)) / 80);
+        rendererParams.mapView.setScale((1.0f + 0.5f*FloatMath.sin(t)) / 30);
 
         rendererParams.lightningView.setDirectionOfView(FloatMath.sin(t / 2), FloatMath.cos(t / 2));
-        rendererParams.lightningView.setInclination(20+10*FloatMath.cos(t/2));
+        rendererParams.lightningView.setInclination(30+0*FloatMath.cos(t/2));
         rendererParams.lightningView.setCenterPosition(position);
         rendererParams.lightningView.setScale(0.01f);
+        rendererParams.lightningView.setAspectRation(0.5f);
 
         for(GameRenderable rend : renderers){
             rend.render(rendererParams);

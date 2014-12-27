@@ -37,7 +37,7 @@ public class LandMeshRenderer implements GameRenderable {
         HeightGrid grid = params.world.heightGrid;
         float meterSize = params.world.metrics.meterSize();
 
-        fb = generateVertices(grid, meterSize, meterSize);
+        fb = generateVertices(grid, meterSize);
         sb = generateIndices(grid);
         fbn = generateNormals(meterSize, grid);
 
@@ -45,14 +45,14 @@ public class LandMeshRenderer implements GameRenderable {
         params.meshIndices = sb;
     }
 
-    private FloatBuffer generateVertices(HeightGrid grid, float scale, float meterSize){
+    private FloatBuffer generateVertices(HeightGrid grid, float scale){
         float[] f = new float[grid.data.length * 3];
         for (int i = 0; i < grid.data.length; i++) {
             int x = i % grid.width;
             int y = i / grid.width;
             f[3 * i] = scale * (x + (y % 2 == 1 ? 0.5f : 0f));
             f[3 * i + 1] = scale * y;
-            f[3 * i + 2] = scale * grid.data[i] / meterSize;
+            f[3 * i + 2] = grid.data[i];
         }
         return  GLHelper.make(f);
     }

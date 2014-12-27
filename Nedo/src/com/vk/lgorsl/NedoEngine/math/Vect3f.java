@@ -2,6 +2,8 @@ package com.vk.lgorsl.NedoEngine.math;
 
 import android.util.FloatMath;
 
+import java.nio.FloatBuffer;
+
 /**
  * three - dimensional float vector
  * <p/>
@@ -93,6 +95,13 @@ public class Vect3f extends VectNf<Vect3f> {
         array[pos++] = y;
         array[pos++] = z;
         return pos;
+    }
+
+    @Override
+    public void putIntoFloatBuffer(FloatBuffer floatBuffer) {
+        floatBuffer.put(x);
+        floatBuffer.put(y);
+        floatBuffer.put(z);
     }
 
     public static void cross(Vect3f result, Vect3f f, Vect3f s) {

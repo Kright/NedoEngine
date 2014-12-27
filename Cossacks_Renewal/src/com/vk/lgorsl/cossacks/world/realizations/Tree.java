@@ -2,6 +2,8 @@ package com.vk.lgorsl.cossacks.world.realizations;
 
 import com.vk.lgorsl.cossacks.world.interfaces.iTree;
 
+import java.util.Random;
+
 /**
  * Simple realization of tree
  *
@@ -34,15 +36,16 @@ public class Tree extends MapObject implements iTree {
 
     public static class Factory implements iTree.Factory{
 
-        final int type;
+        private final int typesCount;
+        private final Random rnd = new Random();
 
-        public Factory(int type) {
-            this.type = type;
+        public Factory(int typesCount) {
+            this.typesCount = typesCount;
         }
 
         @Override
         public iTree makeTree(int x, int y) {
-            return new Tree(x, y, type, 100);
+            return new Tree(x, y, rnd.nextInt(typesCount), 100);
         }
     }
 }
