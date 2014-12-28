@@ -148,10 +148,7 @@ public class Matrix3_3f implements iMatrix<Matrix3_3f, Vect3f>{
                     eq(m32, f.m32) &&
                     eq(m33, f.m33);
         }
-        if (o instanceof Matrix4_4f){
-            return Helper.equals((Matrix4_4f)o, this);
-        }
-        return false;
+        return (o instanceof Matrix4_4f) && Helper.equals((Matrix4_4f)o, this);
     }
 
     private static boolean eq(float f1, float f2) {
@@ -168,7 +165,7 @@ public class Matrix3_3f implements iMatrix<Matrix3_3f, Vect3f>{
         float mi13 = m21 * m32 - m22 * m31;
 
         final float determinant = m11 * mi11 - m12 * mi12 + m13 * mi13;
-        if (Math.abs(determinant) < 0.001) return false;
+        if (determinant == 0f) return false;
         final float m = 1 / determinant;
 
         float mi21 = m12 * m33 - m32 * m13;
