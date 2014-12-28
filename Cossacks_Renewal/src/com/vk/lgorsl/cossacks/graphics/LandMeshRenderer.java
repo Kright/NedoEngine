@@ -133,8 +133,8 @@ public class LandMeshRenderer implements GameRenderable {
         glUniformMatrix4fv(shadowShader.get("uMatrixShadow"), 1, false,
                 params.lightningView.projection().getArray(), 0);
 
-        glUniform4f(shadowShader.get("uColorAmbient"), 0.0f, 0.4f, 0.1f, 1f);
-        glUniform4f(shadowShader.get("uColorDiffuse"), 0.1f, 0.5f, 0.0f, 1f);
+        glUniform4f(shadowShader.get("uColorAmbient"), 36/255f, 74/255f, 30/255f, 1f);
+        glUniform4f(shadowShader.get("uColorDiffuse"), 30/255f, 90/255f, 5/255f, 1f);
         glUniform1f(shadowShader.get("uEps"), uEps);
 
         params.depthTexture.use(0);

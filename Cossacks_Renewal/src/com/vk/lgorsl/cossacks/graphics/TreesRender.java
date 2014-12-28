@@ -1,14 +1,15 @@
 package com.vk.lgorsl.cossacks.graphics;
 
-import com.vk.lgorsl.NedoEngine.math.Matrix4_4f;
+import com.vk.lgorsl.NedoEngine.math.Rectangle2i;
 import com.vk.lgorsl.NedoEngine.math.Vect3f;
-import com.vk.lgorsl.NedoEngine.math.iRectangle2i;
 import com.vk.lgorsl.NedoEngine.openGL.CleverShader;
 import com.vk.lgorsl.NedoEngine.openGL.GLHelper;
 import com.vk.lgorsl.NedoEngine.openGL.Texture2D;
 import com.vk.lgorsl.NedoEngine.openGL.TextureLoader;
 import com.vk.lgorsl.cossacks.R;
 import com.vk.lgorsl.cossacks.world.WorldInstance;
+import com.vk.lgorsl.cossacks.world.interfaces.ViewBounds;
+import com.vk.lgorsl.cossacks.world.interfaces.iMapView;
 import com.vk.lgorsl.cossacks.world.interfaces.iTree;
 
 import static android.opengl.GLES20.*;
@@ -18,6 +19,8 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
 /**
+ * it renders trees :)
+ *
  * Created by lgor on 27.12.2014.
  */
 public class TreesRender implements GameRenderable {
@@ -73,22 +76,17 @@ public class TreesRender implements GameRenderable {
 
     @Override
     public void render(RendererParams params) {
-        render(params, params.mapView.projection(), shader);
+        render(params, params.mapView, shader);
     }
 
-    public void render(RendererParams params, Matrix4_4f matrix4_4f, CleverShader shader){
+    public void render(RendererParams params, iMapView view, CleverShader shader){
         int meter = params.world.metrics.meterSize();
-        float[] arr = matrix4_4f.getArray();
+        float[] arr = view.projection().getArray();
         Vect3f dx = new Vect3f().set(-arr[5], arr[1], 0);
         dx.setLength(meter*2);
         Vect3f dh = new Vect3f().set(0, 0, meter*10);
-        int count = putData(fb, dx, dh, params.world, params.world.map.bounds());
 
-        {    //temp!!
-            glCullFace(GL_FRONT);
-            glFrontFace(GL_CCW);
-            glDisable(GL_CULL_FACE);
-        }
+        int count = putData(fb, dx, dh, params.world, view.viewBounds());
 
         shader.useProgram();
         GLHelper.checkError("start");
@@ -96,7 +94,7 @@ public class TreesRender implements GameRenderable {
         texture.use(0);
         glUniform1i(shader.get("uTexture"), 0);
 
-        glUniformMatrix4fv(shader.get("uMatrix"), 1, false, matrix4_4f.getArray(), 0);
+        glUniformMatrix4fv(shader.get("uMatrix"), 1, false, view.projection().getArray(), 0);
 
         shader.enableAllVertexAttribArray();
 
@@ -113,24 +111,42 @@ public class TreesRender implements GameRenderable {
         GLHelper.checkError("end");
     }
 
-    private int putData(FloatBuffer fb, Vect3f dx, Vect3f dh, WorldInstance world, iRectangle2i boundingBox) {
+    private final Rectangle2i aabb = new Rectangle2i(0,0,0,0);
+
+    private int putData(FloatBuffer fb, Vect3f dx, Vect3f dh, WorldInstance world, ViewBounds boundingBox) {
         fb.position(0);
 
         Vect3f pos = new Vect3f();
         int count = 0;
 
-        for (iTree tree : world.trees.objects(boundingBox)) {
+        boundingBox.getAABB(aabb);
+
+        for (iTree tree : world.trees.objects(aabb)) {
             if (!tree.alive()) {
                 continue;
             }
             int xi = tree.x();
             int yi = tree.y();
             int zi = world.heightGrid.getHeight(xi, yi);
-            //int zi = 10;
 
             float x = xi;
             float y = yi;
             float z = zi;
+
+            /*
+            {   //test!!
+                Vect2f v;
+                switch (tree.type()){
+                    case 0: v = boundingBox.leftDown; break;
+                    case 1: v = boundingBox.leftUp; break;
+                    case 2: v = boundingBox.rightDown; break;
+                    default: v = boundingBox.rightUp; break;
+                }
+                x = v.x;
+                y = v.y;
+                z = 0;
+            }
+            */
 
             TreesParams treesP = treesParams[tree.type()];
 
@@ -141,24 +157,24 @@ public class TreesRender implements GameRenderable {
             fb.put(treesP.tyDown);
 
             pos.set(x, y, z);
-            pos.add(dx);
-            pos.putIntoFloatBuffer(fb);
-            fb.put(treesP.txRigth);
-            fb.put(treesP.tyDown);
-
-            pos.set(x, y, z);
-            pos.add(dx);
-            pos.add(dh);
-            pos.putIntoFloatBuffer(fb);
-            fb.put(treesP.txRigth);
-            fb.put(treesP.tyUp);
-
-            pos.set(x, y, z);
             pos.madd(dx, -1f);
             pos.add(dh);
             pos.putIntoFloatBuffer(fb);
             fb.put(treesP.txLeft);
             fb.put(treesP.tyUp);
+
+            pos.set(x, y, z);
+            pos.add(dx);
+            pos.add(dh);
+            pos.putIntoFloatBuffer(fb);
+            fb.put(treesP.txRigth);
+            fb.put(treesP.tyUp);
+
+            pos.set(x, y, z);
+            pos.add(dx);
+            pos.putIntoFloatBuffer(fb);
+            fb.put(treesP.txRigth);
+            fb.put(treesP.tyDown);
 
             count++;
         }

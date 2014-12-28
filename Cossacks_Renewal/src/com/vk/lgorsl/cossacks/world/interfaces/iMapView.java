@@ -35,7 +35,7 @@ public interface iMapView {
      */
     void setInclination(float angle);
 
-    public void getViewDirection(Vect3f result);
+    void getViewDirection(Vect3f result);
 
     /**
      * @return projection matrix for openGL
@@ -46,5 +46,5 @@ public interface iMapView {
      * то, что снаружи bounding box, заведомо не рисуется.
      * @return bounds
      */
-    iRectangle2i boundingBox();
+    ViewBounds viewBounds();
 }

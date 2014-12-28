@@ -17,6 +17,26 @@ public class Helper {
         return a > b ? (a - b) < precision : (b - a) < precision;
     }
 
+    public static float max(float... params){
+        float max = params[0];
+        for(int i=1; i<params.length; i++){
+            if (params[i] > max) {
+                max = params[i];
+            }
+        }
+        return max;
+    }
+
+    public static float min(float... params){
+        float min = params[0];
+        for(int i=1; i<params.length; i++){
+            if (params[i] < min) {
+                min = params[i];
+            }
+        }
+        return min;
+    }
+
     public static boolean equals(Matrix4_4f m4, Matrix3_3f m) {
         float arr[] = m4.getArray();
         return equals(arr[0], m.m11, matrix4_4fPrecision) &&

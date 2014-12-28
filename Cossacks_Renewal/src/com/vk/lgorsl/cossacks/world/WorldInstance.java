@@ -30,7 +30,7 @@ public class WorldInstance {
         GridLandscape land = new GridLandscape(metrics);
         heightGrid = land.grid;
 
-        heightGrid.randomHeight(7, 12*metrics.meterSize(), 0.4f);
+        heightGrid.randomHeight(9, 12*metrics.meterSize(), 0.6f);
 
         /*
         final float h = 200;

@@ -2,6 +2,7 @@ package com.vk.lgorsl.cossacks.world.realizations;
 
 import android.util.FloatMath;
 import com.vk.lgorsl.NedoEngine.math.*;
+import com.vk.lgorsl.cossacks.world.interfaces.ViewBounds;
 import com.vk.lgorsl.cossacks.world.interfaces.WorldMetrics;
 import com.vk.lgorsl.cossacks.world.interfaces.iMapView;
 
@@ -15,8 +16,8 @@ public class MapView implements iMapView {
     private Point2i center;
     private final WorldMetrics metrics;
 
-    private final Rectangle2i viewBounds = new Rectangle2i(0, 0, 0, 0);
-    private final Matrix4_4f matrix4_4f = new Matrix4_4f();
+    private final ViewBounds viewBounds = new ViewBounds();
+    private final Matrix4_4f matrix = new Matrix4_4f();
     private final Vect2f directionOfView = new Vect2f().set(0, 1);
 
     private float scale = 0.001f;
@@ -82,11 +83,12 @@ public class MapView implements iMapView {
     @Override
     public Matrix4_4f projection() {
         updateMatrixAndBounds();
-        return matrix4_4f;
+        return matrix;
     }
 
     @Override
-    public iRectangle2i boundingBox() {
+    public ViewBounds viewBounds() {
+        updateMatrixAndBounds();
         return viewBounds;
     }
 
@@ -97,20 +99,20 @@ public class MapView implements iMapView {
         final float cos = FloatMath.cos(inclinationAngle);
 
         //TODO calculate coefficient
-        float k=1.0f;
+        float k=0.6f;
 
         xProjection.set(-directionOfView.y, directionOfView.x*sin, directionOfView.x*k*sin).mul(scale/aspectRatio);
         yProjection.set(directionOfView.x, directionOfView.y*sin, directionOfView.y*k*sin).mul(scale/aspectRatio);
         upProjection.set(0, cos*scale, 0);
 
-        matrix4_4f.setColumn(0, xProjection, 0);
-        matrix4_4f.setColumn(1, yProjection, 0);
-        matrix4_4f.setColumn(2, upProjection, 0);
+        matrix.setColumn(0, xProjection, 0);
+        matrix.setColumn(1, yProjection, 0);
+        matrix.setColumn(2, upProjection, 0);
 
-        matrix4_4f.setColumn(3,
-                - (center.x * xProjection.x + center.y * yProjection.x),
-                - (center.x * xProjection.y + center.y * yProjection.y),
-                - (center.x * xProjection.y + center.y * yProjection.y)*k + (1-k),
+        matrix.setColumn(3,
+                -(center.x * xProjection.x + center.y * yProjection.x),
+                -(center.x * xProjection.y + center.y * yProjection.y),
+                -(center.x * xProjection.y + center.y * yProjection.y) * k + (1 - k),
                 1f);
 
         /**
@@ -121,8 +123,30 @@ public class MapView implements iMapView {
          *
          *  and scaled
          */
+        float[] arr = matrix.getArray();
 
-        //TODO calculating bounds!
-        viewBounds.set(metrics.mapSize());
+        Matrix2_2f mat2 = new Matrix2_2f().set(arr[0], arr[4], arr[2], arr[6]);
+        mat2.invert();
+
+        Vect2f vCenter = new Vect2f().set(arr[12], arr[14]);
+        mat2.mul(vCenter, vCenter);
+        vCenter.mul(-1);
+
+
+        Vect2f right = new Vect2f().set(1, 0);
+        Vect2f forward = new Vect2f().set(0, 1);
+
+        mat2.mul(right, right);
+        mat2.mul(forward, forward);
+
+        right.mul(1.1f);
+        forward.mul(1.1f);
+
+        viewBounds.rightUp.set(vCenter).add(right).add(forward);
+        viewBounds.rightDown.set(vCenter).add(right).sub(forward);
+        viewBounds.leftUp.set(vCenter).sub(right).add(forward);
+        viewBounds.leftDown.set(vCenter).sub(right).sub(forward);
+
+        //viewBounds.rightUp.set(vCenter);
     }
 }

@@ -88,7 +88,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         Point2i position = new Point2i().set(mapSize.xCenter(), mapSize.yCenter());
 
         rendererParams.mapView.setDirectionOfView(FloatMath.sin(t), FloatMath.cos(t));
-        rendererParams.mapView.setInclination(40+20*FloatMath.sin(t+0.345f));
+        rendererParams.mapView.setInclination(30+0*FloatMath.sin(t+0.345f));
         rendererParams.mapView.setCenterPosition(position);
         rendererParams.mapView.setScale((1.0f + 0.5f*FloatMath.sin(t)) / 30);
 

@@ -102,7 +102,7 @@ public class LightRenderer implements GameRenderable {
 
         glDrawElements(GL_TRIANGLES, params.meshIndices.capacity(), GL_UNSIGNED_SHORT, params.meshIndices);
 
-        params.treesRender.render(params, params.lightningView.projection(), treesShadows);
+        params.treesRender.render(params, params.lightningView, treesShadows);
 
         shader.disableAllVertexAttribArray();
 
