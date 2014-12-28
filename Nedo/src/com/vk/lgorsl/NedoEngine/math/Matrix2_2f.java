@@ -1,10 +1,9 @@
 package com.vk.lgorsl.NedoEngine.math;
 
 /**
- *
  * Created by lgor on 28.12.2014.
  */
-public class Matrix2_2f implements iMatrix<Matrix2_2f, Vect2f>{
+public class Matrix2_2f implements iMatrix<Matrix2_2f, Vect2f> {
 
     public float
             m11, m12,
@@ -79,15 +78,13 @@ public class Matrix2_2f implements iMatrix<Matrix2_2f, Vect2f>{
 
     public boolean getInverted(Matrix2_2f result) {
         final float det = getDeterminant();
-        if (Math.abs(det) < Helper.matrix4_4fPrecision) {
-            return false;
-        }
+        if (det == 0f) return false;
         final float mul = 1f / det;
         result.set(mul * m22, -m12 * mul, -m21 * mul, mul * m11);
         return true;
     }
 
-    private static boolean eq(float f, float s){
-        return Math.abs(f-s)< Helper.matrix4_4fPrecision;
+    private static boolean eq(float f, float s) {
+        return Math.abs(f - s) < Helper.matrix4_4fPrecision;
     }
 }
