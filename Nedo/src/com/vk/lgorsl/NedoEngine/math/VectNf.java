@@ -20,23 +20,23 @@ abstract class VectNf<T extends VectNf<T>>{
     /**
      * multiply vector to a single value
      */
-    public abstract void mul(float mul);
+    public abstract T mul(float mul);
 
     /**
      * multiply and add.
      * this += vect * mul;
      */
-    public abstract void madd(T vect, float mul);
+    public abstract T madd(T vect, float mul);
 
     /**
      * this += vect;
      */
-    public abstract void add(T vect);
+    public abstract T add(T vect);
 
     /**
      * this -= vect;
      */
-    public abstract void sub(T vect);
+    public abstract T sub(T vect);
 
     /**
      * set length == 1

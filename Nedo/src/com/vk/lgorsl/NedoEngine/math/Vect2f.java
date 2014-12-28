@@ -30,27 +30,31 @@ public class Vect2f extends VectNf<Vect2f> {
     }
 
     @Override
-    public void mul(float mul) {
+    public Vect2f mul(float mul) {
         x *= mul;
         y *= mul;
+        return this;
     }
 
     @Override
-    public void add(Vect2f v) {
+    public Vect2f add(Vect2f v) {
         x += v.x;
         y += v.y;
+        return this;
     }
 
     @Override
-    public void madd(Vect2f v, float mul) {
+    public Vect2f madd(Vect2f v, float mul) {
         x += v.x * mul;
         y += v.y * mul;
+        return this;
     }
 
     @Override
-    public void sub(Vect2f v) {
+    public Vect2f sub(Vect2f v) {
         x -= v.x;
         y -= v.y;
+        return this;
     }
 
     @Override
@@ -76,13 +80,14 @@ public class Vect2f extends VectNf<Vect2f> {
 
     /**
      * it is looks like cross product of 3d vectors
+     *
      * @return x * v.y - y * v.x
      */
     public float cross(Vect2f v) {
         return x * v.y - y * v.x;
     }
 
-    public float distance(Vect2f v){
+    public float distance(Vect2f v) {
         float dx = x - v.x;
         float dy = y - v.y;
         return FloatMath.sqrt(dx * dx + dy * dy);
@@ -103,6 +108,6 @@ public class Vect2f extends VectNf<Vect2f> {
 
     @Override
     public String toString() {
-        return "["+x+','+y+']';
+        return "[" + x + ',' + y + ']';
     }
 }

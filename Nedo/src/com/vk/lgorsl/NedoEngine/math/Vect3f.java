@@ -6,7 +6,7 @@ import java.nio.FloatBuffer;
 
 /**
  * three - dimensional float vector
- * <p/>
+ *
  * Created by lgor on 04.11.2014.
  */
 public class Vect3f extends VectNf<Vect3f> {
@@ -32,31 +32,35 @@ public class Vect3f extends VectNf<Vect3f> {
     }
 
     @Override
-    public void mul(float mul) {
+    public Vect3f mul(float mul) {
         x *= mul;
         y *= mul;
         z *= mul;
+        return this;
     }
 
     @Override
-    public void add(Vect3f v) {
+    public Vect3f add(Vect3f v) {
         x += v.x;
         y += v.y;
         z += v.z;
+        return this;
     }
 
     @Override
-    public void madd(Vect3f v, float mul) {
+    public Vect3f madd(Vect3f v, float mul) {
         x += v.x * mul;
         y += v.y * mul;
         z += v.z * mul;
+        return this;
     }
 
     @Override
-    public void sub(Vect3f v) {
+    public Vect3f sub(Vect3f v) {
         x -= v.x;
         y -= v.y;
         z -= v.z;
+        return this;
     }
 
     @Override

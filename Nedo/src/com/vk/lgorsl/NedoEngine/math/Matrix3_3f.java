@@ -7,7 +7,7 @@ package com.vk.lgorsl.NedoEngine.math;
  *
  * Created by lgor on 04.11.2014.
  */
-public class Matrix3_3f {
+public class Matrix3_3f implements iMatrix<Matrix3_3f, Vect3f>{
 
     protected static float eps = 0.0001f;
 
@@ -87,7 +87,7 @@ public class Matrix3_3f {
         return this;
     }
 
-    public void transpose() {
+    public Matrix3_3f transpose() {
         float t;
         t = m12;
         m12 = m21;
@@ -98,6 +98,7 @@ public class Matrix3_3f {
         t = m32;
         m32 = m23;
         m23 = t;
+        return this;
     }
 
     public final float getDeterminant() {

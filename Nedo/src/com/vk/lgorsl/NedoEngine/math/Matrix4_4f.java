@@ -17,7 +17,7 @@ import android.opengl.Matrix;
  * <p/>
  * Created by lgor on 04.11.2014.
  */
-public class Matrix4_4f {
+public class Matrix4_4f implements iMatrix<Matrix4_4f, Vect3f>{
 
     protected final static int size = 4;
     protected final static int len = size * size;
@@ -188,7 +188,7 @@ public class Matrix4_4f {
         result.set(arr[12], arr[13], arr[14]);
     }
 
-    public boolean getInvert(Matrix4_4f inverted) {
+    public boolean getInverted(Matrix4_4f inverted) {
         /*
         if (arr[3]==0f && arr[7]==0f && arr[11]==0f && arr[15]==1f){
             ... быстрое инвертирование для частного случая
@@ -198,7 +198,7 @@ public class Matrix4_4f {
     }
 
     public boolean invert() {
-        return getInvert(this);
+        return getInverted(this);
     }
 
     public boolean symmetric() {
@@ -312,8 +312,9 @@ public class Matrix4_4f {
                 v.x * arr[2] + v.y * arr[6] + v.z * arr[10]);
     }
 
-    public void multiplication(Matrix4_4f first, Matrix4_4f second) {
+    public Matrix4_4f multiplication(Matrix4_4f first, Matrix4_4f second) {
         Matrix4_4f.multiply(this, first, second);
+        return this;
     }
 
     /**
