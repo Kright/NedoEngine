@@ -1,5 +1,6 @@
 package com.vk.lgorsl.cossacks.world.realizations;
 
+import android.util.FloatMath;
 import com.vk.lgorsl.NedoEngine.math.Rectangle2i;
 
 import java.util.Random;
@@ -31,7 +32,8 @@ public class HeightGrid {
         data = new short[gridH * gridW];
     }
 
-    public void addHeight(Rectangle2i rect, float dh1, float dh2, float dh3, float dh4){
+    public void addHeight(Rectangle2i rect, float dh1, float dh2, float dh3, float dh4, boolean smooth){
+        final float pi = (float) Math.PI;
         for(int x=rect.xMin; x<=rect.xMax; x++){
             float kx0 = (x-rect.xMin)/(float)rect.width();
             float dkx = 0.5f / rect.width();
@@ -43,6 +45,10 @@ public class HeightGrid {
                     kx += dkx;
                 }
                 float ky = (y-rect.yMin)/(float)rect.height();
+                if (smooth){
+                    kx = 0.5f - 0.5f*FloatMath.cos(kx*pi);
+                    ky = 0.5f - 0.5f*FloatMath.cos(ky*pi);
+                }
                 float dh = (1-ky)*(dh1*(1-kx) + kx*dh2) + ky*(dh3*(1-kx)+kx*dh4);
                 data[n] += (short)dh;
             }
@@ -61,7 +67,7 @@ public class HeightGrid {
     }
 
     //crazy temporal code
-    public void randomHeight(int levels, float max, float persistence) {
+    public void randomHeight(int levels, float max, float persistence, boolean smooth) {
         Random rnd = new Random();
         Rectangle2i rect = new Rectangle2i(0, 0, width-1, height-1);
         int size = width;
@@ -77,7 +83,7 @@ public class HeightGrid {
             for(int dx=0; dx<pow; dx++){
                 for(int dy=0; dy<pow; dy++){
                     rect.set(dx*size, dy*size, (dx+1)*size-1, (dy+1)*size-1);
-                    addHeight(rect, h[dx][dy], h[dx+1][dy], h[dx][dy+1], h[dx+1][dy+1]);
+                    addHeight(rect, h[dx][dy], h[dx+1][dy], h[dx][dy+1], h[dx+1][dy+1], smooth);
                 }
             }
             size /= 2;
