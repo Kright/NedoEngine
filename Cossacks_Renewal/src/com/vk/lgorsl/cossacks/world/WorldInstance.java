@@ -1,9 +1,6 @@
 package com.vk.lgorsl.cossacks.world;
 import com.vk.lgorsl.cossacks.world.interfaces.*;
-import com.vk.lgorsl.cossacks.world.realizations.GridLandscape;
-import com.vk.lgorsl.cossacks.world.realizations.HeightGrid;
-import com.vk.lgorsl.cossacks.world.realizations.NaiveMap;
-import com.vk.lgorsl.cossacks.world.realizations.Tree;
+import com.vk.lgorsl.cossacks.world.realizations.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +46,8 @@ public class WorldInstance {
 
         treeFactory = new Tree.Factory(4, metrics.meterSize()*8, metrics.meterSize() * 3);
         generateTrees(1024);
+
+        countries.add(new CalmCountry(this));
     }
 
     private void generateTrees(int count){
@@ -60,8 +59,18 @@ public class WorldInstance {
         }
     }
 
+    public boolean isEnemies(int countryId1, int countryId2){
+        if (countryId1 == 0 || countryId2 == 0){
+            return false;
+        }
+        //naive realization
+        return true;
+    }
+
     public void tick(){
-        trees.update(1);
+        for(iCountry c : countries){
+            c.update();
+        }
     }
 
     public void save(){
