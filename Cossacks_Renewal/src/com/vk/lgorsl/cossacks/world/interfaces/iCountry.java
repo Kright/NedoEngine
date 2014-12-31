@@ -14,4 +14,6 @@ public interface iCountry {
     iMap<iBuilding> buildings();
 
     iPathFinder pathFinder();
+
+    void update();
 }
