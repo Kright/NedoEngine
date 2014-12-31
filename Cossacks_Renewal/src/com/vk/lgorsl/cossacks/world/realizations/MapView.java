@@ -112,7 +112,7 @@ public class MapView implements iMapView {
         matrix.setColumn(3,
                 -(center.x * xProjection.x + center.y * yProjection.x),
                 -(center.x * xProjection.y + center.y * yProjection.y),
-                -(center.x * xProjection.y + center.y * yProjection.y) * k + (1 - k),
+                -(center.x * xProjection.y + center.y * yProjection.y) * k + (1 - k)*0.5f,
                 1f);
 
         /**
