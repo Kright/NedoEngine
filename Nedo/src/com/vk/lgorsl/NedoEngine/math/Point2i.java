@@ -10,6 +10,11 @@ public class Point2i implements iPoint2i {
     public Point2i() {
     }
 
+    public Point2i(iPoint2i src){
+        x = src.x();
+        y = src.y();
+    }
+
     public int x, y;
 
     public Point2i set(int x, int y) {
