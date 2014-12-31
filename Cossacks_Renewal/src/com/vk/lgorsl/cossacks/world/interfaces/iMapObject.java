@@ -15,6 +15,11 @@ public interface iMapObject extends iPoint2i {
     int id();
 
     /**
+     * 0 is default for objects who don't owned by countries (trees, rocks);
+     */
+    int getCountryId();
+
+    /**
      * dead gameObjects will be removed from game world
      */
     boolean alive();

@@ -2,7 +2,6 @@ package com.vk.lgorsl.TryGLgame;
 
 import android.test.AndroidTestCase;
 import android.util.FloatMath;
-import com.vk.lgorsl.NedoEngine.math.Operable;
 import com.vk.lgorsl.NedoEngine.math.Vect2f;
 import com.vk.lgorsl.NedoEngine.math.Vect3f;
 
@@ -16,22 +15,7 @@ public class VectTest extends AndroidTestCase {
     public void testVectOperators(){
         Vect2f vv = new Vect2f();
         Vect3f vvv = new Vect3f();
-        Operable.Unary one = new Operable.Unary() {
-            @Override
-            public float apply(float f) {
-                return 1;
-            }
-        };
-        vv.apply(one);
-        vvv.apply(one);
-        Operable.Binary bin = new Operable.Binary() {
-            @Override
-            public float apply(float first, float second) {
-                return second + first;
-            }
-        };
-        vv.apply(bin, vv, vv);
-        vvv.apply(bin, vvv, vvv);
+
         assertEquals(vv.length2(), 8.0f);
         assertEquals(vvv.length2(), 12.0f);
     }

@@ -63,15 +63,6 @@ public class MatrixTest extends AndroidTestCase {
         m2.makeRotation(q);
         assertTrue("determinant =" + m2.getDeterminant(), Math.abs(m2.getDeterminant() - 1f) < 0.0001);
         Vect3f v1 = new Vect3f(), v2 = new Vect3f(), v3 = new Vect3f();
-        m2.getXAxis(v1);
-        m2.getYAxis(v2);
-        m2.getZAxis(v3);
-        assertTrue("length = " + v1.length(), Math.abs(v1.length() - 1) < 0.00001);
-        assertTrue("length = " + v2.length(), Math.abs(v2.length() - 1) < 0.00001);
-        assertTrue("length = " + v3.length(), Math.abs(v3.length() - 1) < 0.00001);
-        assertTrue(v1.dot(v2) + "", Math.abs(v1.dot(v2)) < 0.000001f);
-        assertTrue(v1.dot(v3) + "", Math.abs(v1.dot(v3)) < 0.000001f);
-        assertTrue(v2.dot(v3) + "", Math.abs(v2.dot(v3)) < 0.000001f);
 
         m.set(m2);
         m.transpose();

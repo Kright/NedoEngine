@@ -18,6 +18,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="TryGLgame" scope="PROVIDED" />
     <orderEntry type="module" module-name="Nedo" />
+    <orderEntry type="module" module-name="Nedo" />
   </component>
 </module>
 

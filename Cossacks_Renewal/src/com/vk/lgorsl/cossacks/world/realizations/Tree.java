@@ -11,15 +11,18 @@ import java.util.Random;
  *
  * Created by lgor on 13.12.2014.
  */
-public class Tree extends MapObject implements iTree {
+public class Tree implements iTree {
+
+    private static final int amountOfWood = 100;
 
     protected final int type;
     protected final int size;
+    private int x, y;
+    private boolean alive = true;
 
     public Tree(int x, int y, int type, int size){
         this.x = x;
         this.y = y;
-        this.id = -1;
         this.type = type;
         this.size = size;
     }
@@ -32,6 +35,37 @@ public class Tree extends MapObject implements iTree {
     @Override
     public int size() {
         return size;
+    }
+
+    @Override
+    public int cutDown() {
+        alive = false;
+        return amountOfWood;
+    }
+
+    @Override
+    public int id() {
+        return -1;
+    }
+
+    @Override
+    public int getCountryId() {
+        return 0;
+    }
+
+    @Override
+    public boolean alive() {
+        return alive;
+    }
+
+    @Override
+    public int x() {
+        return x;
+    }
+
+    @Override
+    public int y() {
+        return y;
     }
 
     public static class Factory implements iTree.Factory{

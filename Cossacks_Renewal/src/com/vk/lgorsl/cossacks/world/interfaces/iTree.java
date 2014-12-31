@@ -10,12 +10,17 @@ public interface iTree extends iMapObject{
     /**
      * @return type of tree. Necessary if we drawing it;
      */
-    public int type();
+    int type();
 
     /**
      * @return size of tree. Necessary if we drawing it;
      */
-    public int size();
+    int size();
+
+    /**
+     * @return amount of wood
+     */
+    int cutDown();
 
     public static interface Factory{
 
