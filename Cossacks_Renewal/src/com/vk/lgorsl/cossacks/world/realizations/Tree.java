@@ -72,14 +72,22 @@ public class Tree implements iTree {
 
         private final int typesCount;
         private final Random rnd = new Random();
+        private final int averageSize;
+        private final double deltaSize;
 
-        public Factory(int typesCount) {
+        public Factory(int typesCount, int height, int heightDeviation) {
             this.typesCount = typesCount;
+            this.averageSize = height;
+            this.deltaSize = heightDeviation;
         }
 
         @Override
         public iTree makeTree(int x, int y) {
-            return new Tree(x, y, rnd.nextInt(typesCount), 100);
+            int height = averageSize + (int)(deltaSize * rnd.nextGaussian());
+            if (height <= averageSize - 2*deltaSize){
+                height = averageSize;
+            }
+            return new Tree(x, y, rnd.nextInt(typesCount), height);
         }
     }
 }

@@ -83,8 +83,8 @@ public class TreesRender implements GameRenderable {
         int meter = params.world.metrics.meterSize();
         float[] arr = view.projection().getArray();
         Vect3f dx = new Vect3f().set(-arr[5], arr[1], 0);
-        dx.setLength(meter*2);
-        Vect3f dh = new Vect3f().set(0, 0, meter*10);
+        dx.setLength(0.2f);
+        Vect3f dh = new Vect3f().set(0, 0, 1);
 
         int count = putData(fb, dx, dh, params.world, view.viewBounds());
 
@@ -149,29 +149,30 @@ public class TreesRender implements GameRenderable {
             */
 
             TreesParams treesP = treesParams[tree.type()];
+            float treeSize= tree.size();
 
             pos.set(x, y, z);
-            pos.madd(dx, -1f);
+            pos.madd(dx, -treeSize);
             pos.putIntoFloatBuffer(fb);
             fb.put(treesP.txLeft);
             fb.put(treesP.tyDown);
 
             pos.set(x, y, z);
-            pos.madd(dx, -1f);
-            pos.add(dh);
+            pos.madd(dx, -treeSize);
+            pos.madd(dh, treeSize);
             pos.putIntoFloatBuffer(fb);
             fb.put(treesP.txLeft);
             fb.put(treesP.tyUp);
 
             pos.set(x, y, z);
-            pos.add(dx);
-            pos.add(dh);
+            pos.madd(dx, treeSize);
+            pos.madd(dh, treeSize);
             pos.putIntoFloatBuffer(fb);
             fb.put(treesP.txRigth);
             fb.put(treesP.tyUp);
 
             pos.set(x, y, z);
-            pos.add(dx);
+            pos.madd(dx, treeSize);
             pos.putIntoFloatBuffer(fb);
             fb.put(treesP.txRigth);
             fb.put(treesP.tyDown);

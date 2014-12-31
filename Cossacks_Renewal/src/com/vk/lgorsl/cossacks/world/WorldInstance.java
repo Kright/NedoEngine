@@ -46,7 +46,7 @@ public class WorldInstance {
         map = land;
         trees = new NaiveMap<>(metrics);
 
-        treeFactory = new Tree.Factory(4);
+        treeFactory = new Tree.Factory(4, metrics.meterSize()*8, metrics.meterSize() * 3);
         Random rnd = new Random();
         for(int i=0; i<1024; i++){
             int x = rnd.nextInt(map.bounds().width()-metrics.meterSize()*2) + map.bounds().xMin()+metrics.meterSize();
