@@ -13,8 +13,6 @@ void main(){
     gl_Position = uMatrix * vec4(aPosition.xyz, 1.0);
     vInv.xyz = (uMatrixShadow * vec4(aPosition.xyz, 1.0)).xyz;
     vNormal = aNormal;
-    vInv.z = vInv.z*0.5+0.5;
-    vInv.xy = (vInv.xy*0.5+vec2(0.5, 0.5));
     vInv.w = aPosition.z*0.001;
 }
 

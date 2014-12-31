@@ -1,8 +1,11 @@
 package com.vk.lgorsl.cossacks.graphics;
 
+import com.vk.lgorsl.NedoEngine.math.Matrix4_4f;
 import com.vk.lgorsl.NedoEngine.math.Vect3f;
 import com.vk.lgorsl.NedoEngine.openGL.CleverShader;
 import com.vk.lgorsl.NedoEngine.openGL.GLHelper;
+import com.vk.lgorsl.NedoEngine.openGL.Texture2D;
+import com.vk.lgorsl.NedoEngine.openGL.TextureLoader;
 import com.vk.lgorsl.cossacks.R;
 import com.vk.lgorsl.cossacks.world.realizations.HeightGrid;
 
@@ -25,10 +28,24 @@ public class LandMeshRenderer implements GameRenderable {
 
     private float uEps = 0.001f;
 
+    private Texture2D grass;
+
+    private final Matrix4_4f matrix = new Matrix4_4f();
+    private final Matrix4_4f temp = new Matrix4_4f();
+    {
+        matrix.setColumn(0, 0.5f, 0, 0, 0);
+        matrix.setColumn(1, 0, 0.5f, 0, 0);
+        matrix.setColumn(2, 0, 0, 0.5f, 0);
+        matrix.setColumn(3, 0.5f, 0.5f, 0.5f, 1f);
+    }
+
     @Override
     public boolean load(RendererParams params) {
-        shadowShader = new CleverShader(params.resources, R.raw.shader_land_renderer);
+        //shadowShader = new CleverShader(params.resources, R.raw.shader_land_renderer);
         //shadowShader = new CleverShader(params.resources, R.raw.shader_land_debug);
+        shadowShader = new CleverShader(params.resources, R.raw.shader_land_tex_depth_render);
+        grass = TextureLoader.loadTexture(GLHelper.loadBitmap2(params.resources, R.drawable.grass),
+                GL_NEAREST_MIPMAP_NEAREST, GL_NEAREST, GL_REPEAT, GL_REPEAT, true);
         createGrid(params);
         return true;
     }
@@ -130,15 +147,32 @@ public class LandMeshRenderer implements GameRenderable {
 
         glUniformMatrix4fv(shadowShader.get("uMatrix"), 1, false,
                 params.mapView.projection().getArray(), 0);
+
+        float amb = 0.5f;
+        glUniform3f(shadowShader.get("uAmbient"), 0.5f * amb, amb, 1.5f * amb);
+        float dif = 0.6f;
+        glUniform3f(shadowShader.get("uDiffuse"), 1.5f * dif, 1.4f * dif, dif);
+
+        grass.use(0);
+        glUniform1i(shadowShader.get("uTexture"), 0);
+
+        glUniform1f(shadowShader.get("uTextureScale"), 0.001f);
+
+        temp.multiplication(matrix, params.lightningView.projection());
+        glUniformMatrix4fv(shadowShader.get("uMatrixShadow"), 1, false, temp.getArray(), 0);
+
+        /*
         glUniformMatrix4fv(shadowShader.get("uMatrixShadow"), 1, false,
                 params.lightningView.projection().getArray(), 0);
 
         glUniform4f(shadowShader.get("uColorAmbient"), 36/255f, 74/255f, 30/255f, 1f);
         glUniform4f(shadowShader.get("uColorDiffuse"), 30/255f, 90/255f, 5/255f, 1f);
+        */
+
         glUniform1f(shadowShader.get("uEps"), uEps);
 
-        params.depthTexture.use(0);
-        glUniform1i(shadowShader.get("uDepthMap"), 0);
+        params.depthTexture.use(1);
+        glUniform1i(shadowShader.get("uDepthMap"), 1);
 
         Vect3f dir = new Vect3f();
         params.lightningView.getViewDirection(dir);

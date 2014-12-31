@@ -27,7 +27,7 @@ public interface iMapView {
     /**
      * @param ratio = screen width / height
      */
-    void setAspectRation(float ratio);
+    void setAspectRatio(float ratio);
 
     /**
      * @param angle in degrees

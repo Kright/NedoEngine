@@ -63,7 +63,7 @@ public class MapView implements iMapView {
     }
 
     @Override
-    public void setAspectRation(float ratio) {
+    public void setAspectRatio(float ratio) {
         this.aspectRatio = ratio;
     }
 
