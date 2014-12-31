@@ -7,6 +7,8 @@ package com.vk.lgorsl.cossacks.world.interfaces;
  */
 public interface iUnit extends iMapObject{
 
+    int type();
+
     int getDirection();
 
     int getState();     //moving, reloading, attacking, etc
