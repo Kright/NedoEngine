@@ -25,7 +25,7 @@ public interface iMap<T extends iMapObject>{
      * game objects may to change their positions or to die
      * to fix it, call update() method;
      */
-    void update();
+    void update(int ticks);
 
     /**
      * @return iterable for objects from area

@@ -6,9 +6,9 @@ import java.util.Random;
 
 /**
  * Simple realization of tree
- *
+ * <p/>
  * теортечески, можно будет в будущем сделать так, чтобы деревья со временем росли, раскидывали семена и в итоге умирали
- *
+ * <p/>
  * Created by lgor on 13.12.2014.
  */
 public class Tree implements iTree {
@@ -20,7 +20,7 @@ public class Tree implements iTree {
     private int x, y;
     private boolean alive = true;
 
-    public Tree(int x, int y, int type, int size){
+    public Tree(int x, int y, int type, int size) {
         this.x = x;
         this.y = y;
         this.type = type;
@@ -68,7 +68,7 @@ public class Tree implements iTree {
         return y;
     }
 
-    public static class Factory implements iTree.Factory{
+    public static class Factory implements iTree.Factory {
 
         private final int typesCount;
         private final Random rnd = new Random();
@@ -83,8 +83,8 @@ public class Tree implements iTree {
 
         @Override
         public iTree makeTree(int x, int y) {
-            int height = averageSize + (int)(deltaSize * rnd.nextGaussian());
-            if (height <= averageSize - 2*deltaSize){
+            int height = averageSize + (int) (deltaSize * rnd.nextGaussian());
+            if (height <= averageSize/8) {
                 height = averageSize;
             }
             return new Tree(x, y, rnd.nextInt(typesCount), height);

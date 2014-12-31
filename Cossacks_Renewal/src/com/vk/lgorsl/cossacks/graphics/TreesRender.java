@@ -80,7 +80,6 @@ public class TreesRender implements GameRenderable {
     }
 
     public void render(RendererParams params, iMapView view, CleverShader shader){
-        int meter = params.world.metrics.meterSize();
         float[] arr = view.projection().getArray();
         Vect3f dx = new Vect3f().set(-arr[5], arr[1], 0);
         dx.setLength(0.2f);

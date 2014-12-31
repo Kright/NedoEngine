@@ -1,13 +1,12 @@
 package com.vk.lgorsl.cossacks.world;
-import com.vk.lgorsl.cossacks.world.interfaces.WorldMetrics;
-import com.vk.lgorsl.cossacks.world.interfaces.iLandscapeMap;
-import com.vk.lgorsl.cossacks.world.interfaces.iMap;
-import com.vk.lgorsl.cossacks.world.interfaces.iTree;
+import com.vk.lgorsl.cossacks.world.interfaces.*;
 import com.vk.lgorsl.cossacks.world.realizations.GridLandscape;
 import com.vk.lgorsl.cossacks.world.realizations.HeightGrid;
 import com.vk.lgorsl.cossacks.world.realizations.NaiveMap;
 import com.vk.lgorsl.cossacks.world.realizations.Tree;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -22,6 +21,8 @@ public class WorldInstance {
     public WorldMetrics metrics;
 
     public HeightGrid heightGrid;
+
+    public List<iCountry> countries = new ArrayList<>();
 
     private iTree.Factory treeFactory;
 
@@ -47,8 +48,12 @@ public class WorldInstance {
         trees = new NaiveMap<>(metrics);
 
         treeFactory = new Tree.Factory(4, metrics.meterSize()*8, metrics.meterSize() * 3);
+        generateTrees(1024);
+    }
+
+    private void generateTrees(int count){
         Random rnd = new Random();
-        for(int i=0; i<1024; i++){
+        for(int i=0; i<count; i++){
             int x = rnd.nextInt(map.bounds().width()-metrics.meterSize()*2) + map.bounds().xMin()+metrics.meterSize();
             int y = rnd.nextInt(map.bounds().height()-metrics.meterSize()*2) + map.bounds().yMin()+metrics.meterSize();
             trees.add(treeFactory.makeTree(x,y));
@@ -56,7 +61,7 @@ public class WorldInstance {
     }
 
     public void tick(){
-        trees.update();
+        trees.update(1);
     }
 
     public void save(){

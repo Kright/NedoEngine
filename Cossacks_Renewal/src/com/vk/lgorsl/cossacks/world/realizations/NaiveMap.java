@@ -42,7 +42,7 @@ public class NaiveMap<T extends iMapObject> implements iMap<T> {
     }
 
     @Override
-    public void update() {
+    public void update(int ticks) {
         Iterator<T> iterator = lst.iterator();
         while (iterator.hasNext()){
             if (!iterator.next().alive()){
