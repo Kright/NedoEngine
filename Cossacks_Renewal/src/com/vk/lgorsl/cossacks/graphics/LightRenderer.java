@@ -20,8 +20,6 @@ import com.vk.lgorsl.cossacks.R;
  */
 public class LightRenderer implements GameRenderable {
 
-    public final static int depthTextureSize = 2048;
-
     private final int[]
             frameBuffer = new int[1],
             renderBuffer = new int[1];
@@ -30,8 +28,16 @@ public class LightRenderer implements GameRenderable {
     private CleverShader shader;
     private CleverShader treesShadows;
 
+    private int depthTextureSize;
+    private boolean firstDrawCall = true;
+
     @Override
     public boolean load(RendererParams params) {
+        depthTextureSize = params.settings.depthTextureSize;
+        if (depthTextureSize<256){
+            depthTextureSize = 256;
+        }
+
         glGenFramebuffers(1, frameBuffer, 0);
         glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer[0]);
 
@@ -40,7 +46,8 @@ public class LightRenderer implements GameRenderable {
         glGenTextures(1, texId, 0);
         glBindTexture(GL_TEXTURE_2D, texId[0]);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, depthTextureSize, depthTextureSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, null);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, params.settings.depthTextureSize,
+                params.settings.depthTextureSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, null);
 
         TextureLoader.setParameters(GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 
@@ -70,7 +77,7 @@ public class LightRenderer implements GameRenderable {
 
     @Override
     public final void render(RendererParams params) {
-        if (!params.lightningRendering) {
+        if (!firstDrawCall && !params.settings.shadowsEnabled){
             return;
         }
 
@@ -86,12 +93,13 @@ public class LightRenderer implements GameRenderable {
     }
 
     public void renderWorld(RendererParams params) {
-        glClearColor(0, 0, 0, 0);
+        glClearColor(1f, 1f, 1f, 1f);
         glClearDepthf(1f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        renderLand(params);
-        params.treesRender.render(params, params.lightningView, treesShadows);
+        if (params.settings.shadowsEnabled) {
+            renderLand(params);
+            params.treesRender.render(params, params.lightningView, treesShadows);
+        }
     }
 
     private void renderLand(RendererParams params){

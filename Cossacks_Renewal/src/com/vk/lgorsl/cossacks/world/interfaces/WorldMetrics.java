@@ -14,7 +14,14 @@ public class WorldMetrics {
     private final int meterOffset;
     private final iRectangle2i boudns;
 
-    private WorldMetrics(int mapXsize, int mapYsize, int maxHeight, int meterOffset) {
+    /**
+     * map size isn't in meters!
+     * @param mapXsize width
+     * @param mapYsize width along another axis
+     * @param maxHeight
+     * @param meterOffset meter size = (1 << meterOffset)
+     */
+    public WorldMetrics(int mapXsize, int mapYsize, int maxHeight, int meterOffset) {
         boudns = new Rectangle2i(0, 0, mapXsize, mapYsize);
         this.meterOffset = meterOffset;
         this.maxHeight = maxHeight;
@@ -34,10 +41,5 @@ public class WorldMetrics {
 
     public int getRShiftToMeter() {
         return meterOffset;
-    }
-
-    public static WorldMetrics sizeInMeters(int size, int meterOffset) {
-        size *= (1 << meterOffset);
-        return new WorldMetrics(size, size, 30*(1<<meterOffset), meterOffset);
     }
 }

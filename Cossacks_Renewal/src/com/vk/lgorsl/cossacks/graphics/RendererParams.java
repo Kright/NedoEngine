@@ -18,6 +18,14 @@ import java.nio.ShortBuffer;
  */
 public class RendererParams {
 
+    public static class Settings{
+        boolean shadowsEnabled = true;
+        float shadowsEps = 0.0005f;
+        int depthTextureSize = 2048;
+    }
+
+    public Settings settings = new Settings();
+
     public WorldInstance world;
 
     public iMapView mapView;
@@ -27,7 +35,6 @@ public class RendererParams {
     public final Point2i defaultViewportSize = new Point2i();   //viewport of surface
 
     //lightning
-    public boolean lightningRendering = true;       //TODO using it!!
     public Texture2D depthTexture;
     public iMapView lightningView;
 

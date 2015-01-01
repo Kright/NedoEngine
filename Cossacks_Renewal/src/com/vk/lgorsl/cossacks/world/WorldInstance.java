@@ -16,33 +16,17 @@ public class WorldInstance {
     public iLandscapeMap map;
     public iMap<iTree> trees;
     public WorldMetrics metrics;
-
     public HeightGrid heightGrid;
-
     public List<iCountry> countries = new ArrayList<>();
 
     private iTree.Factory treeFactory;
 
     public void load(){
-        metrics = WorldMetrics.sizeInMeters(255, 5);
+        metrics = new WorldMetrics(255 << 5, 255 << 5 , 30 << 5, 5);
         GridLandscape land = new GridLandscape(metrics);
         heightGrid = land.grid;
 
-        heightGrid.randomHeight(6, 10*metrics.meterSize(), 0.7f, true);
-
-        //int h = metrics.maxHeight();
-        //heightGrid.addHeight((Rectangle2i) metrics.mapSize(), h, h, h, h, false);
-
-        /*
-        final float h = 200;
-        int size = 12;
-        heightGrid.addHeight(new Rectangle2i(128-size, 128-size, 128+size, 128+size), h, h, h, h);
-        size-=1;
-        heightGrid.addHeight(new Rectangle2i(128-size, 128-size, 128+size, 128+size), h, h, h, h);
-        size-=1;
-        heightGrid.addHeight(new Rectangle2i(128-size, 128-size, 128+size, 128+size), h, h, h, h);
-        heightGrid.addHeight(new Rectangle2i(177, 177, size+177, size+177), h, h, h, h);
-        */
+        heightGrid.randomHeight(8, 8*metrics.meterSize(), 0.6f, true);
 
         map = land;
         trees = new NaiveMap<>(metrics);

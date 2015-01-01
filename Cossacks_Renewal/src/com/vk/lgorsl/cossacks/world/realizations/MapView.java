@@ -13,28 +13,24 @@ import com.vk.lgorsl.cossacks.world.interfaces.iMapView;
  */
 public class MapView implements iMapView {
 
-    private Point2i center;
     private final WorldMetrics metrics;
 
     private final ViewBounds viewBounds = new ViewBounds();
+    private final Point2i center = new Point2i();
+    private final Vect2f viewDirection = new Vect2f().set(0, 1);
+
     private final Matrix4_4f matrix = new Matrix4_4f();
-    private final Vect2f directionOfView = new Vect2f().set(0, 1);
-
-    private float scale = 0.001f;
-    private float inclinationAngle = 60 / 180 * (float) Math.PI;
-
-    private float aspectRatio = 1f;
-
     private boolean matrixUpdated = false;
 
-    private final Vect3f
-            xProjection = new Vect3f(),
-            yProjection = new Vect3f(),
-            upProjection = new Vect3f();
+    private float
+            scale = 0.001f,
+            aspectRatio = 1,
+            inclinationCos = FloatMath.sqrt(2) / 2,
+            inclinationSin = FloatMath.sqrt(2) / 2;
 
     public MapView(Point2i center, WorldMetrics metrics) {
-        this.center = center;
         this.metrics = metrics;
+        this.center.set(center);
     }
 
     @Override
@@ -58,26 +54,26 @@ public class MapView implements iMapView {
 
     @Override
     public void setDirectionOfView(float dx, float dy) {
-        directionOfView.set(dx, dy).normalize();
+        viewDirection.set(dx, dy).normalize();
         matrixUpdated = false;
     }
 
     @Override
     public void setAspectRatio(float ratio) {
-        this.aspectRatio = ratio;
+        aspectRatio = ratio;
         matrixUpdated = false;
     }
 
     @Override
     public void getViewDirection(Vect3f result) {
-        final float sin = FloatMath.sin(inclinationAngle);
-        final float cos = FloatMath.cos(inclinationAngle);
-        result.set(directionOfView.x*cos, directionOfView.y*cos, -sin);
+        result.set(viewDirection.x*inclinationCos, viewDirection.y*inclinationCos, -inclinationSin);
     }
 
     @Override
-    public void setInclination(float angle) {
-        inclinationAngle = angle / 180 * (float) Math.PI;
+    public void setInclination(float angleInDegrees) {
+        float angle = Helper.radiansInDegree * angleInDegrees;
+        inclinationCos = FloatMath.cos(angle);
+        inclinationSin = FloatMath.sin(angle);
         matrixUpdated = false;
     }
 
@@ -96,35 +92,57 @@ public class MapView implements iMapView {
     private void updateMatrixAndBounds() {
         if (matrixUpdated) return;
         matrixUpdated = true;
-        final float sin = FloatMath.sin(inclinationAngle);
-        final float cos = FloatMath.cos(inclinationAngle);
 
-        //TODO calculate coefficient
-        float k=0.6f;
+        float maxHeight = metrics.maxHeight();
+        float minHeight = - metrics.meterSize();
 
-        xProjection.set(-directionOfView.y, directionOfView.x*sin, directionOfView.x*k*sin).mul(scale/aspectRatio);
-        yProjection.set(directionOfView.x, directionOfView.y*sin, directionOfView.y*k*sin).mul(scale/aspectRatio);
-        upProjection.set(0, cos*scale, 0);
+        float xz  = 1f / scale / inclinationSin;
+        float maxDepth = xz - minHeight *inclinationCos / inclinationSin;
+        float minDepth = -xz - maxHeight * inclinationCos / inclinationSin;
 
-        matrix.setColumn(0, xProjection, 0);
-        matrix.setColumn(1, yProjection, 0);
-        matrix.setColumn(2, upProjection, 0);
+        final float scaledX = viewDirection.x * scale;
+        final float scaledY = viewDirection.y * scale;
 
-        matrix.setColumn(3,
-                -(center.x * xProjection.x + center.y * yProjection.x),
-                -(center.x * xProjection.y + center.y * yProjection.y),
-                -(center.x * xProjection.y + center.y * yProjection.y) * k + (1 - k)*0.5f,
-                1f);
+        final float oldXx = -scaledY / aspectRatio;
+        final float oldXy = scaledX * inclinationSin;
+        final float oldYx = scaledX / aspectRatio;
+        final float oldYy = scaledY * inclinationSin;
 
-        /**
-         *  i.x     j.x     0       dx
-         *  i.y*sin j.y*sin cos     dy
-         *  -||-*k  -||-*k  0       dy*k+(1-k)
-         *  0       0       0       1
-         *
-         *  and scaled
-         */
+        final float oldZy = inclinationCos *scale;
+
+        float rowZx = scaledX * inclinationCos;
+        float rowZy = scaledY * inclinationCos;
+
+        final float alpha = 2f / (maxDepth - minDepth) / (viewDirection.x * rowZx + viewDirection.y * rowZy);
+
+        rowZx *= alpha;
+        rowZy *= alpha;
+
+        final float cx = center.x + maxDepth * viewDirection.x;
+        final float cy = center.y + maxDepth * viewDirection.y;
+
         float[] arr = matrix.getArray();
+
+        arr[0] = oldXx;
+        arr[1] = oldXy;
+        arr[2] = rowZx;
+        arr[3] = 0;
+
+        arr[4] = oldYx;
+        arr[5] = oldYy;
+        arr[6] = rowZy;
+        arr[7] = 0;
+
+        arr[8] = 0;
+        arr[9] = oldZy;
+        arr[10] = 0;
+        arr[11] = 0;
+
+        arr[12] = -oldXx * center.x - oldYx *center.y;
+        arr[13] = -oldXy * center.x - oldYy * center.y;
+        arr[14] = 1 - rowZx * cx - rowZy * cy;
+        arr[15] = 1f;
+
 
         Matrix2_2f mat2 = new Matrix2_2f().set(arr[0], arr[4], arr[2], arr[6]);
         mat2.invert();
@@ -147,7 +165,5 @@ public class MapView implements iMapView {
         viewBounds.rightDown.set(vCenter).add(right).sub(forward);
         viewBounds.leftUp.set(vCenter).sub(right).add(forward);
         viewBounds.leftDown.set(vCenter).sub(right).sub(forward);
-
-        //viewBounds.rightUp.set(vCenter);
     }
 }

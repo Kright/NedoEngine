@@ -77,7 +77,7 @@ public class HeightGrid {
             float[][] h = new float[pow+1][pow+1];
             for(int dx=0; dx<pow+1; dx++){
                 for(int dy=0; dy<pow+1; dy++){
-                    h[dx][dy] = dh * (float)rnd.nextGaussian();
+                    h[dx][dy] = Math.abs(dh * (float)rnd.nextGaussian());
                 }
             }
             for(int dx=0; dx<pow; dx++){

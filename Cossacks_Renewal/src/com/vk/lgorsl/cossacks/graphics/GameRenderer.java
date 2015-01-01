@@ -87,19 +87,20 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         GLHelper.checkError();
 
         float t = (rendererParams.clock.framesCount()%(628*2))/100f;
+        t*=2;
         iRectangle2i mapSize = rendererParams.world.metrics.mapSize();
         Point2i position = new Point2i().set(mapSize.xCenter(), mapSize.yCenter());
 
         rendererParams.mapView.setDirectionOfView(FloatMath.sin(t), FloatMath.cos(t));
-        rendererParams.mapView.setInclination(30+5*FloatMath.sin(t+0.345f));
+        rendererParams.mapView.setInclination(30+25*FloatMath.sin(t+0.345f));
         rendererParams.mapView.setCenterPosition(position);
-        rendererParams.mapView.setScale((1.0f + 0.5f*FloatMath.sin(t)) / 30);
+        rendererParams.mapView.setScale((1.0f + 0.3f*FloatMath.sin(t)) / 40);
 
         rendererParams.lightningView.setDirectionOfView(FloatMath.sin(t / 2), FloatMath.cos(t / 2));
         rendererParams.lightningView.setInclination(30+0*FloatMath.cos(t/2));
         rendererParams.lightningView.setCenterPosition(position);
-        rendererParams.lightningView.setScale(0.007f);
-        rendererParams.lightningView.setAspectRatio(0.5f);
+        rendererParams.lightningView.setScale(0.005f);
+        rendererParams.lightningView.setAspectRatio(1f);
 
         for(GameRenderable rend : renderers){
             rend.render(rendererParams);

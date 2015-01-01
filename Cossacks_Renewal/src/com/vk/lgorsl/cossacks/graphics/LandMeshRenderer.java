@@ -26,8 +26,6 @@ public class LandMeshRenderer implements GameRenderable {
     private FloatBuffer fbn; //normals
     private ShortBuffer sb;
 
-    private float uEps = 0.001f;
-
     private Texture2D grass;
 
     private final Matrix4_4f matrix = new Matrix4_4f();
@@ -165,7 +163,7 @@ public class LandMeshRenderer implements GameRenderable {
         glUniform4f(shadowShader.get("uColorDiffuse"), 30/255f, 90/255f, 5/255f, 1f);
         */
 
-        glUniform1f(shadowShader.get("uEps"), uEps);
+        glUniform1f(shadowShader.get("uEps"), params.settings.shadowsEps);
 
         params.depthTexture.use(1);
         glUniform1i(shadowShader.get("uDepthMap"), 1);

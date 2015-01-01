@@ -30,10 +30,10 @@ public interface iMapView {
     void setAspectRatio(float ratio);
 
     /**
-     * @param angle in degrees
+     * @param angleInDegrees in degrees
      * 90 is vertical, 0 is horizontal field of view;
      */
-    void setInclination(float angle);
+    void setInclination(float angleInDegrees);
 
     void getViewDirection(Vect3f result);
 
