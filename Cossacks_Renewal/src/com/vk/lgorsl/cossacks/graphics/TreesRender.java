@@ -115,7 +115,6 @@ public class TreesRender implements GameRenderable {
     private int putData(FloatBuffer fb, Vect3f dx, Vect3f dh, WorldInstance world, ViewBounds boundingBox) {
         fb.position(0);
 
-        Vect3f pos = new Vect3f();
         int count = 0;
 
         boundingBox.getAABB(aabb);
@@ -126,55 +125,38 @@ public class TreesRender implements GameRenderable {
             }
             int xi = tree.x();
             int yi = tree.y();
-            int zi = world.heightGrid.getHeight(xi, yi);
 
             float x = xi;
             float y = yi;
-            float z = zi;
-
-            /*
-            {   //test!!
-                Vect2f v;
-                switch (tree.type()){
-                    case 0: v = boundingBox.leftDown; break;
-                    case 1: v = boundingBox.leftUp; break;
-                    case 2: v = boundingBox.rightDown; break;
-                    default: v = boundingBox.rightUp; break;
-                }
-                x = v.x;
-                y = v.y;
-                z = 0;
-            }
-            */
+            float z = world.heightGrid.getHeight(xi, yi);
 
             TreesParams treesP = treesParams[tree.type()];
             float treeSize= tree.size();
 
-            pos.set(x, y, z);
-            pos.madd(dx, -treeSize);
-            pos.putIntoFloatBuffer(fb);
+            fb.put(x - dx.x*treeSize);
+            fb.put(y - dx.y*treeSize);
+            fb.put(z - dx.z*treeSize);
             fb.put(treesP.txLeft);
             fb.put(treesP.tyDown);
 
-            pos.set(x, y, z);
-            pos.madd(dx, -treeSize);
-            pos.madd(dh, treeSize);
-            pos.putIntoFloatBuffer(fb);
+            fb.put(x + (dh.x - dx.x)*treeSize);
+            fb.put(y + (dh.y - dx.y)*treeSize);
+            fb.put(z + (dh.z - dx.z)*treeSize);
             fb.put(treesP.txLeft);
             fb.put(treesP.tyUp);
 
-            pos.set(x, y, z);
-            pos.madd(dx, treeSize);
-            pos.madd(dh, treeSize);
-            pos.putIntoFloatBuffer(fb);
+            fb.put(x + (dh.x + dx.x)*treeSize);
+            fb.put(y + (dh.y + dx.y)*treeSize);
+            fb.put(z + (dh.z + dx.z)*treeSize);
             fb.put(treesP.txRigth);
             fb.put(treesP.tyUp);
 
-            pos.set(x, y, z);
-            pos.madd(dx, treeSize);
-            pos.putIntoFloatBuffer(fb);
+            fb.put(x + dx.x*treeSize);
+            fb.put(y + dx.y*treeSize);
+            fb.put(z + dx.z*treeSize);
             fb.put(treesP.txRigth);
             fb.put(treesP.tyDown);
+
 
             count++;
         }
