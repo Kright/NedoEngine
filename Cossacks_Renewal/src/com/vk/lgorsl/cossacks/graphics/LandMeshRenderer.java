@@ -138,10 +138,6 @@ public class LandMeshRenderer implements GameRenderable {
 
     @Override
     public void render(RendererParams params) {
-        glClearColor(0, 0, 0, 0);
-        glClearDepthf(1f);
-
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         shadowShader.useProgram();
 
@@ -151,7 +147,7 @@ public class LandMeshRenderer implements GameRenderable {
         float amb = 0.5f;
         glUniform3f(shadowShader.get("uAmbient"), 0.5f * amb, amb, 1.5f * amb);
         float dif = 0.6f;
-        glUniform3f(shadowShader.get("uDiffuse"), 1.5f * dif, 1.4f * dif, dif);
+        glUniform3f(shadowShader.get("uDiffuse"), 2.0f * dif, 1.4f * dif, 0.6f*dif);
 
         grass.use(0);
         glUniform1i(shadowShader.get("uTexture"), 0);

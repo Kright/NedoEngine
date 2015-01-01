@@ -20,7 +20,7 @@ import com.vk.lgorsl.cossacks.R;
  */
 public class LightRenderer implements GameRenderable {
 
-    public final static int depthTextureSize = 1024;
+    public final static int depthTextureSize = 2048;
 
     private final int[]
             frameBuffer = new int[1],
@@ -63,7 +63,6 @@ public class LightRenderer implements GameRenderable {
         //shader = new CleverShader(params.resources, R.raw.shader_depth_debug);
         treesShadows = new CleverShader(params.resources, R.raw.shader_depth_discard);
 
-
         params.depthTexture = texture2D;
 
         return true;
@@ -91,6 +90,11 @@ public class LightRenderer implements GameRenderable {
         glClearDepthf(1f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        renderLand(params);
+        params.treesRender.render(params, params.lightningView, treesShadows);
+    }
+
+    private void renderLand(RendererParams params){
         shader.useProgram();
         shader.get("uMatrix");
         glUniformMatrix4fv(shader.get("uMatrix"), 1, false,
@@ -101,10 +105,6 @@ public class LightRenderer implements GameRenderable {
                 0, params.meshVertices);
 
         glDrawElements(GL_TRIANGLES, params.meshIndices.capacity(), GL_UNSIGNED_SHORT, params.meshIndices);
-
-        params.treesRender.render(params, params.lightningView, treesShadows);
-
         shader.disableAllVertexAttribArray();
-
     }
 }

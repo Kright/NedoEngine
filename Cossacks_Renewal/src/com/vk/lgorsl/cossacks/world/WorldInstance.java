@@ -30,6 +30,9 @@ public class WorldInstance {
 
         heightGrid.randomHeight(6, 10*metrics.meterSize(), 0.7f, true);
 
+        //int h = metrics.maxHeight();
+        //heightGrid.addHeight((Rectangle2i) metrics.mapSize(), h, h, h, h, false);
+
         /*
         final float h = 200;
         int size = 12;

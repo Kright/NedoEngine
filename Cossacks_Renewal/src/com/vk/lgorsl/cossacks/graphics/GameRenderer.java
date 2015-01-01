@@ -45,6 +45,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         GLHelper.checkError();
 
         renderers.add(new LightRenderer());
+        renderers.add(new ScreenColorDepthCleaner());
         renderers.add(new LandMeshRenderer());
         renderers.add(new TreesRender());
         //renderers.add(new LandMeshGridRenderer());
@@ -67,23 +68,25 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         GLHelper.checkError();
     }
 
+    private long time = System.currentTimeMillis();
+
     @Override
     public void onDrawFrame(GL10 gl) {
         rendererParams.clock.update();
 
-        if (rendererParams.clock.framesCount() % 200 == 0) {
-            NedoLog.log("fps = " + rendererParams.clock.fps());
+        if (rendererParams.clock.framesCount() % 100 == 0) {
+            long now = rendererParams.clock.getTime();
+            NedoLog.log("time per frame: " + (now-time)/100 + " ms, fps = " + rendererParams.clock.fps());
+            time = now;
         }
 
         glFrontFace(GL_CCW);
         glCullFace(GL_FRONT);
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
-
         GLHelper.checkError();
 
         float t = (rendererParams.clock.framesCount()%(628*2))/100f;
-        t*=2;
         iRectangle2i mapSize = rendererParams.world.metrics.mapSize();
         Point2i position = new Point2i().set(mapSize.xCenter(), mapSize.yCenter());
 
