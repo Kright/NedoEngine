@@ -20,7 +20,7 @@ import java.nio.ShortBuffer;
 
 /**
  * it renders trees :)
- *
+ * <p>
  * Created by lgor on 27.12.2014.
  */
 public class TreesRender implements GameRenderable {
@@ -29,6 +29,7 @@ public class TreesRender implements GameRenderable {
 
     private FloatBuffer fb;
     private int maxTreesCount = 1024;
+    private final float[] arr = new float[maxTreesCount * 20];
     private ShortBuffer sb;
 
     private CleverShader shader;
@@ -59,11 +60,11 @@ public class TreesRender implements GameRenderable {
                 GL_NEAREST_MIPMAP_NEAREST, GL_LINEAR, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, true);
 
         treesParams = new TreesParams[4];
-        for(int i=0; i<treesParams.length; i++){
+        for (int i = 0; i < treesParams.length; i++) {
             treesParams[i] = new TreesParams();
-            treesParams[i].txLeft = 1f/8*i;
-            treesParams[i].txRigth = 1f/8 + 1f/8*i;
-            treesParams[i].tyDown = 1/4f;
+            treesParams[i].txLeft = 1f / 8 * i;
+            treesParams[i].txRigth = 1f / 8 + 1f / 8 * i;
+            treesParams[i].tyDown = 1 / 4f;
             treesParams[i].tyUp = 0f;
         }
 
@@ -79,7 +80,7 @@ public class TreesRender implements GameRenderable {
         render(params, params.mapView, shader);
     }
 
-    public void render(RendererParams params, iMapView view, CleverShader shader){
+    public void render(RendererParams params, iMapView view, CleverShader shader) {
         float[] arr = view.projection().getArray();
         Vect3f dx = new Vect3f().set(-arr[5], arr[1], 0);
         dx.setLength(0.2f);
@@ -104,21 +105,19 @@ public class TreesRender implements GameRenderable {
         glVertexAttribPointer(shader.get("aTexCoord"), 2, GL_FLOAT, false, 20, fb);
 
         GLHelper.checkError("before rendering");
-        glDrawElements(GL_TRIANGLES, count*6, GL_UNSIGNED_SHORT, sb);
+        glDrawElements(GL_TRIANGLES, count * 6, GL_UNSIGNED_SHORT, sb);
 
         shader.disableAllVertexAttribArray();
         GLHelper.checkError("end");
     }
 
-    private final Rectangle2i aabb = new Rectangle2i(0,0,0,0);
+    private final Rectangle2i aabb = new Rectangle2i(0, 0, 0, 0);
 
     private int putData(FloatBuffer fb, Vect3f dx, Vect3f dh, WorldInstance world, ViewBounds boundingBox) {
         fb.position(0);
-
-        int count = 0;
+        int pos = 0;
 
         boundingBox.getAABB(aabb);
-
         for (iTree tree : world.trees.objects(aabb)) {
             if (!tree.alive()) {
                 continue;
@@ -131,35 +130,34 @@ public class TreesRender implements GameRenderable {
             float z = world.heightGrid.getHeight(xi, yi);
 
             TreesParams treesP = treesParams[tree.type()];
-            float treeSize= tree.size();
+            float treeSize = tree.size();
 
-            fb.put(x - dx.x*treeSize);
-            fb.put(y - dx.y*treeSize);
-            fb.put(z - dx.z*treeSize);
-            fb.put(treesP.txLeft);
-            fb.put(treesP.tyDown);
+            arr[pos++] = x - dx.x * treeSize;
+            arr[pos++] = y - dx.y * treeSize;
+            arr[pos++] = z - dx.z * treeSize;
+            arr[pos++] = treesP.txLeft;
+            arr[pos++] = treesP.tyDown;
 
-            fb.put(x + (dh.x - dx.x)*treeSize);
-            fb.put(y + (dh.y - dx.y)*treeSize);
-            fb.put(z + (dh.z - dx.z)*treeSize);
-            fb.put(treesP.txLeft);
-            fb.put(treesP.tyUp);
+            arr[pos++] = x + (dh.x - dx.x) * treeSize;
+            arr[pos++] = y + (dh.y - dx.y) * treeSize;
+            arr[pos++] = z + (dh.z - dx.z) * treeSize;
+            arr[pos++] = treesP.txLeft;
+            arr[pos++] = treesP.tyUp;
 
-            fb.put(x + (dh.x + dx.x)*treeSize);
-            fb.put(y + (dh.y + dx.y)*treeSize);
-            fb.put(z + (dh.z + dx.z)*treeSize);
-            fb.put(treesP.txRigth);
-            fb.put(treesP.tyUp);
+            arr[pos++] = x + (dh.x + dx.x) * treeSize;
+            arr[pos++] = y + (dh.y + dx.y) * treeSize;
+            arr[pos++] = z + (dh.z + dx.z) * treeSize;
+            arr[pos++] = treesP.txRigth;
+            arr[pos++] = treesP.tyUp;
 
-            fb.put(x + dx.x*treeSize);
-            fb.put(y + dx.y*treeSize);
-            fb.put(z + dx.z*treeSize);
-            fb.put(treesP.txRigth);
-            fb.put(treesP.tyDown);
-
-
-            count++;
+            arr[pos++] = x + dx.x * treeSize;
+            arr[pos++] = y + dx.y * treeSize;
+            arr[pos++] = z + dx.z * treeSize;
+            arr[pos++] = treesP.txRigth;
+            arr[pos++] = treesP.tyDown;
         }
-        return count;
+
+        fb.put(arr);
+        return pos/20;
     }
 }
