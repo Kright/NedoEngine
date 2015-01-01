@@ -66,7 +66,7 @@ public class MapView implements iMapView {
 
     @Override
     public void getViewDirection(Vect3f result) {
-        result.set(viewDirection.x*inclinationCos, viewDirection.y*inclinationCos, -inclinationSin);
+        result.set(viewDirection.x * inclinationCos, viewDirection.y * inclinationCos, -inclinationSin);
     }
 
     @Override
@@ -94,10 +94,10 @@ public class MapView implements iMapView {
         matrixUpdated = true;
 
         float maxHeight = metrics.maxHeight();
-        float minHeight = - metrics.meterSize();
+        float minHeight = -metrics.meterSize();
 
-        float xz  = 1f / scale / inclinationSin;
-        float maxDepth = xz - minHeight *inclinationCos / inclinationSin;
+        float xz = 1f / scale / inclinationSin;
+        float maxDepth = xz - minHeight * inclinationCos / inclinationSin;
         float minDepth = -xz - maxHeight * inclinationCos / inclinationSin;
 
         final float scaledX = viewDirection.x * scale;
@@ -108,7 +108,7 @@ public class MapView implements iMapView {
         final float oldYx = scaledX / aspectRatio;
         final float oldYy = scaledY * inclinationSin;
 
-        final float oldZy = inclinationCos *scale;
+        final float oldZy = inclinationCos * scale;
 
         float rowZx = scaledX * inclinationCos;
         float rowZy = scaledY * inclinationCos;
@@ -138,7 +138,7 @@ public class MapView implements iMapView {
         arr[10] = 0;
         arr[11] = 0;
 
-        arr[12] = -oldXx * center.x - oldYx *center.y;
+        arr[12] = -oldXx * center.x - oldYx * center.y;
         arr[13] = -oldXy * center.x - oldYy * center.y;
         arr[14] = 1 - rowZx * cx - rowZy * cy;
         arr[15] = 1f;
