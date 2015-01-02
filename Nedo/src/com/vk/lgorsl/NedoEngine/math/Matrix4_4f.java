@@ -64,6 +64,14 @@ public class Matrix4_4f implements iMatrix<Matrix4_4f, Vect3f>{
         return this;
     }
 
+    public Matrix4_4f set(float... params){
+        if (params.length>16) throw new ArrayIndexOutOfBoundsException("wrong number of parameters");
+        for(int i=0; i<params.length && i<16; i++){
+            arr[(i*4)%16 + i/4] = params[i];
+        }
+        return this;
+    }
+
     public final Matrix4_4f makeScale(float sx, float sy, float sz) {
         arr[0] = sx;
         arr[1] = arr[2] = arr[3] = arr[4] = 0f;

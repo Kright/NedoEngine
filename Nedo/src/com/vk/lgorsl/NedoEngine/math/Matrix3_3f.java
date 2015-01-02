@@ -41,6 +41,19 @@ public class Matrix3_3f implements iMatrix<Matrix3_3f, Vect3f>{
         return this;
     }
 
+    public Matrix3_3f set(float s11, float s12, float s13, float s21, float s22, float s23, float s31, float s32, float s33){
+        m11 = s11;
+        m12 = s12;
+        m13 = s13;
+        m21 = s21;
+        m22 = s22;
+        m23 = s23;
+        m31 = s31;
+        m32 = s32;
+        m33 = s33;
+        return this;
+    }
+
     /**
      * set to this matrix values from left top sub-matrix 3*3
      */
@@ -112,6 +125,12 @@ public class Matrix3_3f implements iMatrix<Matrix3_3f, Vect3f>{
                 m11 * v.x + m12 * v.y + m13 * v.z,
                 m21 * v.x + m22 * v.y + m23 * v.z,
                 m31 * v.x + m32 * v.y + m33 * v.z);
+    }
+
+    public void mul(Vect2f result, Vect2f v){
+        result.set(
+                m11 * v.x + m12* v.y + m13 ,
+                m21 * v.x + m22 *v.y + m23);
     }
 
     public void multiply(float m) {

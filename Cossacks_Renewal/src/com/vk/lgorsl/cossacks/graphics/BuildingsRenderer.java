@@ -45,7 +45,9 @@ public class BuildingsRenderer implements GameRenderable {
 
     @Override
     public boolean load(RendererParams params) {
-        ObjFile file = ObjLoader.simpleLoad(GLHelper.loadRawFileAsOneString(params.resources, R.raw.house1, "\n"));
+        ObjLoader loader = new ObjLoader();
+
+        ObjFile file = loader.load(GLHelper.loadRawFileAsOneString(params.resources, R.raw.house1, "\n"));
         Matrix4_4f rot = new Matrix4_4f().makeRotation(90, 1, 0, 0);
         for (Vect3f v : file.vertices) {
             rot.mul(v, v);
