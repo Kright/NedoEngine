@@ -13,13 +13,14 @@ import com.vk.lgorsl.cossacks.world.interfaces.iMapView;
  */
 public class MapView implements iMapView {
 
+    protected final Matrix4_4f matrix = new Matrix4_4f();
+
     private final WorldMetrics metrics;
 
-    private final ViewBounds viewBounds = new ViewBounds();
-    private final Point2i center = new Point2i();
-    private final Vect2f viewDirection = new Vect2f().set(0, 1);
+    protected final ViewBounds viewBounds = new ViewBounds();
+    protected final Point2i center = new Point2i();
+    protected final Vect2f viewDirection = new Vect2f().set(0, 1);
 
-    private final Matrix4_4f matrix = new Matrix4_4f();
     private boolean matrixUpdated = false;
 
     private float
@@ -84,15 +85,25 @@ public class MapView implements iMapView {
     }
 
     @Override
+    public Matrix4_4f anotherProjection() {
+        return matrix;
+    }
+
+    @Override
     public ViewBounds viewBounds() {
         updateMatrixAndBounds();
         return viewBounds;
     }
 
-    private void updateMatrixAndBounds() {
+    protected void updateMatrixAndBounds() {
         if (matrixUpdated) return;
         matrixUpdated = true;
 
+        constructMatrix();
+        constructViewBounds();
+    }
+
+    protected void constructMatrix(){
         float maxHeight = metrics.maxHeight();
         float minHeight = -metrics.meterSize();
 
@@ -142,8 +153,10 @@ public class MapView implements iMapView {
         arr[13] = -oldXy * center.x - oldYy * center.y;
         arr[14] = 1 - rowZx * cx - rowZy * cy;
         arr[15] = 1f;
+    }
 
-
+    protected void constructViewBounds(){
+        float[] arr = matrix.getArray();
         Matrix2_2f mat2 = new Matrix2_2f().set(arr[0], arr[4], arr[2], arr[6]);
         mat2.invert();
 

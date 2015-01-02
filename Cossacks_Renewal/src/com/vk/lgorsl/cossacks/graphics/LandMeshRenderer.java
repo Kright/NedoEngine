@@ -1,6 +1,5 @@
 package com.vk.lgorsl.cossacks.graphics;
 
-import com.vk.lgorsl.NedoEngine.math.Matrix4_4f;
 import com.vk.lgorsl.NedoEngine.math.Vect3f;
 import com.vk.lgorsl.NedoEngine.openGL.CleverShader;
 import com.vk.lgorsl.NedoEngine.openGL.GLHelper;
@@ -27,15 +26,6 @@ public class LandMeshRenderer implements GameRenderable {
     private ShortBuffer sb;
 
     private Texture2D grass;
-
-    private final Matrix4_4f matrix = new Matrix4_4f();
-    private final Matrix4_4f temp = new Matrix4_4f();
-    {
-        matrix.setColumn(0, 0.5f, 0, 0, 0);
-        matrix.setColumn(1, 0, 0.5f, 0, 0);
-        matrix.setColumn(2, 0, 0, 0.5f, 0);
-        matrix.setColumn(3, 0.5f, 0.5f, 0.5f, 1f);
-    }
 
     @Override
     public boolean load(RendererParams params) {
@@ -152,16 +142,7 @@ public class LandMeshRenderer implements GameRenderable {
 
         glUniform1f(shadowShader.get("uTextureScale"), 0.001f);
 
-        temp.multiplication(matrix, params.lightningView.projection());
-        glUniformMatrix4fv(shadowShader.get("uMatrixShadow"), 1, false, temp.getArray(), 0);
-
-        /*
-        glUniformMatrix4fv(shadowShader.get("uMatrixShadow"), 1, false,
-                params.lightningView.projection().getArray(), 0);
-
-        glUniform4f(shadowShader.get("uColorAmbient"), 36/255f, 74/255f, 30/255f, 1f);
-        glUniform4f(shadowShader.get("uColorDiffuse"), 30/255f, 90/255f, 5/255f, 1f);
-        */
+        glUniformMatrix4fv(shadowShader.get("uMatrixShadow"), 1, false, params.lightningView.anotherProjection().getArray(), 0);
 
         glUniform1f(shadowShader.get("uEps"), params.settings.shadowsEps);
 
@@ -172,7 +153,6 @@ public class LandMeshRenderer implements GameRenderable {
         params.lightningView.getViewDirection(dir);
         glUniform3f(shadowShader.get("uLightDirection"), dir.x, dir.y, dir.z);
 
-        GLHelper.checkError();
         shadowShader.enableAllVertexAttribArray();
         glVertexAttribPointer(shadowShader.get("aPosition"), 3, GL_FLOAT, false, 0, fb);
         glVertexAttribPointer(shadowShader.get("aNormal"), 3, GL_FLOAT, false, 0, fbn);

@@ -8,6 +8,7 @@ import com.vk.lgorsl.NedoEngine.math.iRectangle2i;
 import com.vk.lgorsl.NedoEngine.openGL.*;
 import com.vk.lgorsl.NedoEngine.utils.NedoLog;
 import com.vk.lgorsl.cossacks.world.WorldInstance;
+import com.vk.lgorsl.cossacks.world.realizations.LightningView;
 import com.vk.lgorsl.cossacks.world.realizations.MapView;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -35,7 +36,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         rendererParams.world = new WorldInstance();
         rendererParams.world.load();
         rendererParams.mapView = new MapView(new Point2i().set(32,32), rendererParams.world.metrics);
-        rendererParams.lightningView = new MapView(new Point2i().set(32, 32), rendererParams.world.metrics);
+        rendererParams.lightningView = new LightningView(new Point2i().set(32, 32), rendererParams.world.metrics);
     }
 
     @Override
@@ -50,7 +51,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         renderers.add(new TreesRender());
         //renderers.add(new LandMeshGridRenderer());
         //renderers.add(new DepthTextureRenderer());
-        renderers.add(new BuildingsRenderer());
+        //renderers.add(new BuildingsRenderer());
 
         for(GameRenderable rend : renderers){
             rend.load(rendererParams);
