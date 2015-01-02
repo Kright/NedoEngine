@@ -19,9 +19,12 @@ import java.nio.ShortBuffer;
 public class RendererParams {
 
     public static class Settings{
+
+        //shadows settings
         boolean shadowsEnabled = true;
-        float shadowsEps = 0.0005f;
+        float shadowsEps = 0.001f;
         int depthTextureSize = 2048;
+
     }
 
     public Settings settings = new Settings();

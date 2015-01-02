@@ -10,4 +10,8 @@ public class NedoException extends RuntimeException{
     public NedoException(String message){
         super(message);
     }
+
+    public NedoException(Exception ex){
+        super(ex);
+    }
 }
