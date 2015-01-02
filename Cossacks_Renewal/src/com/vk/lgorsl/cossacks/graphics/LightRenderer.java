@@ -25,8 +25,8 @@ public class LightRenderer implements GameRenderable {
             renderBuffer = new int[1];
     private Texture2D texture2D;
 
-    private CleverShader shader;
-    private CleverShader treesShadows;
+    public CleverShader shaderDepthDraw;
+    public CleverShader shaderDepthDiscardDraw;
 
     private int depthTextureSize;
     private boolean firstDrawCall = true;
@@ -66,11 +66,13 @@ public class LightRenderer implements GameRenderable {
             throw new NedoException("frameBuffer didn't created! status = " + status);
         }
 
-        shader = new CleverShader(params.resources, R.raw.shader_light_depth);
-        //shader = new CleverShader(params.resources, R.raw.shader_depth_debug);
-        treesShadows = new CleverShader(params.resources, R.raw.shader_depth_discard);
+        shaderDepthDraw = new CleverShader(params.resources, R.raw.shader_light_depth);
+        //shaderDepthDraw = new CleverShader(params.resources, R.raw.shader_depth_debug);
+        shaderDepthDiscardDraw = new CleverShader(params.resources, R.raw.shader_depth_discard);
 
         params.depthTexture = texture2D;
+
+        params.lightRenderer = this;
 
         return true;
     }
@@ -98,21 +100,27 @@ public class LightRenderer implements GameRenderable {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         if (params.settings.shadowsEnabled) {
             renderLand(params);
-            params.treesRender.render(params, params.lightningView, treesShadows);
+            //params.treesRender.render(params, params.lightningView, shaderDepthDiscardDraw);
+            params.treesRender.renderShadows(params);
         }
     }
 
     private void renderLand(RendererParams params){
-        shader.useProgram();
-        shader.get("uMatrix");
-        glUniformMatrix4fv(shader.get("uMatrix"), 1, false,
+        shaderDepthDraw.useProgram();
+        shaderDepthDraw.get("uMatrix");
+        glUniformMatrix4fv(shaderDepthDraw.get("uMatrix"), 1, false,
                 params.lightningView.projection().getArray(), 0);
 
-        shader.enableAllVertexAttribArray();
-        glVertexAttribPointer(shader.get("aPosition"), 3, GL_FLOAT, false,
+        shaderDepthDraw.enableAllVertexAttribArray();
+        glVertexAttribPointer(shaderDepthDraw.get("aPosition"), 3, GL_FLOAT, false,
                 0, params.meshVertices);
 
         glDrawElements(GL_TRIANGLES, params.meshIndices.capacity(), GL_UNSIGNED_SHORT, params.meshIndices);
-        shader.disableAllVertexAttribArray();
+        shaderDepthDraw.disableAllVertexAttribArray();
+    }
+
+    @Override
+    public void renderShadows(RendererParams params) {
+        //nothing
     }
 }

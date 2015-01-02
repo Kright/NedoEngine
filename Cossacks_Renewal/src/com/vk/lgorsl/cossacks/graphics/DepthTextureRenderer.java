@@ -29,4 +29,9 @@ public class DepthTextureRenderer implements GameRenderable{
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         quad.render(matrix);
     }
+
+    @Override
+    public void renderShadows(RendererParams params) {
+        //nothing
+    }
 }

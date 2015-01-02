@@ -85,4 +85,9 @@ public class LandMeshGridRenderer implements GameRenderable {
 
         shader.disableAllVertexAttribArray();
     }
+
+    @Override
+    public void renderShadows(RendererParams params) {
+
+    }
 }

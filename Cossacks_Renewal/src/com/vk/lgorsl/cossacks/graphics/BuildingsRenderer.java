@@ -119,4 +119,23 @@ public class BuildingsRenderer implements GameRenderable {
         shader.disableAllVertexAttribArray();
         GLHelper.checkError();
     }
+
+    public void shadowsRender(RendererParams params){
+        shader.useProgram();
+        shader.enableAllVertexAttribArray();
+
+        fb.position(0);
+        glVertexAttribPointer(shader.get("aPosition"), 3, GL_FLOAT, false, building.stride, fb);
+
+        for (int i = 0; i < maxCount; i++) {
+
+        }
+
+        shader.disableAllVertexAttribArray();
+    }
+
+    @Override
+    public void renderShadows(RendererParams params) {
+
+    }
 }

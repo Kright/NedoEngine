@@ -80,6 +80,11 @@ public class TreesRender implements GameRenderable {
         render(params, params.mapView, shader);
     }
 
+    @Override
+    public void renderShadows(RendererParams params) {
+        render(params, params.lightningView, params.lightRenderer.shaderDepthDiscardDraw);
+    }
+
     public void render(RendererParams params, iMapView view, CleverShader shader) {
         float[] arr = view.projection().getArray();
         Vect3f dx = new Vect3f().set(-arr[5], arr[1], 0);
@@ -89,7 +94,6 @@ public class TreesRender implements GameRenderable {
         int count = putData(fb, dx, dh, params.world, view.viewBounds());
 
         shader.useProgram();
-        GLHelper.checkError("start");
 
         texture.use(0);
         glUniform1i(shader.get("uTexture"), 0);
@@ -97,18 +101,14 @@ public class TreesRender implements GameRenderable {
         glUniformMatrix4fv(shader.get("uMatrix"), 1, false, view.projection().getArray(), 0);
 
         shader.enableAllVertexAttribArray();
-
         fb.position(0);
         glVertexAttribPointer(shader.get("aPosition"), 3, GL_FLOAT, false, 20, fb);
-
         fb.position(3);
         glVertexAttribPointer(shader.get("aTexCoord"), 2, GL_FLOAT, false, 20, fb);
 
-        GLHelper.checkError("before rendering");
         glDrawElements(GL_TRIANGLES, count * 6, GL_UNSIGNED_SHORT, sb);
 
         shader.disableAllVertexAttribArray();
-        GLHelper.checkError("end");
     }
 
     private final Rectangle2i aabb = new Rectangle2i(0, 0, 0, 0);
