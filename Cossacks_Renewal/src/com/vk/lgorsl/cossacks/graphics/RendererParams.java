@@ -7,9 +7,6 @@ import com.vk.lgorsl.NedoEngine.utils.FPSCounter;
 import com.vk.lgorsl.cossacks.world.WorldInstance;
 import com.vk.lgorsl.cossacks.world.interfaces.iMapView;
 
-import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
-
 /**
  * params for rendering
  * uses as global for game renderers
@@ -28,26 +25,21 @@ public class RendererParams {
     }
 
     public Settings settings = new Settings();
-
     public WorldInstance world;
 
     public iMapView mapView;
 
     public final FPSCounter clock;
-
     public final Point2i defaultViewportSize = new Point2i();   //viewport of surface
 
     //lightning
     public Texture2D depthTexture;
     public iMapView lightningView;
 
-    //for lightning and map rendering
-    public FloatBuffer meshVertices;
-    public ShortBuffer meshIndices;
 
     public LightRenderer lightRenderer;
-
     public TreesRender treesRender;
+    public LandMeshRenderer landMeshRenderer;
 
     public final Resources resources;
 

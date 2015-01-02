@@ -19,7 +19,7 @@ import static android.opengl.GLES20.*;
  * <p>
  * Created by lgor on 02.01.2015.
  */
-public class BuildingsRenderer implements GameRenderable {
+public class BuildingsRenderer implements GameRenderSystem {
 
     private final int maxCount = 16;
     private final Matrix4_4f positionMatrix[] = new Matrix4_4f[maxCount];
@@ -121,17 +121,6 @@ public class BuildingsRenderer implements GameRenderable {
     }
 
     public void shadowsRender(RendererParams params){
-        shader.useProgram();
-        shader.enableAllVertexAttribArray();
-
-        fb.position(0);
-        glVertexAttribPointer(shader.get("aPosition"), 3, GL_FLOAT, false, building.stride, fb);
-
-        for (int i = 0; i < maxCount; i++) {
-
-        }
-
-        shader.disableAllVertexAttribArray();
     }
 
     @Override

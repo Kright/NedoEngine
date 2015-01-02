@@ -23,7 +23,7 @@ import java.nio.ShortBuffer;
  * <p>
  * Created by lgor on 27.12.2014.
  */
-public class TreesRender implements GameRenderable {
+public class TreesRender implements GameRenderSystem {
 
     private Texture2D texture;
 

@@ -49,9 +49,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         renderers.add(new ScreenColorDepthCleaner());
         renderers.add(new LandMeshRenderer());
         renderers.add(new TreesRender());
-        //renderers.add(new LandMeshGridRenderer());
         //renderers.add(new DepthTextureRenderer());
-        //renderers.add(new BuildingsRenderer());
 
         for(GameRenderable rend : renderers){
             rend.load(rendererParams);

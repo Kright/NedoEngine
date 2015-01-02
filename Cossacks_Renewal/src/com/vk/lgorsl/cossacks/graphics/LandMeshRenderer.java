@@ -12,12 +12,13 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
 import static android.opengl.GLES20.*;
+import static android.opengl.GLES20.glVertexAttribPointer;
 
 /**
  * Renders land mesh
  * Created by lgor on 21.12.2014.
  */
-public class LandMeshRenderer implements GameRenderable {
+public class LandMeshRenderer implements GameRenderSystem {
 
     private CleverShader shadowShader;
 
@@ -35,6 +36,8 @@ public class LandMeshRenderer implements GameRenderable {
         grass = TextureLoader.loadTexture(GLHelper.loadBitmap2(params.resources, R.drawable.grass),
                 GL_NEAREST_MIPMAP_NEAREST, GL_NEAREST, GL_REPEAT, GL_REPEAT, true);
         createGrid(params);
+
+        params.landMeshRenderer = this;
         return true;
     }
 
@@ -46,8 +49,8 @@ public class LandMeshRenderer implements GameRenderable {
         sb = generateIndices(grid);
         fbn = generateNormals(meterSize, grid);
 
-        params.meshVertices = fb;
-        params.meshIndices = sb;
+        //params.meshVertices = fb;
+        //params.meshIndices = sb;
     }
 
     private FloatBuffer generateVertices(HeightGrid grid, float scale){
@@ -164,6 +167,18 @@ public class LandMeshRenderer implements GameRenderable {
 
     @Override
     public void renderShadows(RendererParams params) {
+        CleverShader shaderDepthDraw = params.lightRenderer.shaderDepthDraw;
 
+        shaderDepthDraw.useProgram();
+        shaderDepthDraw.get("uMatrix");
+        glUniformMatrix4fv(shaderDepthDraw.get("uMatrix"), 1, false,
+                params.lightningView.projection().getArray(), 0);
+
+        shaderDepthDraw.enableAllVertexAttribArray();
+        glVertexAttribPointer(shaderDepthDraw.get("aPosition"), 3, GL_FLOAT, false,
+                0, fb);
+
+        glDrawElements(GL_TRIANGLES, sb.capacity(), GL_UNSIGNED_SHORT, sb);
+        shaderDepthDraw.disableAllVertexAttribArray();
     }
 }

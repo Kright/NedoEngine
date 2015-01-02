@@ -1,8 +1,6 @@
 package com.vk.lgorsl.cossacks.graphics;
 
 import static android.opengl.GLES20.*;
-import static android.opengl.GLES20.glDrawElements;
-import static android.opengl.GLES20.glVertexAttribPointer;
 
 import com.vk.lgorsl.NedoEngine.openGL.CleverShader;
 import com.vk.lgorsl.NedoEngine.openGL.Texture2D;
@@ -99,28 +97,9 @@ public class LightRenderer implements GameRenderable {
         glClearDepthf(1f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         if (params.settings.shadowsEnabled) {
-            renderLand(params);
-            //params.treesRender.render(params, params.lightningView, shaderDepthDiscardDraw);
+
+            params.landMeshRenderer.renderShadows(params);
             params.treesRender.renderShadows(params);
         }
-    }
-
-    private void renderLand(RendererParams params){
-        shaderDepthDraw.useProgram();
-        shaderDepthDraw.get("uMatrix");
-        glUniformMatrix4fv(shaderDepthDraw.get("uMatrix"), 1, false,
-                params.lightningView.projection().getArray(), 0);
-
-        shaderDepthDraw.enableAllVertexAttribArray();
-        glVertexAttribPointer(shaderDepthDraw.get("aPosition"), 3, GL_FLOAT, false,
-                0, params.meshVertices);
-
-        glDrawElements(GL_TRIANGLES, params.meshIndices.capacity(), GL_UNSIGNED_SHORT, params.meshIndices);
-        shaderDepthDraw.disableAllVertexAttribArray();
-    }
-
-    @Override
-    public void renderShadows(RendererParams params) {
-        //nothing
     }
 }

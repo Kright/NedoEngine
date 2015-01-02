@@ -10,7 +10,5 @@ import com.vk.lgorsl.NedoEngine.openGL.Renderable;
  */
 public interface GameRenderable extends Renderable<RendererParams>, Loadable<RendererParams>{
 
-    //render(params), load(params) and next method
-
-    public void renderShadows(RendererParams params);
+    //load(params) and render(params) methods
 }
