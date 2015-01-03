@@ -70,9 +70,11 @@ public class WorldInstance {
     public boolean addBuilding(iBuilding building){
         int r = building.radius()*2;
         tempRect.set(building.x() - r, building.y() - r, building.x()+r, building.y()+r);
-        for (iBuilding bu: countries.get(0).buildings().objects(tempRect)){
+
+        if (countries.get(0).buildings().containsObjects(tempRect)){
             return false;
         }
+
         countries.get(0).buildings().add(building);
         r = building.radius();
         tempRect.set(building.x() - r, building.y() - r, building.x()+r, building.y()+r);

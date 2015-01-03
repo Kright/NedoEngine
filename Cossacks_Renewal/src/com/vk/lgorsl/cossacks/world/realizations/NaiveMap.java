@@ -89,4 +89,14 @@ public class NaiveMap<T extends iMapObject> implements iMap<T> {
             }
         };
     }
+
+    @Override
+    public boolean containsObjects(iRectangle2i area) {
+        for(T obj: lst){
+            if (area.contains(obj) && obj.alive()){
+                return true;
+            }
+        }
+        return false;
+    }
 }

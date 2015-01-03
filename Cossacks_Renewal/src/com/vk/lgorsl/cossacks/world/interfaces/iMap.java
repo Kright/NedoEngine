@@ -31,4 +31,9 @@ public interface iMap<T extends iMapObject>{
      * @return iterable for objects from area
      */
     Iterable<T> objects(iRectangle2i area);
+
+    /**
+     * @return true if any objects exists in this area
+     */
+    boolean containsObjects(iRectangle2i area);
 }
