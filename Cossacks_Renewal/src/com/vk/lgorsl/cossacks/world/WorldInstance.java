@@ -17,8 +17,8 @@ public class WorldInstance {
     public iLandscapeMap map;
     public iMap<iTree> trees;
     public WorldMetrics metrics;
-    public HeightGrid heightGrid;
     public List<iCountry> countries = new ArrayList<>();
+    public HeightGrid heightGrid;
 
     private iTree.Factory treeFactory;
 
@@ -33,6 +33,7 @@ public class WorldInstance {
         heightGrid.randomHeight(8, 8*metrics.meterSize(), 0.6f, true);
 
         map = land;
+
         trees = new NaiveMap<>(metrics);
         treeFactory = new Tree.Factory(4, metrics.meterSize()*8, metrics.meterSize() * 3);
 

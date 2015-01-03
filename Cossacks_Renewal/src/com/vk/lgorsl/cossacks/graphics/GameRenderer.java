@@ -50,6 +50,8 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         renderers.add(new LandMeshRenderer());
         renderers.add(new TreesRender());
         renderers.add(new BuildingsRenderer());
+
+        //renderers.add(new LandscapeRenderer());
         //renderers.add(new DepthTextureRenderer());
 
         for(GameRenderable rend : renderers){
@@ -93,7 +95,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         Point2i position = new Point2i().set(mapSize.xCenter(), mapSize.yCenter());
 
         rendererParams.mapView.setDirectionOfView(FloatMath.sin(t), FloatMath.cos(t));
-        rendererParams.mapView.setInclination(30+25*FloatMath.sin(t+0.345f));
+        rendererParams.mapView.setInclination(30+15*FloatMath.sin(t+0.345f));
         rendererParams.mapView.setCenterPosition(position);
         rendererParams.mapView.setScale((1.0f + 0.7f*FloatMath.sin(t)) / 20);
 

@@ -129,7 +129,6 @@ public class LandMeshRenderer implements GameRenderSystem {
 
     @Override
     public void render(RendererParams params) {
-
         shadowShader.useProgram();
 
         glUniformMatrix4fv(shadowShader.get("uMatrix"), 1, false,
@@ -167,6 +166,7 @@ public class LandMeshRenderer implements GameRenderSystem {
 
     @Override
     public void renderShadows(RendererParams params) {
+
         CleverShader shaderDepthDraw = params.lightRenderer.shaderDepthDraw;
 
         shaderDepthDraw.useProgram();

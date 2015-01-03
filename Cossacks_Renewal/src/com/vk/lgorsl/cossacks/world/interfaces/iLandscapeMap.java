@@ -13,4 +13,13 @@ public interface iLandscapeMap {
     int getHeight(iPoint2i position);
 
     iRectangle2i bounds();
+
+    public interface Editable {
+
+        //void addHeight(iPoint2i position, int radius, int dh, boolean smooth);
+
+        void generateRandomHeight(int maxHeight, int levels, int persistence, boolean smooth);
+
+        void addHeight(iRectangle2i rect, int dh1, int dh2, int dh3, int dh4, boolean smooth);
+    }
 }

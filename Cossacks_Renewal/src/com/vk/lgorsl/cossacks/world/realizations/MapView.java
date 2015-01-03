@@ -97,10 +97,11 @@ public class MapView implements iMapView {
 
     protected void updateMatrixAndBounds() {
         if (matrixUpdated) return;
-        matrixUpdated = true;
 
         constructMatrix();
         constructViewBounds();
+
+        matrixUpdated = true;
     }
 
     protected void constructMatrix(){
