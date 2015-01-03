@@ -17,6 +17,8 @@ public interface iBuilding extends iMapObject, iHitPoints{
      */
     int getDirection();
 
+    int radius();
+
     boolean needsInUpdates();
 
     void update();

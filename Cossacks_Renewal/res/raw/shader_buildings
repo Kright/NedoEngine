@@ -1,6 +1,7 @@
 
 uniform mat4 uMatrix;
 uniform mat4 uMatrixShadow;
+uniform mat3 uMatrixNormals;
 
 attribute vec3 aPosition;
 attribute vec3 aNormal;
@@ -13,7 +14,7 @@ varying vec2 vUV;
 void main(){
     gl_Position = uMatrix * vec4(aPosition.xyz, 1.0);
     vInv = (uMatrixShadow * vec4(aPosition.xyz, 1.0)).xyz;
-    vNormal = aNormal;
+    vNormal = uMatrixNormals * aNormal;
     vUV = aTexCoord;
 }
 

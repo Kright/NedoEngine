@@ -40,6 +40,7 @@ public class RendererParams {
     public LightRenderer lightRenderer;
     public TreesRender treesRender;
     public LandMeshRenderer landMeshRenderer;
+    public BuildingsRenderer buildingsRenderer;
 
     public final Resources resources;
 

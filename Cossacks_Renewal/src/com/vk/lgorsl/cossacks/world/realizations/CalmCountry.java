@@ -17,6 +17,9 @@ public class CalmCountry implements iCountry {
 
     public CalmCountry(WorldInstance world){
         this.world = world;
+        units = new NaiveMap<>(world.metrics);
+        buildings = new NaiveMap<>(world.metrics);
+        pathFinder = new NaivePathFinder();
     }
 
     @Override

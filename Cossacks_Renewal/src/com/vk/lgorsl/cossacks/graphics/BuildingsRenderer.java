@@ -1,16 +1,17 @@
 package com.vk.lgorsl.cossacks.graphics;
 
-import com.vk.lgorsl.NedoEngine.math.Matrix4_4f;
-import com.vk.lgorsl.NedoEngine.math.Vect3f;
+import android.util.FloatMath;
+import com.vk.lgorsl.NedoEngine.math.*;
 import com.vk.lgorsl.NedoEngine.openGL.*;
 import com.vk.lgorsl.NedoEngine.utils.ModelData;
 import com.vk.lgorsl.NedoEngine.utils.ObjFile;
 import com.vk.lgorsl.NedoEngine.utils.ObjLoader;
 import com.vk.lgorsl.cossacks.R;
+import com.vk.lgorsl.cossacks.world.interfaces.iBuilding;
+import com.vk.lgorsl.cossacks.world.interfaces.iCountry;
 
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
-import java.util.Random;
 
 import static android.opengl.GLES20.*;
 
@@ -21,19 +22,14 @@ import static android.opengl.GLES20.*;
  */
 public class BuildingsRenderer implements GameRenderSystem {
 
-    private final int maxCount = 16;
-    private final Matrix4_4f positionMatrix[] = new Matrix4_4f[maxCount];
-    private final Matrix4_4f temp = new Matrix4_4f();
-
-    private final Matrix4_4f matrix = new Matrix4_4f();
+    private final Matrix4_4f tempM = new Matrix4_4f();
+    private final Matrix4_4f tempM2 = new Matrix4_4f();
+    private final Rectangle2i tempRect = new Rectangle2i();
+    private final float[] tempRotation = new float[9];
 
     {
-        matrix.setColumn(0, 0.5f, 0, 0, 0);
-        matrix.setColumn(1, 0, 0.5f, 0, 0);
-        matrix.setColumn(2, 0, 0, 0.5f, 0);
-        matrix.setColumn(3, 0.5f, 0.5f, 0.5f, 1f);
+        tempRotation[0] = tempRotation[4] = tempRotation[8] = 1f;
     }
-
 
     private CleverShader shader;
 
@@ -46,15 +42,10 @@ public class BuildingsRenderer implements GameRenderSystem {
     @Override
     public boolean load(RendererParams params) {
         ObjLoader loader = new ObjLoader();
+        float scale = params.world.metrics.meterSize();
+        loader.setVerticesTransform(new Matrix4_4f().makeRotation(90, 1, 0, 0).scale(scale, scale, scale));
 
         ObjFile file = loader.load(GLHelper.loadRawFileAsOneString(params.resources, R.raw.house1, "\n"));
-        Matrix4_4f rot = new Matrix4_4f().makeRotation(90, 1, 0, 0);
-        for (Vect3f v : file.vertices) {
-            rot.mul(v, v);
-        }
-        for (Vect3f v : file.normals) {
-            rot.mul(v, v);
-        }
         building = file.makeData();
 
         fb = GLHelper.make(building.data);
@@ -63,16 +54,9 @@ public class BuildingsRenderer implements GameRenderSystem {
         buildingsTexture = TextureLoader.loadTexture(GLHelper.loadBitmap2(params.resources, R.drawable.house_tex),
                 GL_LINEAR_MIPMAP_LINEAR, GL_NEAREST, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, true);
 
-        Random rnd = new Random();
-        for (int i = 0; i < maxCount; i++) {
-            int x = rnd.nextInt(32 * 64) + 32 * 96;
-            int y = rnd.nextInt(32 * 64) + 32 * 96;
-            positionMatrix[i] = new Matrix4_4f();
-            positionMatrix[i].makeScale(params.world.metrics.meterSize());
-            positionMatrix[i].translate(x, y, params.world.heightGrid.getHeight(x, y));
-        }
-
         shader = new CleverShader(params.resources, R.raw.shader_buildings);
+
+        params.buildingsRenderer = this;
 
         return true;
     }
@@ -105,26 +89,81 @@ public class BuildingsRenderer implements GameRenderSystem {
         fb.position(5);
         glVertexAttribPointer(shader.get("aNormal"), 3, GL_FLOAT, false, building.stride, fb);
 
-        for (int i = 0; i < maxCount; i++) {
-            temp.multiplication(params.mapView.projection(), positionMatrix[i]);
-            glUniformMatrix4fv(shader.get("uMatrix"), 1, false, temp.getArray(), 0);
+        params.mapView.viewBounds().getAABB(tempRect);
+        tempM.makeIdentity();
 
-            temp.multiplication(matrix, params.lightningView.projection());
-            temp.multiplication(temp, positionMatrix[i]);
-            glUniformMatrix4fv(shader.get("uMatrixShadow"), 1, false, temp.getArray(), 0);
+        int uMatrixNormals = shader.get("uMatrixNormals");
+        int uMatrix = shader.get("uMatrix");
+        int uMatrixShadow = shader.get("uMatrixShadow");
 
-            glDrawElements(GL_TRIANGLES, building.indices.length, GL_UNSIGNED_SHORT, sb);
+        for (iCountry country : params.world.countries) {
+            for (iBuilding b : country.buildings().objects(tempRect)) {
+                float angle = b.getDirection() * Helper.radiansInDegree;
+                float cos = FloatMath.cos(angle);
+                float sin = FloatMath.sin(angle);
+
+                tempM.makeIdentity();
+                float[] arr = tempM.getArray();
+                tempRotation[0] = arr[0] = cos;
+                tempRotation[1] = arr[1] = sin;
+                tempRotation[3] = arr[4] = -sin;
+                tempRotation[4] = arr[5] = cos;
+
+                arr[12] = b.x();
+                arr[13] = b.y();
+                arr[14] = params.world.heightGrid.getHeight(b.x(), b.y());
+
+                glUniformMatrix3fv(uMatrixNormals, 1, false, tempRotation, 0);
+
+                tempM2.multiplication(params.mapView.projection(), tempM);
+                glUniformMatrix4fv(uMatrix, 1, false, tempM2.getArray(), 0);
+
+                tempM2.multiplication(params.lightningView.anotherProjection(), tempM);
+                glUniformMatrix4fv(uMatrixShadow, 1, false, tempM2.getArray(), 0);
+
+                glDrawElements(GL_TRIANGLES, building.indices.length, GL_UNSIGNED_SHORT, sb);
+            }
         }
 
         shader.disableAllVertexAttribArray();
-        GLHelper.checkError();
-    }
-
-    public void shadowsRender(RendererParams params){
     }
 
     @Override
     public void renderShadows(RendererParams params) {
+        CleverShader shader = params.lightRenderer.shaderDepthDraw;
+        shader.useProgram();
+        shader.enableAllVertexAttribArray();
 
+        fb.position(0);
+        glVertexAttribPointer(shader.get("aPosition"), 3, GL_FLOAT, false, building.stride, fb);
+
+        params.mapView.viewBounds().getAABB(tempRect);
+        tempM.makeIdentity();
+        int uMatrix = shader.get("uMatrix");
+
+        for (iCountry country : params.world.countries) {
+            for (iBuilding b : country.buildings().objects(tempRect)) {
+                float angle = b.getDirection() * Helper.radiansInDegree;
+                float cos = FloatMath.cos(angle);
+                float sin = FloatMath.sin(angle);
+
+                float[] arr = tempM.getArray();
+                arr[0] = cos;
+                arr[1] = sin;
+                arr[4] = -sin;
+                arr[5] = cos;
+
+                arr[12] = b.x();
+                arr[13] = b.y();
+                arr[14] = params.world.heightGrid.getHeight(b.x(), b.y());
+
+                tempM2.multiplication(params.lightningView.projection(), tempM);
+                glUniformMatrix4fv(uMatrix, 1, false, tempM2.getArray(), 0);
+
+                glDrawElements(GL_TRIANGLES, building.indices.length, GL_UNSIGNED_SHORT, sb);
+            }
+        }
+
+        shader.disableAllVertexAttribArray();
     }
 }

@@ -100,6 +100,7 @@ public class LightRenderer implements GameRenderable {
 
             params.landMeshRenderer.renderShadows(params);
             params.treesRender.renderShadows(params);
+            params.buildingsRenderer.renderShadows(params);
         }
     }
 }

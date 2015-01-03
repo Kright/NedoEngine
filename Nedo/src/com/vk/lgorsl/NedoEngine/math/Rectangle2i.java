@@ -11,6 +11,10 @@ public class Rectangle2i implements iRectangle2i {
 
     public int xMin, xMax, yMin, yMax;
 
+    public Rectangle2i(){
+        //nothing
+    }
+
     public Rectangle2i(int xMin, int yMin, int xMax, int yMax) {
         set(xMin, yMin, xMax, yMax);
     }

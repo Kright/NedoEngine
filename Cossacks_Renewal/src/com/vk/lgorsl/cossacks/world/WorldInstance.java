@@ -1,4 +1,5 @@
 package com.vk.lgorsl.cossacks.world;
+import com.vk.lgorsl.NedoEngine.math.Rectangle2i;
 import com.vk.lgorsl.cossacks.world.interfaces.*;
 import com.vk.lgorsl.cossacks.world.realizations.*;
 
@@ -23,6 +24,9 @@ public class WorldInstance {
 
     public void load(){
         metrics = new WorldMetrics(255 << 5, 255 << 5 , 30 << 5, 5);
+
+        countries.add(new CalmCountry(this));
+
         GridLandscape land = new GridLandscape(metrics);
         heightGrid = land.grid;
 
@@ -30,11 +34,10 @@ public class WorldInstance {
 
         map = land;
         trees = new NaiveMap<>(metrics);
-
         treeFactory = new Tree.Factory(4, metrics.meterSize()*8, metrics.meterSize() * 3);
-        generateTrees(1024);
 
-        countries.add(new CalmCountry(this));
+        generateTrees(1024);
+        generateBuildings(64, 3, 0);
     }
 
     private void generateTrees(int count){
@@ -44,6 +47,39 @@ public class WorldInstance {
             int y = rnd.nextInt(map.bounds().height()-metrics.meterSize()*2) + map.bounds().yMin()+metrics.meterSize();
             trees.add(treeFactory.makeTree(x,y));
         }
+    }
+
+    private void generateBuildings(int count, int radius, int countryID){
+        BuildingType type = new BuildingType();
+        type.radius = radius * metrics.meterSize();
+        type.countryId = countryID;
+        type.type = 0;
+
+        Random rnd = new Random();
+        
+        for(int i=0; i<count; i++){
+            int delta = metrics.meterSize()*64;
+            int x = rnd.nextInt(map.bounds().width()-2*delta) + map.bounds().xMin()+delta;
+            int y = rnd.nextInt(map.bounds().height()-2*delta) + map.bounds().yMin()+delta;
+            addBuilding(type.makeBuilding(x, y, rnd.nextInt(360)));
+        }
+    }
+
+    private final Rectangle2i tempRect = new Rectangle2i();
+
+    public boolean addBuilding(iBuilding building){
+        int r = building.radius()*2;
+        tempRect.set(building.x() - r, building.y() - r, building.x()+r, building.y()+r);
+        for (iBuilding bu: countries.get(0).buildings().objects(tempRect)){
+            return false;
+        }
+        countries.get(0).buildings().add(building);
+        r = building.radius();
+        tempRect.set(building.x() - r, building.y() - r, building.x()+r, building.y()+r);
+        for(iTree tree : trees.objects(tempRect)){
+            tree.cutDown();
+        }
+        return true;
     }
 
     public boolean isEnemies(int countryId1, int countryId2){
