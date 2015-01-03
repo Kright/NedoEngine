@@ -93,7 +93,7 @@ public class LandscapeRenderer implements GameRenderSystem {
         shader.useProgram();
 
         glUniformMatrix4fv(shader.get("uMatrix"), 1, false, params.mapView.projection().getArray(), 0);
-        glUniformMatrix4fv(shader.get("uMatrixShadow"), 1, false, params.lightningView.anotherProjection().getArray(), 0);
+        glUniformMatrix4fv(shader.get("uMatrixShadow"), 1, false, params.lightView.anotherProjection().getArray(), 0);
 
         float amb = 0.5f;
         glUniform3f(shader.get("uAmbient"), 0.5f * amb, amb, 1.5f * amb);
@@ -110,8 +110,7 @@ public class LandscapeRenderer implements GameRenderSystem {
         params.depthTexture.use(1);
         glUniform1i(shader.get("uDepthMap"), 1);
 
-        Vect3f dir = new Vect3f();
-        params.lightningView.getViewDirection(dir);
+        Vect3f dir = params.lightView.viewDirection();
         glUniform3f(shader.get("uLightDirection"), dir.x, dir.y, dir.z);
 
         shader.enableAllVertexAttribArray();
@@ -130,10 +129,10 @@ public class LandscapeRenderer implements GameRenderSystem {
         shader.enableAllVertexAttribArray();
 
         glUniformMatrix4fv(shader.get("uMatrix"), 1, false,
-                params.lightningView.projection().getArray(), 0);
+                params.lightView.projection().getArray(), 0);
 
         Rectangle2i rect = new Rectangle2i();
-        params.lightningView.viewBounds().getAABB(rect);
+        params.lightView.viewBounds().getAABB(rect);
         renderQuads(params, rect, false);
 
         shader.disableAllVertexAttribArray();

@@ -8,7 +8,7 @@ import com.vk.lgorsl.NedoEngine.math.iRectangle2i;
 import com.vk.lgorsl.NedoEngine.openGL.*;
 import com.vk.lgorsl.NedoEngine.utils.NedoLog;
 import com.vk.lgorsl.cossacks.world.WorldInstance;
-import com.vk.lgorsl.cossacks.world.realizations.LightningView;
+import com.vk.lgorsl.cossacks.world.realizations.LightView;
 import com.vk.lgorsl.cossacks.world.realizations.MapView;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -36,7 +36,9 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         rendererParams.world = new WorldInstance();
         rendererParams.world.load();
         rendererParams.mapView = new MapView(new Point2i().set(32,32), rendererParams.world.metrics);
-        rendererParams.lightningView = new LightningView(new Point2i().set(32, 32), rendererParams.world.metrics);
+
+        rendererParams.lightView = new LightView(rendererParams.world.metrics.maxHeight(),
+                rendererParams.world.metrics.meterSize()*3);
     }
 
     @Override
@@ -99,11 +101,9 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         rendererParams.mapView.setCenterPosition(position);
         rendererParams.mapView.setScale((1.0f + 0.7f*FloatMath.sin(t)) / 20);
 
-        rendererParams.lightningView.setDirectionOfView(FloatMath.sin(t / 2), FloatMath.cos(t / 2));
-        rendererParams.lightningView.setInclination(30+0*FloatMath.cos(t/2));
-        rendererParams.lightningView.setCenterPosition(position);
-        rendererParams.lightningView.setScale(0.005f);
-        rendererParams.lightningView.setAspectRatio(1f);
+        rendererParams.lightView.setViewDirection(FloatMath.sin(t / 2), FloatMath.cos(t / 2));
+        rendererParams.lightView.setInclination(30+0*FloatMath.cos(t/2));
+        rendererParams.lightView.setToCover(rendererParams.mapView.viewBounds());
 
         for(GameRenderable rend : renderers){
             rend.render(rendererParams);

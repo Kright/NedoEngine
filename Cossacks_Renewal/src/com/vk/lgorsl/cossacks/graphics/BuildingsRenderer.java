@@ -66,8 +66,7 @@ public class BuildingsRenderer implements GameRenderSystem {
         shader.useProgram();
 
         glUniform1f(shader.get("uEps"), params.settings.shadowsEps);
-        Vect3f dir = new Vect3f();
-        params.lightningView.getViewDirection(dir);
+        Vect3f dir = params.lightView.viewDirection();
         glUniform3f(shader.get("uLightDirection"), dir.x, dir.y, dir.z);
 
         float amb = 0.5f;
@@ -118,7 +117,7 @@ public class BuildingsRenderer implements GameRenderSystem {
                 tempM2.multiplication(params.mapView.projection(), tempM);
                 glUniformMatrix4fv(uMatrix, 1, false, tempM2.getArray(), 0);
 
-                tempM2.multiplication(params.lightningView.anotherProjection(), tempM);
+                tempM2.multiplication(params.lightView.anotherProjection(), tempM);
                 glUniformMatrix4fv(uMatrixShadow, 1, false, tempM2.getArray(), 0);
 
                 glDrawElements(GL_TRIANGLES, building.indices.length, GL_UNSIGNED_SHORT, sb);
@@ -157,7 +156,8 @@ public class BuildingsRenderer implements GameRenderSystem {
                 arr[13] = b.y();
                 arr[14] = params.world.heightGrid.getHeight(b.x(), b.y());
 
-                tempM2.multiplication(params.lightningView.projection(), tempM);
+                tempM2.multiplication(params.lightView.projection(), tempM);
+
                 glUniformMatrix4fv(uMatrix, 1, false, tempM2.getArray(), 0);
 
                 glDrawElements(GL_TRIANGLES, building.indices.length, GL_UNSIGNED_SHORT, sb);

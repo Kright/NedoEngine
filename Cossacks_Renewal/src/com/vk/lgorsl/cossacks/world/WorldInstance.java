@@ -31,6 +31,8 @@ public class WorldInstance {
         heightGrid = land.grid;
 
         heightGrid.randomHeight(8, 8*metrics.meterSize(), 0.6f, true);
+        //float dh = metrics.maxHeight();
+        //heightGrid.addHeight((Rectangle2i)metrics.mapSize(), dh, dh, dh, dh, false);
 
         map = land;
 

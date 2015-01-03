@@ -21,6 +21,8 @@ public class MapView implements iMapView {
     protected final Point2i center = new Point2i();
     protected final Vect2f viewDirection = new Vect2f().set(0, 1);
 
+    private final Vect3f getViewDirection = new Vect3f();
+
     private boolean matrixUpdated = false;
 
     private float
@@ -66,8 +68,8 @@ public class MapView implements iMapView {
     }
 
     @Override
-    public void getViewDirection(Vect3f result) {
-        result.set(viewDirection.x * inclinationCos, viewDirection.y * inclinationCos, -inclinationSin);
+    public Vect3f viewDirection() {
+        return getViewDirection.set(viewDirection.x * inclinationCos, viewDirection.y * inclinationCos, -inclinationSin);
     }
 
     @Override
@@ -81,11 +83,6 @@ public class MapView implements iMapView {
     @Override
     public Matrix4_4f projection() {
         updateMatrixAndBounds();
-        return matrix;
-    }
-
-    @Override
-    public Matrix4_4f anotherProjection() {
         return matrix;
     }
 

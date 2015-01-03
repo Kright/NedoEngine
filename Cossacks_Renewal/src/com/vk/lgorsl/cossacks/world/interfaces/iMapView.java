@@ -7,7 +7,7 @@ import com.vk.lgorsl.NedoEngine.math.*;
  *
  * Created by lgor on 13.12.2014.
  */
-public interface iMapView {
+public interface iMapView extends iProjection{
 
     /**
      * @return center of view;
@@ -34,24 +34,4 @@ public interface iMapView {
      * 90 is vertical, 0 is horizontal field of view;
      */
     void setInclination(float angleInDegrees);
-
-    void getViewDirection(Vect3f result);
-
-    /**
-     * @return projection matrix for openGL
-     */
-    Matrix4_4f projection();
-
-    /**
-     * necessary for lightning
-     * if standard projection gets results in [-1 .. 1], this in [0, 1]
-     * @return modified projection
-     */
-    Matrix4_4f anotherProjection();
-
-    /**
-     * то, что снаружи bounding box, заведомо не рисуется.
-     * @return bounds
-     */
-    ViewBounds viewBounds();
 }

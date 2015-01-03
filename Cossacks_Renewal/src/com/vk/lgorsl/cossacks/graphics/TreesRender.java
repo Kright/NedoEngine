@@ -9,7 +9,7 @@ import com.vk.lgorsl.NedoEngine.openGL.TextureLoader;
 import com.vk.lgorsl.cossacks.R;
 import com.vk.lgorsl.cossacks.world.WorldInstance;
 import com.vk.lgorsl.cossacks.world.interfaces.ViewBounds;
-import com.vk.lgorsl.cossacks.world.interfaces.iMapView;
+import com.vk.lgorsl.cossacks.world.interfaces.iProjection;
 import com.vk.lgorsl.cossacks.world.interfaces.iTree;
 
 import static android.opengl.GLES20.*;
@@ -82,10 +82,10 @@ public class TreesRender implements GameRenderSystem {
 
     @Override
     public void renderShadows(RendererParams params) {
-        render(params, params.lightningView, params.lightRenderer.shaderDepthDiscardDraw);
+        render(params, params.lightView, params.lightRenderer.shaderDepthDiscardDraw);
     }
 
-    public void render(RendererParams params, iMapView view, CleverShader shader) {
+    public void render(RendererParams params, iProjection view, CleverShader shader) {
         float[] arr = view.projection().getArray();
         Vect3f dx = new Vect3f().set(-arr[5], arr[1], 0);
         dx.setLength(0.2f);

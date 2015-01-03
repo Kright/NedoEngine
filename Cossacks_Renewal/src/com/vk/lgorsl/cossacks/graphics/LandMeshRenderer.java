@@ -144,15 +144,14 @@ public class LandMeshRenderer implements GameRenderSystem {
 
         glUniform1f(shadowShader.get("uTextureScale"), 0.001f);
 
-        glUniformMatrix4fv(shadowShader.get("uMatrixShadow"), 1, false, params.lightningView.anotherProjection().getArray(), 0);
+        glUniformMatrix4fv(shadowShader.get("uMatrixShadow"), 1, false, params.lightView.anotherProjection().getArray(), 0);
 
         glUniform1f(shadowShader.get("uEps"), params.settings.shadowsEps);
 
         params.depthTexture.use(1);
         glUniform1i(shadowShader.get("uDepthMap"), 1);
 
-        Vect3f dir = new Vect3f();
-        params.lightningView.getViewDirection(dir);
+        Vect3f dir = params.lightView.viewDirection();
         glUniform3f(shadowShader.get("uLightDirection"), dir.x, dir.y, dir.z);
 
         shadowShader.enableAllVertexAttribArray();
@@ -172,7 +171,7 @@ public class LandMeshRenderer implements GameRenderSystem {
         shaderDepthDraw.useProgram();
         shaderDepthDraw.get("uMatrix");
         glUniformMatrix4fv(shaderDepthDraw.get("uMatrix"), 1, false,
-                params.lightningView.projection().getArray(), 0);
+                params.lightView.projection().getArray(), 0);
 
         shaderDepthDraw.enableAllVertexAttribArray();
         glVertexAttribPointer(shaderDepthDraw.get("aPosition"), 3, GL_FLOAT, false,

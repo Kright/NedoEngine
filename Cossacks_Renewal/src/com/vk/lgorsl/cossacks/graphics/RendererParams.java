@@ -5,6 +5,7 @@ import com.vk.lgorsl.NedoEngine.math.Point2i;
 import com.vk.lgorsl.NedoEngine.openGL.Texture2D;
 import com.vk.lgorsl.NedoEngine.utils.FPSCounter;
 import com.vk.lgorsl.cossacks.world.WorldInstance;
+import com.vk.lgorsl.cossacks.world.interfaces.iLightView;
 import com.vk.lgorsl.cossacks.world.interfaces.iMapView;
 
 /**
@@ -19,9 +20,14 @@ public class RendererParams {
 
         //shadows settings
         boolean shadowsEnabled = true;
+
         float shadowsEps = 0.001f;
         int depthTextureSize = 2048;
 
+        /*
+        float shadowsEps = 0.002f;
+        int depthTextureSize = 1024;
+        */
     }
 
     public Settings settings = new Settings();
@@ -34,8 +40,7 @@ public class RendererParams {
 
     //lightning
     public Texture2D depthTexture;
-    public iMapView lightningView;
-
+    public iLightView lightView;
 
     public LightRenderer lightRenderer;
     public TreesRender treesRender;
