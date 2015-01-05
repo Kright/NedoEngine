@@ -19,10 +19,13 @@ public class WorldInstance {
     public WorldMetrics metrics;
     public List<iCountry> countries = new ArrayList<>();
     public HeightGrid heightGrid;
+    public GeneratorID generatorID;
 
     private iTree.Factory treeFactory;
 
     public void load(){
+        generatorID = new GeneratorID();
+
         metrics = new WorldMetrics(255 << 5, 255 << 5 , 30 << 5, 5);
 
         countries.add(new CalmCountry(this));
@@ -30,9 +33,7 @@ public class WorldInstance {
         GridLandscape land = new GridLandscape(metrics);
         heightGrid = land.grid;
 
-        heightGrid.randomHeight(8, 8*metrics.meterSize(), 0.6f, true);
-        //float dh = metrics.maxHeight();
-        //heightGrid.addHeight((Rectangle2i)metrics.mapSize(), dh, dh, dh, dh, false);
+        heightGrid.randomHeight(8, 10*metrics.meterSize(), 0.55f, true);
 
         map = land;
 
@@ -48,12 +49,12 @@ public class WorldInstance {
         for(int i=0; i<count; i++){
             int x = rnd.nextInt(map.bounds().width()-metrics.meterSize()*2) + map.bounds().xMin()+metrics.meterSize();
             int y = rnd.nextInt(map.bounds().height()-metrics.meterSize()*2) + map.bounds().yMin()+metrics.meterSize();
-            trees.add(treeFactory.makeTree(x,y));
+            addTree(treeFactory.makeTree(x, y));
         }
     }
 
     private void generateBuildings(int count, int radius, int countryID){
-        BuildingType type = new BuildingType();
+        BuildingType type = new BuildingType(generatorID);
         type.radius = radius * metrics.meterSize();
         type.countryId = countryID;
         type.type = 0;
@@ -84,6 +85,11 @@ public class WorldInstance {
         for(iTree tree : trees.objects(tempRect)){
             tree.cutDown();
         }
+        return true;
+    }
+
+    public boolean addTree(iTree tree){
+        trees.add(tree);
         return true;
     }
 

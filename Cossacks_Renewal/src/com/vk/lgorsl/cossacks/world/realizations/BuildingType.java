@@ -1,5 +1,6 @@
 package com.vk.lgorsl.cossacks.world.realizations;
 
+import com.vk.lgorsl.cossacks.world.interfaces.GeneratorID;
 import com.vk.lgorsl.cossacks.world.interfaces.iBuilding;
 
 /**
@@ -13,7 +14,15 @@ public class BuildingType {
     public int countryId;
     public int type;
 
+    private final GeneratorID generatorID;
+
+    public BuildingType(GeneratorID generatorID){
+        this.generatorID = generatorID;
+    }
+
     public iBuilding makeBuilding(final int x, final int y, final int direction) {
+        final int id = generatorID.getNextID();
+
         return new iBuilding() {
             boolean alive = true;
 
@@ -65,7 +74,7 @@ public class BuildingType {
 
             @Override
             public int id() {
-                return -1;  //not realized yet
+                return id;
             }
 
             @Override
