@@ -13,11 +13,6 @@ import com.vk.lgorsl.NedoEngine.math.Vect3f;
 public class VectTest extends AndroidTestCase {
 
     public void testVectOperators(){
-        Vect2f vv = new Vect2f();
-        Vect3f vvv = new Vect3f();
-
-        assertEquals(vv.length2(), 8.0f);
-        assertEquals(vvv.length2(), 12.0f);
     }
 
     public void testVectEquals() {

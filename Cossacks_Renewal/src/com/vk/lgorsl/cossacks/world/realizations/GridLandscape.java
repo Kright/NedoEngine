@@ -1,6 +1,7 @@
 package com.vk.lgorsl.cossacks.world.realizations;
 
 import android.graphics.Point;
+import com.vk.lgorsl.NedoEngine.math.Vect3f;
 import com.vk.lgorsl.NedoEngine.math.iPoint2i;
 import com.vk.lgorsl.NedoEngine.math.iRectangle2i;
 import com.vk.lgorsl.NedoEngine.utils.NedoException;
@@ -34,6 +35,11 @@ public class GridLandscape implements iLandscapeMap {
         } catch (ArrayIndexOutOfBoundsException ex) {
             throw new NedoException("out of boudns error, input position " + position);
         }
+    }
+
+    @Override
+    public void getNormal(iPoint2i position, Vect3f result) {
+        result.set(0,0,1);
     }
 
     @Override

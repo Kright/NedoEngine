@@ -176,5 +176,6 @@ public class MapView implements iMapView {
         viewBounds.rightDown.set(vCenter).add(right).sub(forward);
         viewBounds.leftUp.set(vCenter).sub(right).add(forward);
         viewBounds.leftDown.set(vCenter).sub(right).sub(forward);
+        viewBounds.update();
     }
 }

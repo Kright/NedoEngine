@@ -89,6 +89,8 @@ public class LightView implements iLightView {
         viewBounds.rightDown.x = direction.x*minF + rightDir.x*maxR;
         viewBounds.rightDown.y = direction.y*minF + rightDir.y*maxR;
 
+        viewBounds.update();
+
         projection.setColumn(0, viewBounds.rightUp.x, viewBounds.rightUp.y, maxHeight, 1);
         projection.setColumn(1, viewBounds.leftUp.x, viewBounds.leftUp.y, maxHeight, 1);
         projection.setColumn(2, viewBounds.leftDown.x, viewBounds.leftDown.y, 0, 1);

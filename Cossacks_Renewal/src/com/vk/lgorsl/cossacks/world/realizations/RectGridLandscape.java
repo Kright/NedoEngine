@@ -1,6 +1,7 @@
 package com.vk.lgorsl.cossacks.world.realizations;
 
 import android.util.FloatMath;
+import com.vk.lgorsl.NedoEngine.math.Vect3f;
 import com.vk.lgorsl.NedoEngine.math.iPoint2i;
 import com.vk.lgorsl.NedoEngine.math.iRectangle2i;
 import com.vk.lgorsl.cossacks.world.interfaces.WorldMetrics;
@@ -59,6 +60,28 @@ public class RectGridLandscape implements iLandscapeMap, iLandscapeMap.Editable 
                 return get(px, py);
             }
         }
+    }
+
+    @Override
+    public void getNormal(iPoint2i position, Vect3f result) {
+        int x = dx + position.x();
+        int y = dy + position.y();
+
+        int px = x / cellSize;
+        int py = y / cellSize;
+
+        int dx = getSafe(px-1, py) - getSafe(px+1, py);
+        int dy = getSafe(px, py-1) - getSafe(px, py+1);
+
+        result.set(dx, dy, 1).normalize();
+    }
+
+    private int getSafe(int x, int y){
+        if (x < 0) x++;
+        if (y < 0) y++;
+        if (x >= width) x = width - 1;
+        if (y >= height) y = height - 1;
+        return data[x + y * width];
     }
 
     private int av(int v1, int v2, int t) {
