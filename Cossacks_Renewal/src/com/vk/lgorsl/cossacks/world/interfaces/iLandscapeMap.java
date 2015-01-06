@@ -21,8 +21,8 @@ public interface iLandscapeMap {
 
         //void addHeight(iPoint2i position, int radius, int dh, boolean smooth);
 
-        void generateRandomHeight(int maxHeight, int levels, int persistence, boolean smooth);
+        void generateRandomHeight(float maxHeight, int levels, float persistence, boolean smooth);
 
-        void addHeight(iRectangle2i rect, int dh1, int dh2, int dh3, int dh4, boolean smooth);
+        void addHeight(iRectangle2i rect, float dh1, float dh2, float dh3, float dh4, boolean smooth);
     }
 }

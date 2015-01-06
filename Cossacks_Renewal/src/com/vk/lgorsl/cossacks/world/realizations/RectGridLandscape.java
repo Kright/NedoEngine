@@ -1,11 +1,11 @@
 package com.vk.lgorsl.cossacks.world.realizations;
 
 import android.util.FloatMath;
-import com.vk.lgorsl.NedoEngine.math.Vect3f;
-import com.vk.lgorsl.NedoEngine.math.iPoint2i;
-import com.vk.lgorsl.NedoEngine.math.iRectangle2i;
+import com.vk.lgorsl.NedoEngine.math.*;
 import com.vk.lgorsl.cossacks.world.interfaces.WorldMetrics;
 import com.vk.lgorsl.cossacks.world.interfaces.iLandscapeMap;
+
+import java.util.Random;
 
 /**
  * realization of height grid
@@ -73,7 +73,7 @@ public class RectGridLandscape implements iLandscapeMap, iLandscapeMap.Editable 
         int dx = getSafe(px-1, py) - getSafe(px+1, py);
         int dy = getSafe(px, py-1) - getSafe(px, py+1);
 
-        result.set(dx, dy, 1).normalize();
+        result.set(dx, dy, cellSize*2).normalize();
     }
 
     private int getSafe(int x, int y){
@@ -98,25 +98,63 @@ public class RectGridLandscape implements iLandscapeMap, iLandscapeMap.Editable 
     }
 
     @Override
-    public void generateRandomHeight(int maxHeight, int levels, int persistence, boolean smooth) {
+    public void generateRandomHeight(float maxHeight, int levels, float persistence, boolean smooth) {
+        Random rnd = new Random();
+        Rectangle2i rect = new Rectangle2i();
+        int size = mapSize.width();
+        int pow = 1;
+        float dh = maxHeight;
+        for (int level = 0; level < levels && size > 1 && dh > 1; level++) {
+            float[][] h = new float[pow + 1][pow + 1];
+            for (int dx = 0; dx < pow + 1; dx++) {
+                for (int dy = 0; dy < pow + 1; dy++) {
+                    h[dx][dy] = Math.abs(dh * (float) rnd.nextGaussian());
+                }
+            }
+            for (int dx = 0; dx < pow; dx++) {
+                for (int dy = 0; dy < pow; dy++) {
+                    rect.set(dx * size, dy * size, (dx + 1) * size - 1, (dy + 1) * size - 1);
+                    addHeight(rect, h[dx][dy], h[dx + 1][dy], h[dx][dy + 1], h[dx + 1][dy + 1], smooth);
+                }
+            }
+            size /= 2;
+            pow *= 2;
+            dh *= persistence;
+        }
+    }
+
+    public void scaleHeight(float maxAmplitude){
+        int max = data[0];
+        int min = data[0];
+        for(int i:data){
+            if (i<min) min = i;
+            if (i>max) max = i;
+        }
+        final float k = maxAmplitude / (max-min);
+        final float dh = -min*k;
+        for(int i=0; i<data.length; i++){
+            data[i] = (int)(data[i]*k + dh);
+        }
     }
 
     @Override
-    public void addHeight(iRectangle2i rect, int dh1, int dh2, int dh3, int dh4, boolean smooth) {
-        int pxMin = (rect.xMin() + dx + cellSize - 1) / cellSize;
-        int pyMin = (rect.yMin() + dy + cellSize - 1) / cellSize;
+    public void addHeight(iRectangle2i rect, float dh1, float dh2, float dh3, float dh4, boolean smooth) {
+        final float pi = (float) Math.PI;
 
-        int pxMax = (rect.xMax() + dx) / cellSize;
-        int pyMax = (rect.yMax() + dy) / cellSize;
+        int pxMin = Math.max(0, (rect.xMin() + dx + cellSize - 1) / cellSize);
+        int pyMin = Math.max(0, (rect.yMin() + dy + cellSize - 1) / cellSize);
+
+        int pxMax = Math.min(width-1, (rect.xMax() + dx) / cellSize);
+        int pyMax = Math.min(height-1, (rect.yMax() + dy) / cellSize);
 
         for (int j = pyMin; j <= pyMax; j++){
             float ky = (float)(j*cellSize-dy - rect.yMin()) / rect.height();
             if (smooth) {
-                ky = 0.5f - FloatMath.cos(ky);
+                ky = 0.5f - 0.5f * FloatMath.cos(ky*pi);
             }
             for (int i = pxMin; i <= pxMax; i++) {
                 float kx = (float)(i*cellSize - dx - rect.xMin()) / rect.width();
-                if (smooth) kx = 0.5f - FloatMath.cos(kx);
+                if (smooth) kx = 0.5f - 0.5f * FloatMath.cos(kx*pi);
                 data[i + j* width] += (int) ((1-kx) * ((1-ky) * dh1 + ky*dh3) + kx * ((1-ky)*dh2 + ky * dh4));
             }
         }

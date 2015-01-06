@@ -27,17 +27,15 @@ public class WorldInstance {
     public void load(){
         generatorID = new GeneratorID();
 
-        metrics = new WorldMetrics(512 << 5, 512 << 5 , 40 << 5, 5);
+        metrics = new WorldMetrics(512 << 5, 512 << 5 , 30 << 5, 5);
 
         countries.add(new CalmCountry(this));
 
-        GridLandscape land = new GridLandscape(metrics);
+        RectGridLandscape land = new RectGridLandscape(metrics, metrics.meterSize());
         map = land;
 
-        land.grid.randomHeight(8, 8*metrics.meterSize(), 0.65f, true);
-
-        int dh = -32*10;
-        land.grid.addHeight(new Rectangle2i(0, 0, 512, 512), dh, dh, dh, dh, false);
+        land.generateRandomHeight(10*metrics.meterSize(), 8, 0.65f, true);
+        land.scaleHeight(metrics.maxHeight()*0.5f);
 
         trees = new NaiveMap<>(metrics);
         treeFactory = new Tree.Factory(4, metrics.meterSize()*8, metrics.meterSize() * 3);
@@ -64,7 +62,7 @@ public class WorldInstance {
         Random rnd = new Random();
         
         for(int i=0; i<count; i++){
-            int delta = metrics.meterSize()*64;
+            int delta = metrics.meterSize()*16;
             int x = rnd.nextInt(map.bounds().width()-2*delta) + map.bounds().xMin()+delta;
             int y = rnd.nextInt(map.bounds().height()-2*delta) + map.bounds().yMin()+delta;
             addBuilding(type.makeBuilding(x, y, rnd.nextInt(360)));
