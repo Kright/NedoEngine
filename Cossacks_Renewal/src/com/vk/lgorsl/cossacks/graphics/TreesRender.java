@@ -26,12 +26,12 @@ public class TreesRender implements GameRenderSystem {
 
     private Texture2D texture;
 
+    private CleverShader simpleShader, shadowShader;
+
     private FloatBuffer fb;
-    private int maxTreesCount = 2048;
+    private int maxTreesCount = 1024;
     private final float[] arr = new float[maxTreesCount * 20];
     private ShortBuffer sb;
-
-    private CleverShader shader;
 
     private class TreesParams {
         float txLeft, txRight, tyUp, tyDown;
@@ -67,7 +67,8 @@ public class TreesRender implements GameRenderSystem {
             treesParams[i].tyUp = 0f;
         }
 
-        shader = params.loadShader(R.raw.shader_simple);
+        simpleShader = params.loadShader(R.raw.shader_simple);
+        shadowShader = params.loadShader(R.raw.shader_depth_discard);
 
         params.treesRender = this;
 
@@ -76,12 +77,12 @@ public class TreesRender implements GameRenderSystem {
 
     @Override
     public void render(RendererParams params) {
-        render(params, params.mapView, shader);
+        render(params, params.mapView, simpleShader);
     }
 
     @Override
     public void renderShadows(RendererParams params) {
-        render(params, params.lightView, params.lightRenderer.shaderDepthDiscardDraw);
+        render(params, params.lightView, shadowShader);
     }
 
     public void render(RendererParams params, iProjection view, CleverShader shader) {
@@ -90,29 +91,22 @@ public class TreesRender implements GameRenderSystem {
         dx.setLength(0.2f);
         Vect3f dh = new Vect3f().set(0, 0, 1);
 
-        int count = putData(fb, dx, dh, params.world, view.viewBounds());
-
         shader.useProgram();
 
         texture.use(0);
         glUniform1i(shader.get("uTexture"), 0);
-
         glUniformMatrix4fv(shader.get("uMatrix"), 1, false, view.projection().getArray(), 0);
 
         shader.enableAllVertexAttribArray();
-        fb.position(0);
-        glVertexAttribPointer(shader.get("aPosition"), 3, GL_FLOAT, false, 20, fb);
-        fb.position(3);
-        glVertexAttribPointer(shader.get("aTexCoord"), 2, GL_FLOAT, false, 20, fb);
 
-        glDrawElements(GL_TRIANGLES, count * 6, GL_UNSIGNED_SHORT, sb);
+        renderTrees(dx, dh, params.world, view.viewBounds(), shader.get("aPosition"), shader.get("aTexCoord"));
 
         shader.disableAllVertexAttribArray();
     }
 
     private final Rectangle2i aabb = new Rectangle2i(0, 0, 0, 0);
 
-    private int putData(FloatBuffer fb, Vect3f dx, Vect3f dh, WorldInstance world, ViewBounds boundingBox) {
+    private void renderTrees(Vect3f dx, Vect3f dh, WorldInstance world, ViewBounds boundingBox, int aPosition, int aTexCoord){
         fb.position(0);
         int pos = 0;
 
@@ -151,10 +145,27 @@ public class TreesRender implements GameRenderSystem {
             arr[pos++] = z + dx.z * treeSize;
             arr[pos++] = treesP.txRight;
             arr[pos++] = treesP.tyDown;
-        }
 
+            if (pos/20==maxTreesCount){
+                fb.position(0);
+                fb.put(arr);
+                pos = 0;
+                render(maxTreesCount, aPosition, aTexCoord);
+            }
+        }
+        if (pos>0) {
+            fb.position(0);
+            fb.put(arr, 0, pos);
+            render(pos/20, aPosition, aTexCoord);
+        }
+    }
+
+    private void render(int count, int aPosition, int aTexPos){
         fb.position(0);
-        fb.put(arr, 0, pos);
-        return pos/20;
+        glVertexAttribPointer(aPosition, 3, GL_FLOAT, false, 20, fb);
+        fb.position(3);
+        glVertexAttribPointer(aTexPos, 2, GL_FLOAT, false, 20, fb);
+
+        glDrawElements(GL_TRIANGLES, count * 6, GL_UNSIGNED_SHORT, sb);
     }
 }

@@ -40,7 +40,7 @@ public class WorldInstance {
         trees = new NaiveMap<>(metrics);
         treeFactory = new Tree.Factory(4, metrics.meterSize()*8, metrics.meterSize() * 3);
 
-        generateTrees(2048);
+        generateTrees(2048*3);
         generateBuildings(128, 3, 0);
     }
 
