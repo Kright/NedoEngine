@@ -96,8 +96,7 @@ public class LightRenderer implements GameRenderable {
         glClearDepthf(1f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         if (params.settings.shadowsEnabled) {
-
-            params.landMeshRenderer.renderShadows(params);
+            params.landscapeRenderer.renderShadows(params);
             params.treesRender.renderShadows(params);
             params.buildingsRenderer.renderShadows(params);
         }

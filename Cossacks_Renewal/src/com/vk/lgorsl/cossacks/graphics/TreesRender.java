@@ -27,7 +27,7 @@ public class TreesRender implements GameRenderSystem {
     private Texture2D texture;
 
     private FloatBuffer fb;
-    private int maxTreesCount = 1024;
+    private int maxTreesCount = 2048;
     private final float[] arr = new float[maxTreesCount * 20];
     private ShortBuffer sb;
 
@@ -156,7 +156,8 @@ public class TreesRender implements GameRenderSystem {
             arr[pos++] = treesP.tyDown;
         }
 
-        fb.put(arr);
+        fb.position(0);
+        fb.put(arr, 0, pos);
         return pos/20;
     }
 }

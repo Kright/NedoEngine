@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
 import com.vk.lgorsl.NedoEngine.openGL.ConfigChooser;
@@ -11,6 +12,8 @@ import com.vk.lgorsl.NedoEngine.utils.NedoLog;
 import com.vk.lgorsl.cossacks.graphics.GameRenderer;
 
 public class Renewal extends Activity {
+
+    volatile public static boolean shadows = true;
 
     GLSurfaceView view;
     GameRenderer renderer;
@@ -31,7 +34,15 @@ public class Renewal extends Activity {
         NedoLog.log("onCreate");
 
         if (view == null) {
-            view = new GLSurfaceView(this);
+            view = new GLSurfaceView(this){
+                @Override
+                public boolean onTouchEvent(MotionEvent event) {
+                    if (event.getActionMasked() == MotionEvent.ACTION_DOWN){
+                        shadows = !shadows;
+                    }
+                    return true;
+                }
+            };
             view.setEGLContextClientVersion(2);
 
             view.setEGLConfigChooser(new ConfigChooser(ConfigChooser.RGBA8888DEPTH16).setConfigPrinting(false));

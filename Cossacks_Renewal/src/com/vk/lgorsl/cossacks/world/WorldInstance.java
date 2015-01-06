@@ -32,22 +32,25 @@ public class WorldInstance {
     public void load(){
         generatorID = new GeneratorID();
 
-        metrics = new WorldMetrics(255 << 5, 255 << 5 , 30 << 5, 5);
+        metrics = new WorldMetrics(512 << 5, 512 << 5 , 40 << 5, 5);
 
         countries.add(new CalmCountry(this));
 
         GridLandscape land = new GridLandscape(metrics);
         map = land;
         heightGrid = land.grid;
-        heightGrid.randomHeight(8, 10*metrics.meterSize(), 0.55f, true);
+        heightGrid.randomHeight(8, 15*metrics.meterSize(), 0.65f, true);
+
+        int dh = -32*10;
+        heightGrid.addHeight(new Rectangle2i(0, 0, 512, 512), dh, dh, dh, dh, false);
 
         heightMap = new RectGridLandscape(metrics, metrics.meterSize());
 
         trees = new NaiveMap<>(metrics);
         treeFactory = new Tree.Factory(4, metrics.meterSize()*8, metrics.meterSize() * 3);
 
-        generateTrees(1024);
-        generateBuildings(64, 3, 0);
+        generateTrees(2048);
+        generateBuildings(128, 3, 0);
     }
 
     private void generateTrees(int count){

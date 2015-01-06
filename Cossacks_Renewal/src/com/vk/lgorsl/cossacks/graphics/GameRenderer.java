@@ -6,7 +6,9 @@ import android.util.FloatMath;
 import com.vk.lgorsl.NedoEngine.math.Point2i;
 import com.vk.lgorsl.NedoEngine.math.iRectangle2i;
 import com.vk.lgorsl.NedoEngine.openGL.*;
+import com.vk.lgorsl.NedoEngine.utils.FPSCounter;
 import com.vk.lgorsl.NedoEngine.utils.NedoLog;
+import com.vk.lgorsl.cossacks.Renewal;
 import com.vk.lgorsl.cossacks.world.WorldInstance;
 import com.vk.lgorsl.cossacks.world.realizations.LightView;
 import com.vk.lgorsl.cossacks.world.realizations.MapView;
@@ -49,11 +51,10 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 
         renderers.add(new LightRenderer());
         renderers.add(new ScreenColorDepthCleaner());
-        renderers.add(new LandMeshRenderer());
+        //renderers.add(new LandMeshRenderer());
+        renderers.add(new LandscapeRenderer(rendererParams.settings.cellSize, rendererParams.settings.chunkSize));
         renderers.add(new TreesRender());
         renderers.add(new BuildingsRenderer());
-
-        //renderers.add(new LandscapeRenderer());
         //renderers.add(new DepthTextureRenderer());
 
         for(GameRenderable rend : renderers){
@@ -61,6 +62,14 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         }
 
         Shader.releaseCompiler();
+
+        Runtime.getRuntime().gc();
+        printMemory();
+    }
+
+    private static void printMemory(){
+        NedoLog.log("free = " + Runtime.getRuntime().freeMemory() + ", total " + Runtime.getRuntime().totalMemory() +
+                ", max memory = " + Runtime.getRuntime().maxMemory());
     }
 
     @Override
@@ -74,16 +83,24 @@ public class GameRenderer implements GLSurfaceView.Renderer {
     }
 
     private long time = System.currentTimeMillis();
+    long first = 0;
 
     @Override
     public void onDrawFrame(GL10 gl) {
-        rendererParams.clock.update();
+        FPSCounter clock = rendererParams.clock;
+        clock.update();
+        if (first == 0){
+            first = clock.getTime();
+        }
 
-        if (rendererParams.clock.framesCount() % 100 == 0) {
-            long now = rendererParams.clock.getTime();
+        if (clock.framesCount() % 100 == 0) {
+            long now = clock.getTime();
             NedoLog.log("time per frame: " + (now-time)/100 + " ms, fps = " + rendererParams.clock.fps());
+            NedoLog.log("average fps = " + rendererParams.clock.framesCount()*1000 / (now-first));
             time = now;
         }
+
+        rendererParams.settings.shadowsEnabled = Renewal.shadows;
 
         glFrontFace(GL_CCW);
         glCullFace(GL_FRONT);
@@ -97,7 +114,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         Point2i position = new Point2i().set(mapSize.xCenter(), mapSize.yCenter());
 
         rendererParams.mapView.setDirectionOfView(FloatMath.sin(t), FloatMath.cos(t));
-        rendererParams.mapView.setInclination(30+15*FloatMath.sin(t+0.345f));
+        rendererParams.mapView.setInclination(30+FloatMath.sin(t+0.345f));
         rendererParams.mapView.setCenterPosition(position);
         rendererParams.mapView.setScale((1.0f + 0.7f*FloatMath.sin(t)) / 20);
 

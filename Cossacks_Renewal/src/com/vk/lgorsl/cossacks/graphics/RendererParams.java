@@ -27,6 +27,10 @@ public class RendererParams {
         float shadowsEps = 0.001f;
         int depthTextureSize = 2048;
 
+        //landscape rendering settings
+        int cellSize = 32;
+        int chunkSize = cellSize*64;
+
         /*
         float shadowsEps = 0.002f;
         int depthTextureSize = 1024;
@@ -49,6 +53,8 @@ public class RendererParams {
     public TreesRender treesRender;
     public LandMeshRenderer landMeshRenderer;
     public BuildingsRenderer buildingsRenderer;
+
+    public LandscapeRenderer landscapeRenderer;
 
     public final Resources resources;
 

@@ -1,95 +1,78 @@
 package com.vk.lgorsl.cossacks.graphics;
 
-import com.vk.lgorsl.NedoEngine.math.Point2i;
 import com.vk.lgorsl.NedoEngine.math.Rectangle2i;
 import com.vk.lgorsl.NedoEngine.math.Vect3f;
 import com.vk.lgorsl.NedoEngine.math.iRectangle2i;
-import com.vk.lgorsl.NedoEngine.openGL.CleverShader;
-import com.vk.lgorsl.NedoEngine.openGL.GLHelper;
-import com.vk.lgorsl.NedoEngine.openGL.Texture2D;
-import com.vk.lgorsl.NedoEngine.openGL.TextureLoader;
+import com.vk.lgorsl.NedoEngine.openGL.*;
 import com.vk.lgorsl.NedoEngine.utils.NedoLog;
 import com.vk.lgorsl.cossacks.R;
-import com.vk.lgorsl.cossacks.world.interfaces.iLandscapeMap;
+import com.vk.lgorsl.cossacks.world.interfaces.ViewBounds;
 
-import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
-import java.util.ArrayList;
 
 import static android.opengl.GLES20.*;
 
 /**
  * new landscape renderer
- *
+ * <p>
  * Created by lgor on 03.01.2015.
  */
 public class LandscapeRenderer implements GameRenderSystem {
 
     private Texture2D grass;
-    private CleverShader shader;
-    private ArrayList<Quad> cache = new ArrayList<>();
-    private final int quadSize = 64 << 5;
-    private final int maxCacheSize = 128;
+    private CleverShader shader, shaderDepth;
 
-    private ShortBuffer indices;
+    private LandscapeChunk[][] land;
+    private int width, height;
 
-    private static class Quad {
-        final Rectangle2i area = new Rectangle2i();
-        FloatBuffer verticesWithNormals;
-        int timesNotUsed;
+    private final int cellSize, chunkSize;
 
-        void set(iRectangle2i area, iLandscapeMap map, int parts) {
-            parts++;
-            this.area.set(area);
-            float[] data = new float[parts * parts * 6];
-            int pos = 0;
-            Point2i p = new Point2i();
-            for (int i = 0; i < parts; i++) {
-                for (int j = 0; j < parts; j++) {
-                    p.set(area.xMin() + i * area.width() / parts, area.yMin() + j * area.height() / parts);
-                    data[pos++] = p.x;
-                    data[pos++] = p.y;
-                    data[pos++] = map.getHeight(p);
-                    //TODO normals calculation
-                    data[pos++] = 0;
-                    data[pos++] = 0;
-                    data[pos++] = 1;
-                }
-            }
-            verticesWithNormals = GLHelper.make(data);
-            timesNotUsed = 0;
-        }
+    public LandscapeRenderer(int cellSize, int chunkSize) {
+        this.cellSize = cellSize;
+        this.chunkSize = chunkSize;
     }
-
-    private ArrayList<iRectangle2i> areas = new ArrayList<>();
 
     @Override
     public boolean load(RendererParams params) {
-        shader = params.loadShader(R.raw.shader_land_tex_depth_render);
-        indices = generateIndices(32);
-        grass = TextureLoader.loadTexture(GLHelper.loadBitmap2(params.resources, R.drawable.grass),
-                GL_NEAREST_MIPMAP_NEAREST, GL_NEAREST, GL_REPEAT, GL_REPEAT, true);
+        iRectangle2i mapSize = params.world.metrics.mapSize();
 
-        iRectangle2i big = params.world.map.bounds();
-        for(int i=0; i<8; i++){
-            for(int j=0; j<8 ; j++){
-                Rectangle2i r = new Rectangle2i();
-                int dx = i*big.width() / 8 + big.xMin();
-                int dy = j*big.height() / 8 + big.yMin();
-                r.set(dx, dy, dx+quadSize, dy+quadSize);
-                areas.add(r);
+        width = mapSize.width() / chunkSize;
+        if ((mapSize.width()) % chunkSize != 0) width++;
+        height = mapSize.height() / chunkSize;
+        if ((mapSize.height()) % chunkSize != 0) height++;
+
+        land = new LandscapeChunk[width][height];
+
+        ShortBuffer indices = null;
+        Rectangle2i rectangle = new Rectangle2i();
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                land[i][j] = new LandscapeChunk(cellSize);
+                int x = mapSize.xMin() + chunkSize * i;
+                int y = mapSize.yMin() + chunkSize * j;
+                //land[i][j].set(rectangle.set(x, y, x + chunkSize, y + chunkSize), params.world.heightMap);
+                if (indices == null) {
+                    land[i][j].set(rectangle.set(x, y, x + chunkSize, y + chunkSize), params.world.map, true);
+                    indices = land[i][j].indices;
+                } else {
+                    land[i][j].set(rectangle.set(x, y, x + chunkSize, y + chunkSize), params.world.map, false);
+                    land[i][j].indices = indices;
+                }
             }
         }
 
+        grass = TextureLoader.loadTexture(GLHelper.loadBitmap2(params.resources, R.drawable.grass),
+                GL_NEAREST_MIPMAP_NEAREST, GL_NEAREST, GL_REPEAT, GL_REPEAT, true);
+
+        shader = params.loadShader(R.raw.shader_land_tex_depth_render);
+        shaderDepth = params.loadShader(R.raw.shader_light_depth);
+
+        params.landscapeRenderer = this;
         return true;
     }
 
     @Override
     public void render(RendererParams params) {
-        if (params.clock.framesCount() % 50 == 0) {
-            NedoLog.log("cache size == " + cache.size());
-        }
-        update();
         shader.useProgram();
 
         glUniformMatrix4fv(shader.get("uMatrix"), 1, false, params.mapView.projection().getArray(), 0);
@@ -98,7 +81,7 @@ public class LandscapeRenderer implements GameRenderSystem {
         float amb = 0.5f;
         glUniform3f(shader.get("uAmbient"), 0.5f * amb, amb, 1.5f * amb);
         float dif = 0.6f;
-        glUniform3f(shader.get("uDiffuse"), 2.0f * dif, 1.4f * dif, 0.6f*dif);
+        glUniform3f(shader.get("uDiffuse"), 2.0f * dif, 1.4f * dif, 0.6f * dif);
 
         grass.use(0);
         glUniform1i(shader.get("uTexture"), 0);
@@ -115,106 +98,61 @@ public class LandscapeRenderer implements GameRenderSystem {
 
         shader.enableAllVertexAttribArray();
 
-        Rectangle2i rect = new Rectangle2i();
-        params.mapView.viewBounds().getAABB(rect);
-        renderQuads(params, rect, true);
+        renderQuads(shader, params, params.mapView.viewBounds(), true);
 
         shader.disableAllVertexAttribArray();
+    }
+
+    private void renderQuads(CleverShader shader, RendererParams params, ViewBounds bounds, boolean useNormals) {
+        int count = 0;
+        LandscapeChunk chunk;
+        for (int i = 0; i < width; i++)
+            for (int j = 0; j < height; j++) {
+                chunk = land[i][j];
+                if (bounds.intersects(chunk.area)) {
+                    count++;
+                    glVertexAttribPointer(shader.get("aPosition"), 3, GL_FLOAT, false, 0, chunk.vertices);
+                    if (useNormals) {
+                        glVertexAttribPointer(shader.get("aNormal"), 3, GL_FLOAT, false, 0, chunk.normals);
+                    }
+                    glDrawElements(GL_TRIANGLES, chunk.indices.capacity(), GL_UNSIGNED_SHORT, chunk.indices);
+                }
+            }
+        if (params.clock.framesCount() % 100 == 0) {
+            if (useNormals) {
+                NedoLog.log("Landscape, chunks was rendered : " + count);
+                NedoLog.log("used memory " + getUsedMemory());
+            }
+        }
+    }
+
+    public int getUsedMemory() {
+        ShortBuffer indices = land[0][0].indices;
+        int memory = 2*indices.capacity();
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                LandscapeChunk chunk = land[i][j];
+                memory += 4 * chunk.vertices.capacity();
+                memory += 4 * chunk.vertices.capacity();
+                if (chunk.indices!=indices){
+                    memory += 2 * chunk.indices.capacity();
+                }
+            }
+        }
+        return memory;
     }
 
     @Override
     public void renderShadows(RendererParams params) {
-        CleverShader shader = params.lightRenderer.shaderDepthDraw;
-        shader.useProgram();
-        shader.enableAllVertexAttribArray();
+        shaderDepth.useProgram();
+        shaderDepth.enableAllVertexAttribArray();
 
-        glUniformMatrix4fv(shader.get("uMatrix"), 1, false,
+        glUniformMatrix4fv(shaderDepth.get("uMatrix"), 1, false,
                 params.lightView.projection().getArray(), 0);
 
-        Rectangle2i rect = new Rectangle2i();
-        params.lightView.viewBounds().getAABB(rect);
-        renderQuads(params, rect, false);
+        //bounds from mapView is a feature;
+        renderQuads(shaderDepth, params, params.mapView.viewBounds(), false);
 
-        shader.disableAllVertexAttribArray();
+        shaderDepth.disableAllVertexAttribArray();
     }
-
-    private void renderQuads(RendererParams params, iRectangle2i mapArea, boolean useNormals){
-        int count = 0;
-        for(iRectangle2i rect: areas){
-            if (mapArea.intersects(rect)){
-                Quad q = get(rect, params.world.map);
-                if (q!=null) {
-                    count++;
-                    q.verticesWithNormals.position(0);
-                    glVertexAttribPointer(shader.get("aPosition"), 3, GL_FLOAT, false, 6 * 4, q.verticesWithNormals);
-                    if (useNormals) {
-                        q.verticesWithNormals.position(3);
-                        glVertexAttribPointer(shader.get("aNormal"), 3, GL_FLOAT, false, 6 * 4, q.verticesWithNormals);
-                    }
-                    glDrawElements(GL_TRIANGLES, indices.capacity(), GL_UNSIGNED_SHORT, indices);
-                }
-            }
-        }
-        //todo remove it
-        if (params.clock.framesCount() % 234==0) {
-            NedoLog.log("quads was drawed : " + count);
-        }
-    }
-
-    private void update(){
-        for(Quad q: cache){
-            q.timesNotUsed++;
-        }
-    }
-
-    private Quad get(iRectangle2i rect, iLandscapeMap map){
-        for(Quad q: cache){
-            if (q.area.equals(rect)){
-                q.timesNotUsed = 0;
-                return q;
-            }
-        }
-        //if not found
-        Quad q = getFreeQuad();
-        if (q!=null) {
-            q.set(rect, map, 32);
-        }
-        return q;
-    }
-
-    private Quad getFreeQuad(){
-        for(Quad q: cache){
-            if (q.timesNotUsed>3){
-                return q;
-            }
-        }
-        Quad q = null;
-        if (cache.size()<maxCacheSize) {
-            q = new Quad();
-            q.timesNotUsed = 4;
-            cache.add(q);
-        }
-        return q;
-    }
-
-    private ShortBuffer generateIndices(int size) {
-        short[] indices = new short[size * size * 6];
-        int pos = 0;
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                short p1 = (short) (i + j * (size + 1));
-                short p2 = (short) (p1 + 1);
-                short p3 = (short) (i + (j + 1) * (size + 1));
-                short p4 = (short) (p3 + 1);
-                indices[pos++] = p1;
-                indices[pos++] = p3;
-                indices[pos++] = p2;
-                indices[pos++] = p2;
-                indices[pos++] = p3;
-                indices[pos++] = p4;
-            }
-        }
-        return GLHelper.make(indices);
-    }
-
 }

@@ -46,9 +46,6 @@ public class LandMeshRenderer implements GameRenderSystem {
         fb = generateVertices(grid, meterSize);
         sb = generateIndices(grid);
         fbn = generateNormals(meterSize, grid);
-
-        //params.meshVertices = fb;
-        //params.meshIndices = sb;
     }
 
     private FloatBuffer generateVertices(HeightGrid grid, float scale){
@@ -163,7 +160,6 @@ public class LandMeshRenderer implements GameRenderSystem {
 
     @Override
     public void renderShadows(RendererParams params) {
-
         CleverShader shaderDepthDraw = params.lightRenderer.shaderDepthDraw;
 
         shaderDepthDraw.useProgram();
