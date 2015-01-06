@@ -12,7 +12,6 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
 import static android.opengl.GLES20.*;
-import static android.opengl.GLES20.glVertexAttribPointer;
 
 /**
  * Renders land mesh

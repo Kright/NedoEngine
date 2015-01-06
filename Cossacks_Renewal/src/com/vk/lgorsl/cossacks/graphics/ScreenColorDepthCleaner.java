@@ -1,7 +1,6 @@
 package com.vk.lgorsl.cossacks.graphics;
 
 import static android.opengl.GLES20.*;
-import static android.opengl.GLES20.GL_DEPTH_BUFFER_BIT;
 
 /**
  * simple renderer

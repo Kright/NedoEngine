@@ -13,7 +13,6 @@ import com.vk.lgorsl.cossacks.world.interfaces.iProjection;
 import com.vk.lgorsl.cossacks.world.interfaces.iTree;
 
 import static android.opengl.GLES20.*;
-import static android.opengl.GLES20.glDrawElements;
 
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
@@ -35,7 +34,7 @@ public class TreesRender implements GameRenderSystem {
     private CleverShader shader;
 
     private class TreesParams {
-        float txLeft, txRigth, tyUp, tyDown;
+        float txLeft, txRight, tyUp, tyDown;
     }
 
     private TreesParams[] treesParams;
@@ -63,7 +62,7 @@ public class TreesRender implements GameRenderSystem {
         for (int i = 0; i < treesParams.length; i++) {
             treesParams[i] = new TreesParams();
             treesParams[i].txLeft = 1f / 8 * i;
-            treesParams[i].txRigth = 1f / 8 + 1f / 8 * i;
+            treesParams[i].txRight = 1f / 8 + 1f / 8 * i;
             treesParams[i].tyDown = 1 / 4f;
             treesParams[i].tyUp = 0f;
         }
@@ -147,13 +146,13 @@ public class TreesRender implements GameRenderSystem {
             arr[pos++] = x + (dh.x + dx.x) * treeSize;
             arr[pos++] = y + (dh.y + dx.y) * treeSize;
             arr[pos++] = z + (dh.z + dx.z) * treeSize;
-            arr[pos++] = treesP.txRigth;
+            arr[pos++] = treesP.txRight;
             arr[pos++] = treesP.tyUp;
 
             arr[pos++] = x + dx.x * treeSize;
             arr[pos++] = y + dx.y * treeSize;
             arr[pos++] = z + dx.z * treeSize;
-            arr[pos++] = treesP.txRigth;
+            arr[pos++] = treesP.txRight;
             arr[pos++] = treesP.tyDown;
         }
 

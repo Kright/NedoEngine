@@ -18,7 +18,7 @@ public class WorldMetrics {
      * map size isn't in meters!
      * @param mapXsize width
      * @param mapYsize width along another axis
-     * @param maxHeight
+     * @param maxHeight maximum height of the map
      * @param meterOffset meter size = (1 << meterOffset)
      */
     public WorldMetrics(int mapXsize, int mapYsize, int maxHeight, int meterOffset) {
