@@ -89,6 +89,11 @@ public class WorldInstance {
     }
 
     public boolean addTree(iTree tree){
+        final int r = 32;
+        tempRect.set(tree.x() - r, tree.y() - r, tree.x() + r, tree.y()+r);
+        if (trees.containsObjects(tempRect)){
+            return false;
+        }
         trees.add(tree);
         return true;
     }
