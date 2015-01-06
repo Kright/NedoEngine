@@ -65,7 +65,7 @@ public class LandscapeRenderer implements GameRenderSystem {
 
     @Override
     public boolean load(RendererParams params) {
-        shader = new CleverShader(params.resources, R.raw.shader_land_tex_depth_render);
+        shader = params.loadShader(R.raw.shader_land_tex_depth_render);
         indices = generateIndices(32);
         grass = TextureLoader.loadTexture(GLHelper.loadBitmap2(params.resources, R.drawable.grass),
                 GL_NEAREST_MIPMAP_NEAREST, GL_NEAREST, GL_REPEAT, GL_REPEAT, true);

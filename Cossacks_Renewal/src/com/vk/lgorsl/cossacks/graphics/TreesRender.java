@@ -67,7 +67,7 @@ public class TreesRender implements GameRenderSystem {
             treesParams[i].tyUp = 0f;
         }
 
-        shader = new CleverShader(params.resources, R.raw.shader_simple);
+        shader = params.loadShader(R.raw.shader_simple);
 
         params.treesRender = this;
 

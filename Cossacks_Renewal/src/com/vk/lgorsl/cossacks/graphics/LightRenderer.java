@@ -64,9 +64,8 @@ public class LightRenderer implements GameRenderable {
             throw new NedoException("frameBuffer didn't created! status = " + status);
         }
 
-        shaderDepthDraw = new CleverShader(params.resources, R.raw.shader_light_depth);
-        //shaderDepthDraw = new CleverShader(params.resources, R.raw.shader_depth_debug);
-        shaderDepthDiscardDraw = new CleverShader(params.resources, R.raw.shader_depth_discard);
+        shaderDepthDraw = params.loadShader(R.raw.shader_light_depth);
+        shaderDepthDiscardDraw = params.loadShader(R.raw.shader_depth_discard);
 
         params.depthTexture = texture2D;
 

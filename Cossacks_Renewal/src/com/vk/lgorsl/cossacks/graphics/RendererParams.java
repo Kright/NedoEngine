@@ -2,11 +2,14 @@ package com.vk.lgorsl.cossacks.graphics;
 
 import android.content.res.Resources;
 import com.vk.lgorsl.NedoEngine.math.Point2i;
+import com.vk.lgorsl.NedoEngine.openGL.CleverShader;
 import com.vk.lgorsl.NedoEngine.openGL.Texture2D;
 import com.vk.lgorsl.NedoEngine.utils.FPSCounter;
 import com.vk.lgorsl.cossacks.world.WorldInstance;
 import com.vk.lgorsl.cossacks.world.interfaces.iLightView;
 import com.vk.lgorsl.cossacks.world.interfaces.iMapView;
+
+import java.util.HashMap;
 
 /**
  * params for rendering
@@ -48,6 +51,17 @@ public class RendererParams {
     public BuildingsRenderer buildingsRenderer;
 
     public final Resources resources;
+
+    public CleverShader loadShader(int id){
+        CleverShader cs = loadedShaders.get(id);
+        if (cs == null){
+            cs = new CleverShader(resources, id);
+            loadedShaders.put(id, cs);
+        }
+        return cs;
+    }
+
+    private HashMap<Integer, CleverShader> loadedShaders = new HashMap<>(16);
 
     public RendererParams(Resources resources) {
         this.resources = resources;

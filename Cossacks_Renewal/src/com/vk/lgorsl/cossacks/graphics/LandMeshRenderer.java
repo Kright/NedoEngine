@@ -29,9 +29,8 @@ public class LandMeshRenderer implements GameRenderSystem {
 
     @Override
     public boolean load(RendererParams params) {
-        //shadowShader = new CleverShader(params.resources, R.raw.shader_land_renderer);
-        //shadowShader = new CleverShader(params.resources, R.raw.shader_land_debug);
-        shadowShader = new CleverShader(params.resources, R.raw.shader_land_tex_depth_render);
+        shadowShader = params.loadShader(R.raw.shader_land_tex_depth_render);
+
         grass = TextureLoader.loadTexture(GLHelper.loadBitmap2(params.resources, R.drawable.grass),
                 GL_NEAREST_MIPMAP_NEAREST, GL_NEAREST, GL_REPEAT, GL_REPEAT, true);
         createGrid(params);
