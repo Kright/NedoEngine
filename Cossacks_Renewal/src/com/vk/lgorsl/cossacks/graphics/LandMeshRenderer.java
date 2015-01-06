@@ -40,12 +40,15 @@ public class LandMeshRenderer implements GameRenderSystem {
     }
 
     private void createGrid(RendererParams params) {
-        HeightGrid grid = params.world.heightGrid;
+
+        //HeightGrid grid = params.world.heightGrid;
+            HeightGrid grid = null;
         float meterSize = params.world.metrics.meterSize();
 
         fb = generateVertices(grid, meterSize);
         sb = generateIndices(grid);
         fbn = generateNormals(meterSize, grid);
+
     }
 
     private FloatBuffer generateVertices(HeightGrid grid, float scale){

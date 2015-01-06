@@ -18,11 +18,6 @@ public class WorldInstance {
     public WorldMetrics metrics;
     public List<iCountry> countries = new ArrayList<>();
 
-    public iLandscapeMap heightMap;
-
-    //@Deprecated
-    public HeightGrid heightGrid;
-    //@Deprecated
     public iLandscapeMap map;
 
     public GeneratorID generatorID;
@@ -38,13 +33,11 @@ public class WorldInstance {
 
         GridLandscape land = new GridLandscape(metrics);
         map = land;
-        heightGrid = land.grid;
-        heightGrid.randomHeight(8, 15*metrics.meterSize(), 0.65f, true);
+
+        land.grid.randomHeight(8, 8*metrics.meterSize(), 0.65f, true);
 
         int dh = -32*10;
-        heightGrid.addHeight(new Rectangle2i(0, 0, 512, 512), dh, dh, dh, dh, false);
-
-        heightMap = new RectGridLandscape(metrics, metrics.meterSize());
+        land.grid.addHeight(new Rectangle2i(0, 0, 512, 512), dh, dh, dh, dh, false);
 
         trees = new NaiveMap<>(metrics);
         treeFactory = new Tree.Factory(4, metrics.meterSize()*8, metrics.meterSize() * 3);
@@ -56,8 +49,8 @@ public class WorldInstance {
     private void generateTrees(int count){
         Random rnd = new Random();
         for(int i=0; i<count; i++){
-            int x = rnd.nextInt(heightMap.bounds().width()-metrics.meterSize()*2) + heightMap.bounds().xMin()+metrics.meterSize();
-            int y = rnd.nextInt(heightMap.bounds().height()-metrics.meterSize()*2) + heightMap.bounds().yMin()+metrics.meterSize();
+            int x = rnd.nextInt(map.bounds().width()-metrics.meterSize()*2) + map.bounds().xMin()+metrics.meterSize();
+            int y = rnd.nextInt(map.bounds().height()-metrics.meterSize()*2) + map.bounds().yMin()+metrics.meterSize();
             addTree(treeFactory.makeTree(x, y));
         }
     }
@@ -72,8 +65,8 @@ public class WorldInstance {
         
         for(int i=0; i<count; i++){
             int delta = metrics.meterSize()*64;
-            int x = rnd.nextInt(heightMap.bounds().width()-2*delta) + heightMap.bounds().xMin()+delta;
-            int y = rnd.nextInt(heightMap.bounds().height()-2*delta) + heightMap.bounds().yMin()+delta;
+            int x = rnd.nextInt(map.bounds().width()-2*delta) + map.bounds().xMin()+delta;
+            int y = rnd.nextInt(map.bounds().height()-2*delta) + map.bounds().yMin()+delta;
             addBuilding(type.makeBuilding(x, y, rnd.nextInt(360)));
         }
     }

@@ -121,12 +121,9 @@ public class TreesRender implements GameRenderSystem {
             if (!tree.alive()) {
                 continue;
             }
-            int xi = tree.x();
-            int yi = tree.y();
-
-            float x = xi;
-            float y = yi;
-            float z = world.heightGrid.getHeight(xi, yi);
+            float x = tree.x();
+            float y = tree.y();
+            float z = world.map.getHeight(tree);
 
             TreesParams treesP = treesParams[tree.type()];
             float treeSize = tree.size();

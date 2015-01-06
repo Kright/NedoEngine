@@ -54,7 +54,6 @@ public class BuildingsRenderer implements GameRenderSystem {
         buildingsTexture = TextureLoader.loadTexture(GLHelper.loadBitmap2(params.resources, R.drawable.house_tex),
                 GL_LINEAR_MIPMAP_LINEAR, GL_NEAREST, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, true);
 
-
         shader = params.loadShader(R.raw.shader_buildings);
         params.buildingsRenderer = this;
 
@@ -110,7 +109,7 @@ public class BuildingsRenderer implements GameRenderSystem {
 
                 arr[12] = b.x();
                 arr[13] = b.y();
-                arr[14] = params.world.heightGrid.getHeight(b.x(), b.y());
+                arr[14] = params.world.map.getHeight(b);
 
                 glUniformMatrix3fv(uMatrixNormals, 1, false, tempRotation, 0);
 
@@ -154,7 +153,8 @@ public class BuildingsRenderer implements GameRenderSystem {
 
                 arr[12] = b.x();
                 arr[13] = b.y();
-                arr[14] = params.world.heightGrid.getHeight(b.x(), b.y());
+                //arr[14] = params.world.heightGrid.getHeight(b.x(), b.y());
+                arr[14] = params.world.map.getHeight(b);
 
                 tempM2.multiplication(params.lightView.projection(), tempM);
 
