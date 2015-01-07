@@ -45,14 +45,17 @@ public class BuildingsRenderer implements GameRenderSystem {
         float scale = params.world.metrics.meterSize();
         loader.setVerticesTransform(new Matrix4_4f().makeRotation(90, 1, 0, 0).scale(scale, scale, scale));
 
-        ObjFile file = loader.load(GLHelper.loadRawFileAsOneString(params.resources, R.raw.house1, "\n"));
+        //ObjFile file = loader.load(GLHelper.loadRawFileAsOneString(params.resources, R.raw.house1, "\n"));
+        ObjFile file = loader.load(GLHelper.loadRawFileAsOneString(params.resources, R.raw.house3, "\n"));
         building = file.makeData();
 
         fb = GLHelper.make(building.data);
         sb = GLHelper.make(building.indices);
 
-        buildingsTexture = TextureLoader.loadTexture(GLHelper.loadBitmap2(params.resources, R.drawable.house_tex),
-                params.settings.buildingsFilterMin, params.settings.buildingsFilterMag, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, true);
+        //buildingsTexture = TextureLoader.loadTexture(GLHelper.loadBitmap2(params.resources, R.drawable.house_tex),
+        //        params.settings.buildingsFilterMin, params.settings.buildingsFilterMag, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, true);
+        buildingsTexture = TextureLoader.loadTexture(GLHelper.loadBitmap2(params.resources, R.drawable.house3_tex),
+                        params.settings.buildingsFilterMin, params.settings.buildingsFilterMag, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, true);
 
         shader = params.loadShader(R.raw.shader_buildings);
         params.buildingsRenderer = this;
