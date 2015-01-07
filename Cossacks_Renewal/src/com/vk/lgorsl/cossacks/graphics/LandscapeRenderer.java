@@ -4,7 +4,6 @@ import com.vk.lgorsl.NedoEngine.math.Rectangle2i;
 import com.vk.lgorsl.NedoEngine.math.Vect3f;
 import com.vk.lgorsl.NedoEngine.math.iRectangle2i;
 import com.vk.lgorsl.NedoEngine.openGL.*;
-import com.vk.lgorsl.NedoEngine.utils.NedoLog;
 import com.vk.lgorsl.cossacks.R;
 import com.vk.lgorsl.cossacks.world.interfaces.ViewBounds;
 
@@ -50,7 +49,6 @@ public class LandscapeRenderer implements GameRenderSystem {
                 land[i][j] = new LandscapeChunk(cellSize);
                 int x = mapSize.xMin() + chunkSize * i;
                 int y = mapSize.yMin() + chunkSize * j;
-                //land[i][j].set(rectangle.set(x, y, x + chunkSize, y + chunkSize), params.world.heightMap);
                 if (indices == null) {
                     land[i][j].set(rectangle.set(x, y, x + chunkSize, y + chunkSize), params.world.map, true);
                     indices = land[i][j].indices;
@@ -98,19 +96,17 @@ public class LandscapeRenderer implements GameRenderSystem {
 
         shader.enableAllVertexAttribArray();
 
-        renderQuads(shader, params, params.mapView.viewBounds(), true);
+        renderQuads(shader, params.mapView.viewBounds(), true);
 
         shader.disableAllVertexAttribArray();
     }
 
-    private void renderQuads(CleverShader shader, RendererParams params, ViewBounds bounds, boolean useNormals) {
-        int count = 0;
+    private void renderQuads(CleverShader shader, ViewBounds bounds, boolean useNormals) {
         LandscapeChunk chunk;
-        for (int i = 0; i < width; i++)
+        for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 chunk = land[i][j];
                 if (bounds.intersects(chunk.area)) {
-                    count++;
                     glVertexAttribPointer(shader.get("aPosition"), 3, GL_FLOAT, false, 0, chunk.vertices);
                     if (useNormals) {
                         glVertexAttribPointer(shader.get("aNormal"), 3, GL_FLOAT, false, 0, chunk.normals);
@@ -118,23 +114,18 @@ public class LandscapeRenderer implements GameRenderSystem {
                     glDrawElements(GL_TRIANGLES, chunk.indices.capacity(), GL_UNSIGNED_SHORT, chunk.indices);
                 }
             }
-        if (params.clock.framesCount() % 100 == 0) {
-            if (useNormals) {
-                NedoLog.log("Landscape, chunks was rendered : " + count);
-                NedoLog.log("used memory " + getUsedMemory());
-            }
         }
     }
 
     public int getUsedMemory() {
         ShortBuffer indices = land[0][0].indices;
-        int memory = 2*indices.capacity();
+        int memory = 2 * indices.capacity();
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 LandscapeChunk chunk = land[i][j];
                 memory += 4 * chunk.vertices.capacity();
                 memory += 4 * chunk.vertices.capacity();
-                if (chunk.indices!=indices){
+                if (chunk.indices != indices) {
                     memory += 2 * chunk.indices.capacity();
                 }
             }
@@ -151,7 +142,7 @@ public class LandscapeRenderer implements GameRenderSystem {
                 params.lightView.projection().getArray(), 0);
 
         //bounds from mapView is a feature;
-        renderQuads(shaderDepth, params, params.mapView.viewBounds(), false);
+        renderQuads(shaderDepth, params.mapView.viewBounds(), false);
 
         shaderDepth.disableAllVertexAttribArray();
     }
