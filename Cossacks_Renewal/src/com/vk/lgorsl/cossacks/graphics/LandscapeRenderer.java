@@ -60,7 +60,7 @@ public class LandscapeRenderer implements GameRenderSystem {
         }
 
         grass = TextureLoader.loadTexture(GLHelper.loadBitmap2(params.resources, R.drawable.grass),
-                GL_NEAREST_MIPMAP_NEAREST, GL_NEAREST, GL_REPEAT, GL_REPEAT, true);
+                params.settings.landFilterMin, params.settings.landFilterMag, GL_REPEAT, GL_REPEAT, true);
 
         shader = params.loadShader(R.raw.shader_land_tex_depth_render);
         shaderDepth = params.loadShader(R.raw.shader_light_depth);

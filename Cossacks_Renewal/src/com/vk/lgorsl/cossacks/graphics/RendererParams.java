@@ -9,6 +9,8 @@ import com.vk.lgorsl.cossacks.world.WorldInstance;
 import com.vk.lgorsl.cossacks.world.interfaces.iLightView;
 import com.vk.lgorsl.cossacks.world.interfaces.iMapView;
 
+import static android.opengl.GLES20.*;
+
 import java.util.HashMap;
 
 /**
@@ -35,6 +37,10 @@ public class RendererParams {
         float shadowsEps = 0.002f;
         int depthTextureSize = 1024;
         */
+
+        public int landFilterMin = GL_NEAREST_MIPMAP_NEAREST, landFilterMag = GL_NEAREST;
+        public int treesFilterMin = GL_NEAREST_MIPMAP_NEAREST, treesFilterMag = GL_LINEAR;
+        public int buildingsFilterMin = GL_NEAREST_MIPMAP_NEAREST, buildingsFilterMag = GL_LINEAR;
     }
 
     public Settings settings = new Settings();

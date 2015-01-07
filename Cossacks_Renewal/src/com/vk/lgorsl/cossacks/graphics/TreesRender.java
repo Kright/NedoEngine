@@ -56,7 +56,7 @@ public class TreesRender implements GameRenderSystem {
         sb.position(0);
 
         texture = TextureLoader.loadTexture(GLHelper.loadBitmap2(params.resources, R.drawable.trees2),
-                GL_NEAREST_MIPMAP_NEAREST, GL_LINEAR, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, true);
+                params.settings.treesFilterMin, params.settings.treesFilterMag, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, true);
 
         treesParams = new TreesParams[4];
         for (int i = 0; i < treesParams.length; i++) {

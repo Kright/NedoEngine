@@ -52,7 +52,7 @@ public class BuildingsRenderer implements GameRenderSystem {
         sb = GLHelper.make(building.indices);
 
         buildingsTexture = TextureLoader.loadTexture(GLHelper.loadBitmap2(params.resources, R.drawable.house_tex),
-                GL_LINEAR_MIPMAP_LINEAR, GL_NEAREST, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, true);
+                params.settings.buildingsFilterMin, params.settings.buildingsFilterMag, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, true);
 
         shader = params.loadShader(R.raw.shader_buildings);
         params.buildingsRenderer = this;
