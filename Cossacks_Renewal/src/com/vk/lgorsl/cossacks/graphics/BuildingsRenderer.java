@@ -46,7 +46,7 @@ public class BuildingsRenderer implements GameRenderSystem {
         loader.setVerticesTransform(new Matrix4_4f().makeRotation(90, 1, 0, 0).scale(scale, scale, scale));
 
         //ObjFile file = loader.load(GLHelper.loadRawFileAsOneString(params.resources, R.raw.house1, "\n"));
-        ObjFile file = loader.load(GLHelper.loadRawFileAsOneString(params.resources, R.raw.house3, "\n"));
+        ObjFile file = loader.load(GLHelper.loadRawFileAsOneString(params.resources, R.raw.house2, "\n"));
         building = file.makeData();
 
         fb = GLHelper.make(building.data);
@@ -156,7 +156,7 @@ public class BuildingsRenderer implements GameRenderSystem {
 
                 arr[12] = b.x();
                 arr[13] = b.y();
-                //arr[14] = params.world.heightGrid.getHeight(b.x(), b.y());
+
                 arr[14] = params.world.map.getHeight(b);
 
                 tempM2.multiplication(params.lightView.projection(), tempM);
