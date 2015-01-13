@@ -70,6 +70,7 @@ public class iMapTest extends TestCase{
             count2++;
         }
         assertEquals(count, count2);
+        assertEquals(map1.containsObjects(area), map2.containsObjects(area));
     }
 
     public void testNaiveMapvsQuadsMap() {
