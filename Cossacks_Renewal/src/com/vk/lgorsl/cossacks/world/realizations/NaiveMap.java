@@ -12,6 +12,7 @@ import java.util.List;
 
 /**
  * Naive map realization
+ * эталон того, как должно работать
  * В перспективе, сделаю разделение карты на квадраты.
  *
  * Created by lgor on 13.12.2014.

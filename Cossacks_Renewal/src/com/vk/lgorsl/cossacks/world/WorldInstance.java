@@ -28,7 +28,7 @@ public class WorldInstance {
     public void load() {
         generatorID = new GeneratorID();
 
-        metrics = new WorldMetrics(512 << 5, 512 << 5, 30 << 5, 5);
+        metrics = new WorldMetrics(1024 << 5, 1024 << 5, 30 << 5, 5);
 
         countries.add(new CalmCountry(this));
 
@@ -42,8 +42,8 @@ public class WorldInstance {
 
         treeFactory = new Tree.Factory(4, metrics.meterSize() * 8, metrics.meterSize() * 3);
 
-        generateTrees(1024 * 6);
-        generateBuildings(128, 3, 0);
+        generateTrees(1024 * 16);
+        generateBuildings(1024, 3, 0);
     }
 
     private void generateTrees(int count) {
