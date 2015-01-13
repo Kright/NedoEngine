@@ -2,6 +2,7 @@ package com.vk.lgorsl.cossacks.world.realizations;
 
 import com.vk.lgorsl.cossacks.world.interfaces.GeneratorID;
 import com.vk.lgorsl.cossacks.world.interfaces.iBuilding;
+import com.vk.lgorsl.cossacks.world.interfaces.iHitPoints;
 
 /**
  * заглушка для зданий
@@ -13,6 +14,7 @@ public class BuildingType {
     public int radius;
     public int countryId;
     public int type;
+    public int maxHp = 1;
 
     private final GeneratorID generatorID;
 
@@ -22,6 +24,7 @@ public class BuildingType {
 
     public iBuilding makeBuilding(final int x, final int y, final int direction) {
         final int id = generatorID.getNextID();
+        final HitPoints hitPoints = new HitPoints(maxHp);
 
         return new iBuilding() {
             boolean alive = true;
@@ -52,24 +55,8 @@ public class BuildingType {
             }
 
             @Override
-            public int hitPoints() {
-                return 1;
-            }
-
-            @Override
-            public int maxHitPoints() {
-                return 1;
-            }
-
-            @Override
-            public void heal(int hp) {
-                //nothing yet
-            }
-
-            @Override
-            public boolean damage(int hp) {
-                alive = false;
-                return true;
+            public iHitPoints hitPoints() {
+                return hitPoints;
             }
 
             @Override

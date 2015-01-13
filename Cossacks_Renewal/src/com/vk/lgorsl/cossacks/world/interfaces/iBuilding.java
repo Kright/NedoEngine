@@ -5,7 +5,7 @@ package com.vk.lgorsl.cossacks.world.interfaces;
  *
  * Created by lgor on 31.12.2014.
  */
-public interface iBuilding extends iMapObject, iHitPoints{
+public interface iBuilding extends iMapObject{
 
     /**
      * @return type of building
@@ -22,4 +22,6 @@ public interface iBuilding extends iMapObject, iHitPoints{
     boolean needsInUpdates();
 
     void update();
+
+    iHitPoints hitPoints();
 }

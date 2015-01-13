@@ -1,9 +1,12 @@
 package com.vk.lgorsl.cossacks.world.realizations;
 
 import com.vk.lgorsl.cossacks.world.WorldInstance;
+import com.vk.lgorsl.cossacks.world.interfaces.iHitPoints;
 import com.vk.lgorsl.cossacks.world.interfaces.iUnit;
 
 /**
+ * naive unit realization
+ *
  * Created by lgor on 12.01.2015.
  */
 public class SimpleUnit implements iUnit{
@@ -29,19 +32,23 @@ public class SimpleUnit implements iUnit{
 
     private final UnitType type;
     private final int id;
+    private final HitPoints hp;
 
-    boolean alive = true;
     int x, y;
     int direction;
-    int hp;
 
     private SimpleUnit(UnitType type, int id, int x, int y){
         this.type = type;
         this.id = id;
         this.x = x;
         this.y = y;
-        this.hp = type.maxHp;
+        this.hp = new HitPoints(type.maxHp);
         this.direction = 0;
+    }
+
+    @Override
+    public iHitPoints hitPoints() {
+        return null;
     }
 
     @Override
@@ -71,7 +78,7 @@ public class SimpleUnit implements iUnit{
 
     @Override
     public boolean alive() {
-        return alive;
+        return hp.alive();
     }
 
     @Override
@@ -82,33 +89,5 @@ public class SimpleUnit implements iUnit{
     @Override
     public int y() {
         return y;
-    }
-
-    @Override
-    public int hitPoints() {
-        return hp;
-    }
-
-    @Override
-    public int maxHitPoints() {
-        return type.maxHp;
-    }
-
-    @Override
-    public void heal(int heal) {
-        hp += heal;
-        if (hp > type.maxHp){
-            hp = type.maxHp;
-        }
-    }
-
-    @Override
-    public boolean damage(int damage) {
-        hp -= damage;
-        if (hp<=0){
-            alive = false;
-            return false;
-        }
-        return true;
     }
 }

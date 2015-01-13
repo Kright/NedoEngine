@@ -5,7 +5,9 @@ package com.vk.lgorsl.cossacks.world.interfaces;
  *
  * Created by lgor on 31.12.2014.
  */
-public interface iUnit extends iMapObject, iHitPoints{
+public interface iUnit extends iMapObject{
+
+    iHitPoints hitPoints();
 
     int type();
 

@@ -7,6 +7,8 @@ package com.vk.lgorsl.cossacks.world.interfaces;
  */
 public interface iHitPoints {
 
+    boolean alive();
+
     int hitPoints();
 
     int maxHitPoints();
