@@ -31,6 +31,11 @@ public class GLHelper {
         return fb;
     }
 
+    public static FloatBuffer makeFloatBuffer(int floatsCount){
+        return ByteBuffer.allocateDirect(floatsCount*4).
+                order(ByteOrder.nativeOrder()).asFloatBuffer();
+    }
+
     public static ShortBuffer make(short[] arr) {
         ShortBuffer sb = ByteBuffer.allocateDirect(arr.length * 4).order(ByteOrder.nativeOrder()).asShortBuffer();
         sb.put(arr);
@@ -186,7 +191,7 @@ public class GLHelper {
     /**
      * https://www.khronos.org/opengles/sdk/docs/man/xhtml/glGet.xml
      *
-     * @param pname
+     * @param pname - parameter name
      * @return array
      */
     public static float[] getFloatv(int pname){
