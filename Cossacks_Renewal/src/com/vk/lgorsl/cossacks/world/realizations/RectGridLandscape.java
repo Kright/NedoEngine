@@ -9,7 +9,7 @@ import java.util.Random;
 
 /**
  * realization of height grid
- *
+ * <p>
  * Created by lgor on 03.01.2015.
  */
 public class RectGridLandscape implements iLandscapeMap, iLandscapeMap.Editable {
@@ -42,6 +42,8 @@ public class RectGridLandscape implements iLandscapeMap, iLandscapeMap.Editable 
         int px = x / cellSize;
         int py = y / cellSize;
 
+        if (px < 0 || py < 0 || px >= width || py >= height) return getSafe(px, py);
+
         x = x % cellSize;
         y = y % cellSize;
 
@@ -70,15 +72,15 @@ public class RectGridLandscape implements iLandscapeMap, iLandscapeMap.Editable 
         int px = x / cellSize;
         int py = y / cellSize;
 
-        int dx = getSafe(px-1, py) - getSafe(px+1, py);
-        int dy = getSafe(px, py-1) - getSafe(px, py+1);
+        int dx = getSafe(px - 1, py) - getSafe(px + 1, py);
+        int dy = getSafe(px, py - 1) - getSafe(px, py + 1);
 
-        result.set(dx, dy, cellSize*2).normalize();
+        result.set(dx, dy, cellSize * 2).normalize();
     }
 
-    private int getSafe(int x, int y){
-        if (x < 0) x++;
-        if (y < 0) y++;
+    private int getSafe(int x, int y) {
+        if (x < 0) x = 0;
+        if (y < 0) y = 0;
         if (x >= width) x = width - 1;
         if (y >= height) y = height - 1;
         return data[x + y * width];
@@ -123,17 +125,17 @@ public class RectGridLandscape implements iLandscapeMap, iLandscapeMap.Editable 
         }
     }
 
-    public void scaleHeight(float maxAmplitude){
+    public void scaleHeight(float maxAmplitude) {
         int max = data[0];
         int min = data[0];
-        for(int i:data){
-            if (i<min) min = i;
-            if (i>max) max = i;
+        for (int i : data) {
+            if (i < min) min = i;
+            if (i > max) max = i;
         }
-        final float k = maxAmplitude / (max-min);
-        final float dh = -min*k;
-        for(int i=0; i<data.length; i++){
-            data[i] = (int)(data[i]*k + dh);
+        final float k = maxAmplitude / (max - min);
+        final float dh = -min * k;
+        for (int i = 0; i < data.length; i++) {
+            data[i] = (int) (data[i] * k + dh);
         }
     }
 
@@ -144,18 +146,18 @@ public class RectGridLandscape implements iLandscapeMap, iLandscapeMap.Editable 
         int pxMin = Math.max(0, (rect.xMin() + dx + cellSize - 1) / cellSize);
         int pyMin = Math.max(0, (rect.yMin() + dy + cellSize - 1) / cellSize);
 
-        int pxMax = Math.min(width-1, (rect.xMax() + dx) / cellSize);
-        int pyMax = Math.min(height-1, (rect.yMax() + dy) / cellSize);
+        int pxMax = Math.min(width - 1, (rect.xMax() + dx) / cellSize);
+        int pyMax = Math.min(height - 1, (rect.yMax() + dy) / cellSize);
 
-        for (int j = pyMin; j <= pyMax; j++){
-            float ky = (float)(j*cellSize-dy - rect.yMin()) / rect.height();
+        for (int j = pyMin; j <= pyMax; j++) {
+            float ky = (float) (j * cellSize - dy - rect.yMin()) / rect.height();
             if (smooth) {
-                ky = 0.5f - 0.5f * FloatMath.cos(ky*pi);
+                ky = 0.5f - 0.5f * FloatMath.cos(ky * pi);
             }
             for (int i = pxMin; i <= pxMax; i++) {
-                float kx = (float)(i*cellSize - dx - rect.xMin()) / rect.width();
-                if (smooth) kx = 0.5f - 0.5f * FloatMath.cos(kx*pi);
-                data[i + j* width] += (int) ((1-kx) * ((1-ky) * dh1 + ky*dh3) + kx * ((1-ky)*dh2 + ky * dh4));
+                float kx = (float) (i * cellSize - dx - rect.xMin()) / rect.width();
+                if (smooth) kx = 0.5f - 0.5f * FloatMath.cos(kx * pi);
+                data[i + j * width] += (int) ((1 - kx) * ((1 - ky) * dh1 + ky * dh3) + kx * ((1 - ky) * dh2 + ky * dh4));
             }
         }
     }
