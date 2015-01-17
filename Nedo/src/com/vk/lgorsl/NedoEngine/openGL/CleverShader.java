@@ -29,10 +29,6 @@ public class CleverShader extends Shader {
     private final HashMap<String, Integer> locations = new HashMap<>(16);
     private final List<Integer> attributes = new ArrayList<>(8);
 
-    public CleverShader(int vertexId, int pixelId) {
-        super(vertexId, pixelId);
-        // locations and attributes don't added :(
-    }
 
     public CleverShader(Resources resources, int resId) {
         this(GLHelper.loadRawFileAsOneString(resources, resId, "\n").
@@ -40,15 +36,13 @@ public class CleverShader extends Shader {
     }
 
     public CleverShader(String vertexShaderCode, String pixelShaderCode) {
-        super(vertexShaderCode, pixelShaderCode);
+        super(addVertexDefaultPrecision(vertexShaderCode), addFragmentDefaultPrecision(pixelShaderCode));
         addLocationsFromCode(vertexShaderCode);
         addLocationsFromCode(pixelShaderCode);
     }
 
     public CleverShader(String[] vertexAndPixelCode) {
-        super(vertexAndPixelCode);
-        addLocationsFromCode(vertexAndPixelCode[0]);
-        addLocationsFromCode(vertexAndPixelCode[1]);
+        this(vertexAndPixelCode[0], vertexAndPixelCode[1]);
     }
 
     /**
@@ -133,5 +127,21 @@ public class CleverShader extends Shader {
         Integer n = locations.get(name);
         if (n == null) throw new NedoException("unknown name : \"" + name + "\"");
         return n;
+    }
+
+    private static String addVertexDefaultPrecision(String src){
+        if (src.contains("precision")){
+            return src;
+        } else {
+            return "precision highp float;\n" + src;
+        }
+    }
+
+    private static String addFragmentDefaultPrecision(String src){
+        if (src.contains("precision")){
+            return src;
+        } else {
+            return "precision mediump float;\n" + src;
+        }
     }
 }
