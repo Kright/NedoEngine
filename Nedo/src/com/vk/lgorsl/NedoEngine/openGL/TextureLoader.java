@@ -1,6 +1,9 @@
 package com.vk.lgorsl.NedoEngine.openGL;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.opengl.GLES20;
 import android.opengl.GLUtils;
 
 import static android.opengl.GLES20.*;
@@ -70,9 +73,18 @@ public class TextureLoader {
         glGenTextures(1, texId, 0);
         glBindTexture(GL_TEXTURE_2D, texId[0]);
 
-        int format = GLUtils.getInternalFormat(bm);
-        int type = GLUtils.getType(bm);
-        GLUtils.texImage2D(GL_TEXTURE_2D, 0, format, bm, type, 0);
+        try {
+            int format = GLUtils.getInternalFormat(bm);
+            int type = GLUtils.getType(bm);
+            GLUtils.texImage2D(GL_TEXTURE_2D, 0, format, bm, type, 0);
+        } catch (IllegalArgumentException ex){
+            GLES20.glGetError();    //давим ошибку, которая появилась при получении типа или формата
+            Bitmap bm2 = Bitmap.createBitmap(bm.getWidth(), bm.getHeight(), Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bm2);
+            canvas.drawBitmap(bm, 0, 0, new Paint());
+            GLUtils.texImage2D(GL_TEXTURE_2D, 0, bm2, 0);
+            bm2.recycle();
+        }
 
         setParameters(minFilter, magFilter, wrapS, wrapT);
 
