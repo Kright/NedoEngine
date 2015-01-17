@@ -86,7 +86,6 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         GLHelper.checkError();
     }
 
-    private long time;
     long first = 0;
 
     @Override
@@ -102,7 +101,6 @@ public class GameRenderer implements GLSurfaceView.Renderer {
             NedoLog.log("fps = " + rendererParams.clock.fps());
             NedoLog.log("average :fps = " + rendererParams.clock.framesCount() * 1000 / (now - first) +
                     " , ms per frame:" + (now - first) / rendererParams.clock.framesCount());
-            time = now;
         }
 
         rendererParams.settings.shadowsEnabled = Renewal.shadows;
@@ -121,7 +119,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         rendererParams.mapView.setDirectionOfView(FloatMath.sin(t), FloatMath.cos(t));
         rendererParams.mapView.setInclination(30 + FloatMath.sin(t + 0.345f));
         rendererParams.mapView.setCenterPosition(position);
-        rendererParams.mapView.setScale((1.0f + 0.7f * FloatMath.sin(t)) / 20);
+        rendererParams.mapView.setScale((1.0f + 0.7f * FloatMath.sin(t)) / 30);
 
         rendererParams.lightView.setViewDirection(FloatMath.sin(t / 2), FloatMath.cos(t / 2));
         rendererParams.lightView.setInclination(30 + 0 * FloatMath.cos(t / 2));

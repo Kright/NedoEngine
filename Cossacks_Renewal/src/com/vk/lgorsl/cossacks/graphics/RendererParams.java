@@ -9,8 +9,6 @@ import com.vk.lgorsl.cossacks.world.WorldInstance;
 import com.vk.lgorsl.cossacks.world.interfaces.iLightView;
 import com.vk.lgorsl.cossacks.world.interfaces.iMapView;
 
-import static android.opengl.GLES20.*;
-
 import java.util.HashMap;
 
 /**
@@ -21,29 +19,7 @@ import java.util.HashMap;
  */
 public class RendererParams {
 
-    public static class Settings{
-
-        //shadows settings
-        boolean shadowsEnabled = true;
-
-        float shadowsEps = 0.001f;
-        int depthTextureSize = 2048;
-
-        //landscape rendering settings
-        int cellSize = 32;
-        int chunkSize = cellSize*64;
-
-        /*
-        float shadowsEps = 0.002f;
-        int depthTextureSize = 1024;
-        */
-
-        public int landFilterMin = GL_NEAREST_MIPMAP_NEAREST, landFilterMag = GL_NEAREST;
-        public int treesFilterMin = GL_NEAREST_MIPMAP_NEAREST, treesFilterMag = GL_LINEAR;
-        public int buildingsFilterMin = GL_NEAREST_MIPMAP_NEAREST, buildingsFilterMag = GL_LINEAR;
-    }
-
-    public Settings settings = new Settings();
+    public Settings settings = Settings.getDefaultSettings();       //Settings.getLowSettings();
     public WorldInstance world;
 
     public iMapView mapView;
