@@ -2,7 +2,7 @@ package com.vk.lgorsl.NedoEngine.math;
 
 /**
  * Class with static helper functions
- *
+ * <p>
  * Created by lgor on 07.11.2014.
  */
 public class Helper {
@@ -20,9 +20,10 @@ public class Helper {
         return a > b ? (a - b) < precision : (b - a) < precision;
     }
 
-    public static float max(float... params){
+
+    public static float max(float... params) {
         float max = params[0];
-        for(int i=1; i<params.length; i++){
+        for (int i = 1; i < params.length; i++) {
             if (params[i] > max) {
                 max = params[i];
             }
@@ -30,14 +31,47 @@ public class Helper {
         return max;
     }
 
-    public static float min(float... params){
+    public static float max(float p1, float p2) {
+        return p1 > p2 ? p1 : p2;
+    }
+
+    public static float max(float p1, float p2, float p3) {
+        if (p1 > p2) {
+            return p1 > p3 ? p1 : p3;
+        } else {
+            return p2 > p3 ? p2 : p3;
+        }
+    }
+
+    public static float max(float p1, float p2, float p3, float p4) {
+        float t1 = p1 > p2 ? p1 : p2;
+        float t2 = p3 > p4 ? p3 : p4;
+        return t1 > t2 ? t1 : t2;
+    }
+
+    public static float min(float... params) {
         float min = params[0];
-        for(int i=1; i<params.length; i++){
+        for (int i = 1; i < params.length; i++) {
             if (params[i] < min) {
                 min = params[i];
             }
         }
         return min;
+    }
+
+    public static float min(float p1, float p2) {
+        return p1 < p2 ? p1 : p2;
+    }
+
+    public static float min(float p1, float p2, float p3) {
+        float t = p1 < p2 ? p1 : p2;
+        return t < p3 ? t : p3;
+    }
+
+    public static float min(float p1, float p2, float p3, float p4) {
+        float t1 = p1 < p2 ? p1 : p2;
+        float t2 = p3 < p4 ? p3 : p4;
+        return t1 < t2 ? t1 : t2;
     }
 
     public static boolean equals(Matrix4_4f m4, Matrix3_3f m) {
